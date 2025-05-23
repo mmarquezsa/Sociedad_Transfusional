@@ -249,35 +249,31 @@
       <div class="w-full md:w-1/2 px-4">
         <h3 class="text-xl font-semibold mb-4 text-gray-800">Envíanos un Mensaje</h3>
         
-        <!-- Formulario que abre cliente de correo -->
-        <!-- Formulario que abre cliente de correo y muestra agradecimiento -->
+    <!-- Formulario que envía directamente a Formspree y muestra agradecimiento -->
 <form id="contact-form" class="space-y-4">
 
   <div>
     <label for="name" class="block text-gray-700 text-sm font-bold mb-1">Nombre:</label>
-    <input type="text" id="name" name="Nombre"
-      class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-      required>
+    <input type="text" id="name" name="name" required
+      class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
   </div>
 
   <div>
     <label for="email" class="block text-gray-700 text-sm font-bold mb-1">Email:</label>
-    <input type="email" id="email" name="Email"
-      class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-      required>
+    <input type="email" id="email" name="email" required
+      class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
   </div>
 
   <div>
     <label for="subject" class="block text-gray-700 text-sm font-bold mb-1">Asunto:</label>
-    <input type="text" id="subject" name="Asunto"
+    <input type="text" id="subject" name="subject"
       class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
   </div>
 
   <div>
     <label for="message" class="block text-gray-700 text-sm font-bold mb-1">Mensaje:</label>
-    <textarea id="message" name="Mensaje" rows="6"
-      class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-      required></textarea>
+    <textarea id="message" name="message" rows="6" required
+      class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"></textarea>
   </div>
 
   <div>
@@ -294,31 +290,41 @@
 </div>
 
 <script>
-  document.getElementById('contact-form').addEventListener('submit', function(e) {
+  document.getElementById('contact-form').addEventListener('submit', async function(e) {
     e.preventDefault();
+    const form = e.target;
 
-    // Recogemos los valores
-    const nombre  = encodeURIComponent(document.getElementById('name').value);
-    const email   = encodeURIComponent(document.getElementById('email').value);
-    const asunto  = encodeURIComponent(document.getElementById('subject').value);
-    const mensaje = encodeURIComponent(document.getElementById('message').value);
+    // Prepara datos
+    const data = {
+      name:    form.name.value,
+      email:   form.email.value,
+      subject: form.subject.value,
+      message: form.message.value
+    };
 
-    // Construimos el mailto
-    const to      = 'inmunohematoymt@gmail.com';
-    const mailto  = `mailto:${to}` +
-                    `?subject=${asunto || 'Contacto desde sitio web'}` +
-                    `&body=Nombre: ${nombre}%0D%0AEmail: ${email}%0D%0A%0D%0A${mensaje}`;
+    try {
+      // Envía a Formspree (reemplaza xjkwdpyd por tu ID real)
+      const resp = await fetch('https://formspree.io/f/xjkwdpyd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-    // Abrimos el cliente de correo
-    window.location.href = mailto;
-
-    // Mostramos el mensaje de agradecimiento
-    document.getElementById('thankyou').classList.remove('hidden');
-
-    // Limpiamos el formulario
-    this.reset();
+      if (resp.ok) {
+        // Muestra agradecimiento
+        document.getElementById('thankyou').classList.remove('hidden');
+        form.reset();
+      } else {
+        const err = await resp.json();
+        alert('Error al enviar: ' + (err.error || resp.statusText));
+      }
+    } catch (error) {
+      alert('Error de red: ' + error.message);
+    }
   });
 </script>
+    
+        
 
 
         <!-- Redes sociales -->
