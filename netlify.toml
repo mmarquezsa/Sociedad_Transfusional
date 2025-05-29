@@ -1,0 +1,5 @@
+[build]
+  # Si tu sitio es puro HTML/CSS/JS sin build, deja command vacío
+  command = ""
+  # Publica la carpeta raíz
+  publish = "."
