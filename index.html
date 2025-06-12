@@ -311,8 +311,25 @@
   </section>
 
   <!-- Quiénes Somos - Inspirado en NTT DATA -->
-  <section id="quienes-somos" class="py-20 lg:py-32 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<section id="quienes-somos" class="relative py-20 lg:py-32 overflow-hidden">
+  
+  <!-- Video de fondo -->
+  <div class="absolute inset-0 z-0">
+    <video 
+      autoplay 
+      muted 
+      loop 
+      playsinline
+      class="absolute inset-0 w-full h-full object-cover"
+    >
+      <source src="Intro.Sochimt.mp4" type="video/mp4">
+      <!-- Fallback para navegadores que no soporten el video -->
+      Tu navegador no soporta videos HTML5.
+    </video>
+    
+    <!-- Overlay para mejorar legibilidad -->
+    <div class="absolute inset-0 bg-white/85 backdrop-blur-sm"></div>
+  </div>
       
       <!-- Header -->
       <div class="text-center mb-16 reveal">
