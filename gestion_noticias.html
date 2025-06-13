@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - SOCHIMT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'sochimt-blue': '#1e40af',
+            'sochimt-red': '#dc2626',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .fade-in { opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Login Screen -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
+      <div class="text-center mb-8">
+        <div class="h-20 w-20 bg-gradient-to-br from-sochimt-blue to-sochimt-red rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-white font-bold text-2xl">SM</span>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800">Panel de Administración</h1>
+        <p class="text-gray-600">SOCHIMT - Gestión de Contenido</p>
+      </div>
+
+      <form id="login-form" class="space-y-6">
+        <div>
+          <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
+          <input type="text" id="username" required 
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue focus:border-transparent">
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
+          <input type="password" id="password" required 
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue focus:border-transparent">
+        </div>
+        <button type="submit" id="login-btn" 
+                class="w-full bg-gradient-to-r from-sochimt-blue to-blue-700 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold">
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <div id="login-error" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+        Usuario o contraseña incorrectos
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" class="hidden min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <div class="flex items-center">
+            <div class="h-10 w-10 bg-gradient-to-br from-sochimt-blue to-sochimt-red rounded-full flex items-center justify-center mr-3">
+              <span class="text-white font-bold">SM</span>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-gray-800">Panel de Administración</h1>
+              <p class="text-sm text-gray-600">Gestión de Noticias</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-600">Bienvenido, <span id="current-user" class="font-semibold"></span></span>
+            <button id="logout-btn" class="text-sochimt-red hover:text-red-700 font-medium">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Navigation Tabs -->
+      <div class="mb-8">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8">
+            <button class="tab-btn active border-b-2 border-sochimt-blue text-sochimt-blue py-2 px-1 font-medium text-sm" data-tab="noticias">
+              📰 Gestionar Noticias
+            </button>
+            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="configuracion">
+              ⚙️ Configuración
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- News Management Tab -->
+      <div id="tab-noticias" class="tab-content">
+        <!-- Add News Form -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-xl font-bold text-gray-800 mb-6">➕ Agregar Nueva Noticia</h2>
+          <form id="news-form" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="news-title" class="block text-sm font-semibold text-gray-700 mb-2">Título *</label>
+                <input type="text" id="news-title" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+              </div>
+              <div>
+                <label for="news-category" class="block text-sm font-semibold text-gray-700 mb-2">Categoría *</label>
+                <select id="news-category" required 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+                  <option value="">Seleccionar categoría</option>
+                  <option value="Evento">Evento</option>
+                  <option value="Publicación">Publicación</option>
+                  <option value="Webinar">Webinar</option>
+                  <option value="Congreso">Congreso</option>
+                  <option value="Noticia">Noticia General</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="news-date" class="block text-sm font-semibold text-gray-700 mb-2">Fecha *</label>
+                <input type="date" id="news-date" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+              </div>
+              <div>
+                <label for="news-url" class="block text-sm font-semibold text-gray-700 mb-2">URL (opcional)</label>
+                <input type="url" id="news-url" placeholder="https://..." 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+              </div>
+            </div>
+            <div>
+              <label for="news-summary" class="block text-sm font-semibold text-gray-700 mb-2">Resumen *</label>
+              <textarea id="news-summary" rows="4" required 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue resize-none"
+                        placeholder="Describe brevemente la noticia..."></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+              <button type="button" id="cancel-edit" class="hidden px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                Cancelar
+              </button>
+              <button type="submit" id="submit-news" 
+                      class="px-6 py-2 bg-gradient-to-r from-sochimt-blue to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300">
+                Publicar Noticia
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- News List -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-gray-800">📋 Noticias Publicadas</h2>
+            <div class="flex items-center space-x-3">
+              <input type="text" id="search-news" placeholder="Buscar noticias..." 
+                     class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sochimt-blue">
+              <button id="export-data" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                📤 Exportar
+              </button>
+            </div>
+          </div>
+
+          <div id="news-list" class="space-y-4">
+            <!-- News items will be loaded here -->
+          </div>
+
+          <div id="no-news" class="hidden text-center py-12">
+            <div class="text-gray-400 text-6xl mb-4">📰</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias publicadas</h3>
+            <p class="text-gray-500">Agrega tu primera noticia usando el formulario de arriba.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuration Tab -->
+      <div id="tab-configuracion" class="tab-content hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-6">⚙️ Configuración del Sistema</h2>
+          
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">👥 Gestión de Usuarios</h3>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="font-medium text-gray-800">admin</p>
+                    <p class="text-sm text-gray-600">Administrador principal</p>
+                  </div>
+                  <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Activo</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">🔒 Cambiar Contraseña</h3>
+              <form id="change-password-form" class="max-w-md space-y-4">
+                <div>
+                  <label for="current-password" class="block text-sm font-semibold text-gray-700 mb-2">Contraseña Actual</label>
+                  <input type="password" id="current-password" required 
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+                </div>
+                <div>
+                  <label for="new-password" class="block text-sm font-semibold text-gray-700 mb-2">Nueva Contraseña</label>
+                  <input type="password" id="new-password" required 
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+                </div>
+                <div>
+                  <label for="confirm-password" class="block text-sm font-semibold text-gray-700 mb-2">Confirmar Contraseña</label>
+                  <input type="password" id="confirm-password" required 
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
+                </div>
+                <button type="submit" 
+                        class="px-6 py-2 bg-gradient-to-r from-sochimt-red to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300">
+                  Cambiar Contraseña
+                </button>
+              </form>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">📊 Estadísticas</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <div class="text-2xl font-bold text-sochimt-blue" id="total-news">0</div>
+                  <div class="text-sm text-gray-600">Total de noticias</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                  <div class="text-2xl font-bold text-green-600" id="recent-news">0</div>
+                  <div class="text-sm text-gray-600">Este mes</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                  <div class="text-2xl font-bold text-purple-600" id="categories-count">0</div>
+                  <div class="text-sm text-gray-600">Categorías activas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error Notifications -->
+  <div id="notification" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg hidden z-50"></div>
+
+  <script>
+    // Configuración
+    const CONFIG = {
+      users: {
+        'admin': 'sochimt2025', // Cambiar por contraseña segura
+        'editor': 'editor123'   // Usuario adicional
+      },
+      storageKey: 'sochimt_news_data',
+      sessionKey: 'sochimt_session'
+    };
+
+    // Estado global
+    let currentUser = null;
+    let editingId = null;
+    let newsData = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
+
+    // Elementos DOM
+    const loginScreen = document.getElementById('login-screen');
+    const adminPanel = document.getElementById('admin-panel');
+    const loginForm = document.getElementById('login-form');
+    const newsForm = document.getElementById('news-form');
+    const newsList = document.getElementById('news-list');
+    const noNews = document.getElementById('no-news');
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      checkSession();
+      setupEventListeners();
+      updateStats();
+    });
+
+    // Verificar sesión existente
+    function checkSession() {
+      const session = sessionStorage.getItem(CONFIG.sessionKey);
+      if (session) {
+        currentUser = session;
+        showAdminPanel();
+      }
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+      // Login
+      loginForm.addEventListener('submit', handleLogin);
+      document.getElementById('logout-btn').addEventListener('click', logout);
+
+      // Tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      // News management
+      newsForm.addEventListener('submit', handleNewsSubmit);
+      document.getElementById('cancel-edit').addEventListener('click', cancelEdit);
+      document.getElementById('search-news').addEventListener('input', filterNews);
+      document.getElementById('export-data').addEventListener('click', exportData);
+
+      // Password change
+      document.getElementById('change-password-form').addEventListener('submit', handlePasswordChange);
+    }
+
+    // Manejo de login
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (CONFIG.users[username] && CONFIG.users[username] === password) {
+        currentUser = username;
+        sessionStorage.setItem(CONFIG.sessionKey, username);
+        showAdminPanel();
+        showNotification('Bienvenido al panel de administración', 'success');
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('login-error').classList.add('hidden');
+        }, 5000);
+      }
+    }
+
+    // Mostrar panel de administración
+    function showAdminPanel() {
+      loginScreen.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      document.getElementById('current-user').textContent = currentUser;
+      loadNews();
+      updateStats();
+    }
+
+    // Logout
+    function logout() {
+      sessionStorage.removeItem(CONFIG.sessionKey);
+      currentUser = null;
+      adminPanel.classList.add('hidden');
+      loginScreen.classList.remove('hidden');
+      loginForm.reset();
+    }
+
+    // Cambiar tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-sochimt-blue', 'text-sochimt-blue');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active', 'border-sochimt-blue', 'text-sochimt-blue');
+      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent', 'text-gray-500');
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+    }
+
+    // Manejo de formulario de noticias
+    function handleNewsSubmit(e) {
+      e.preventDefault();
+      
+      const formData = {
+        id: editingId || Date.now().toString(),
+        titulo: document.getElementById('news-title').value,
+        categoria: document.getElementById('news-category').value,
+        fecha: formatDate(document.getElementById('news-date').value),
+        fechaRaw: document.getElementById('news-date').value,
+        resumen: document.getElementById('news-summary').value,
+        url: document.getElementById('news-url').value || '#',
+        autor: currentUser,
+        fechaCreacion: editingId ? newsData.find(n => n.id === editingId).fechaCreacion : new Date().toISOString()
+      };
+
+      if (editingId) {
+        // Editar noticia existente
+        const index = newsData.findIndex(n => n.id === editingId);
+        newsData[index] = formData;
+        showNotification('Noticia actualizada correctamente', 'success');
+      } else {
+        // Agregar nueva noticia
+        newsData.unshift(formData);
+        showNotification('Noticia publicada correctamente', 'success');
+      }
+
+      saveData();
+      loadNews();
+      newsForm.reset();
+      cancelEdit();
+      updateStats();
+    }
+
+    // Formatear fecha
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+      };
+      return date.toLocaleDateString('es-CL', options);
+    }
+
+    // Cargar noticias
+    function loadNews() {
+      if (newsData.length === 0) {
+        newsList.innerHTML = '';
+        noNews.classList.remove('hidden');
+        return;
+      }
+
+      noNews.classList.add('hidden');
+      newsList.innerHTML = newsData.map(news => `
+        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <div class="flex items-center space-x-3 mb-2">
+                <span class="px-3 py-1 bg-sochimt-blue/10 text-sochimt-blue rounded-full text-sm font-medium">
+                  ${news.categoria}
+                </span>
+                <span class="text-sm text-gray-500">${news.fecha}</span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">${news.titulo}</h3>
+              <p class="text-gray-600 text-sm leading-relaxed mb-3">${news.resumen}</p>
+              <div class="flex items-center text-xs text-gray-500 space-x-4">
+                <span>Por: ${news.autor}</span>
+                <span>Creado: ${new Date(news.fechaCreacion).toLocaleDateString('es-CL')}</span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 ml-4">
+              <button onclick="editNews('${news.id}')" 
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                      title="Editar">
+                ✏️
+              </button>
+              <button onclick="deleteNews('${news.id}')" 
+                      class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                      title="Eliminar">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Editar noticia
+    function editNews(id) {
+      const news = newsData.find(n => n.id === id);
+      if (!news) return;
+
+      document.getElementById('news-title').value = news.titulo;
+      document.getElementById('news-category').value = news.categoria;
+      document.getElementById('news-date').value = news.fechaRaw;
+      document.getElementById('news-summary').value = news.resumen;
+      document.getElementById('news-url').value = news.url === '#' ? '' : news.url;
+
+      editingId = id;
+      document.getElementById('submit-news').textContent = 'Actualizar Noticia';
+      document.getElementById('cancel-edit').classList.remove('hidden');
+
+      // Scroll to form
+      newsForm.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Cancelar edición
+    function cancelEdit() {
+      editingId = null;
+      document.getElementById('submit-news').textContent = 'Publicar Noticia';
+      document.getElementById('cancel-edit').classList.add('hidden');
+    }
+
+    // Eliminar noticia
+    function deleteNews(id) {
+      if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
+        newsData = newsData.filter(n => n.id !== id);
+        saveData();
+        loadNews();
+        updateStats();
+        showNotification('Noticia eliminada correctamente', 'success');
+      }
+    }
+
+    // Filtrar noticias
+    function filterNews() {
+      const query = document.getElementById('search-news').value.toLowerCase();
+      const filteredNews = newsData.filter(news => 
+        news.titulo.toLowerCase().includes(query) || 
+        news.resumen.toLowerCase().includes(query) ||
+        news.categoria.toLowerCase().includes(query)
+      );
+      
+      if (filteredNews.length === 0 && query) {
+        newsList.innerHTML = '<div class="text-center py-8 text-gray-500">No se encontraron noticias que coincidan con tu búsqueda.</div>';
+      } else {
+        // Re-render with filtered data
+        const originalData = [...newsData];
+        newsData = filteredNews;
+        loadNews();
+        newsData = originalData;
+      }
+    }
+
+    // Exportar datos
+    function exportData() {
+      const dataStr = JSON.stringify(newsData, null, 2);
+      const dataBlob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `sochimt_noticias_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      showNotification('Datos exportados correctamente', 'success');
+    }
+
+    // Cambiar contraseña
+    function handlePasswordChange(e) {
+      e.preventDefault();
+      const current = document.getElementById('current-password').value;
+      const newPass = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+
+      if (CONFIG.users[currentUser] !== current) {
+        showNotification('Contraseña actual incorrecta', 'error');
+        return;
+      }
+
+      if (newPass !== confirm) {
+        showNotification('Las contraseñas no coinciden', 'error');
+        return;
+      }
+
+      if (newPass.length < 6) {
+        showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+      }
+
+      // En una implementación real, esto se haría en el backend
+      CONFIG.users[currentUser] = newPass;
+      document.getElementById('change-password-form').reset();
+      showNotification('Contraseña cambiada correctamente', 'success');
+    }
+
+    // Actualizar estadísticas
+    function updateStats() {
+      const now = new Date();
+      const thisMonth = newsData.filter(news => {
+        const newsDate = new Date(news.fechaCreacion);
+        return newsDate.getMonth() === now.getMonth() && 
+               newsDate.getFullYear() === now.getFullYear();
+      }).length;
+
+      const categories = [...new Set(newsData.map(news => news.categoria))].length;
+
+      document.getElementById('total-news').textContent = newsData.length;
+      document.getElementById('recent-news').textContent = thisMonth;
+      document.getElementById('categories-count').textContent = categories;
+    }
+
+    // Guardar datos
+    function saveData() {
+      localStorage.setItem(CONFIG.storageKey, JSON.stringify(newsData));
+      
+      // También generar el archivo JSON para la web pública
+      generatePublicJSON();
+    }
+
+    // Generar JSON para la web pública
+    function generatePublicJSON() {
+      const publicData = newsData.map(news => ({
+        titulo: news.titulo,
+        fecha: news.fecha,
+        resumen: news.resumen,
+        url: news.url,
+        categoria: news.categoria
+      }));
+
+      // En una implementación real, esto se subiría automáticamente al repositorio
+      console.log('JSON para web pública:', publicData);
+      
+      // Mostrar en consola para que el usuario pueda copiarlo
+      console.log('Copia este JSON y reemplaza el contenido en tu archivo noticias.json:');
+      console.log(JSON.stringify(publicData, null, 2));
+    }
+
+    // Mostrar notificaciones
+    function showNotification(message, type = 'info') {
+      const notification = document.getElementById('notification');
+      const colors = {
+        success: 'bg-green-500 text-white',
+        error: 'bg-red-500 text-white',
+        info: 'bg-blue-500 text-white'
+      };
+
+      notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${colors[type]}`;
+      notification.textContent = message;
+      notification.classList.remove('hidden');
+
+      setTimeout(() => {
+        notification.classList.add('hidden');
+      }, 5000);
+    }
+
+  </script>
+</body>
+</html>
