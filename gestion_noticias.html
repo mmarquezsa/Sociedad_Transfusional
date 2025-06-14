@@ -464,6 +464,76 @@
     let editingId = null;
     let newsData = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
 
+    // Variables globales para archivos
+    let selectedFile = null;
+    let selectedFileData = null;
+
+    // Manejar carga de archivos
+    function handleFileUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      // Validar tamaño (10MB máximo)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        showNotification('❌ El archivo es demasiado grande. Máximo 10MB permitido.', 'error');
+        input.value = '';
+        return;
+      }
+
+      // Validar tipo de archivo
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm'];
+      if (!validTypes.includes(file.type)) {
+        showNotification('❌ Tipo de archivo no válido. Solo se permiten imágenes y videos.', 'error');
+        input.value = '';
+        return;
+      }
+
+      selectedFile = file;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedFileData = e.target.result;
+        showFilePreview(file, e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Mostrar preview del archivo
+    function showFilePreview(file, dataUrl) {
+      const uploadArea = document.getElementById('file-upload-area');
+      const preview = document.getElementById('file-preview');
+      const previewContent = document.getElementById('preview-content');
+
+      uploadArea.style.display = 'none';
+      preview.classList.remove('hidden');
+
+      if (file.type.startsWith('image/')) {
+        previewContent.innerHTML = `
+          <img src="${dataUrl}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
+          <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
+          <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+        `;
+      } else if (file.type.startsWith('video/')) {
+        previewContent.innerHTML = `
+          <video controls class="max-w-full h-48 rounded-lg mx-auto">
+            <source src="${dataUrl}" type="${file.type}">
+          </video>
+          <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
+          <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+        `;
+      }
+    }
+
+    // Eliminar archivo seleccionado
+    function removeFile() {
+      selectedFile = null;
+      selectedFileData = null;
+      document.getElementById('news-image').value = '';
+      document.getElementById('file-upload-area').style.display = 'block';
+      document.getElementById('file-preview').classList.add('hidden');
+    }
+
     // Elementos DOM
     const loginScreen = document.getElementById('login-screen');
     const adminPanel = document.getElementById('admin-panel');
@@ -642,7 +712,9 @@
         fechaRaw: document.getElementById('news-date').value,
         resumen: document.getElementById('news-summary').value,
         url: document.getElementById('news-url').value || '#',
-        imagen: getImageForCategory(document.getElementById('news-category').value),
+        imagen: selectedFileData || getImageForCategory(document.getElementById('news-category').value),
+        imagenNombre: selectedFile ? selectedFile.name : null,
+        imagenTipo: selectedFile ? selectedFile.type : null,
         autor: currentUser,
         fechaCreacion: editingId ? newsData.find(n => n.id === editingId).fechaCreacion : new Date().toISOString(),
         estado: 'publicada'
@@ -650,6 +722,13 @@
 
       if (editingId) {
         const index = newsData.findIndex(n => n.id === editingId);
+        // Mantener imagen anterior si no se subió una nueva
+        if (!selectedFileData) {
+          const oldNews = newsData[index];
+          formData.imagen = oldNews.imagen;
+          formData.imagenNombre = oldNews.imagenNombre;
+          formData.imagenTipo = oldNews.imagenTipo;
+        }
         newsData[index] = formData;
         showNotification('✅ Noticia actualizada correctamente', 'success');
       } else {
@@ -708,7 +787,19 @@
                 </span>
                 <span class="text-sm text-gray-600 font-medium">📅 ${news.fecha}</span>
                 <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">✅ Publicada</span>
+                ${news.imagenNombre ? '<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">📎 Con archivo</span>' : ''}
               </div>
+              ${news.imagen && news.imagenNombre && news.imagen.startsWith('data:') ? 
+                `<div class="mb-4">
+                  ${news.imagenTipo && news.imagenTipo.startsWith('image/') ? 
+                    `<img src="${news.imagen}" alt="${news.titulo}" class="w-full h-32 object-cover rounded-lg">` :
+                    news.imagenTipo && news.imagenTipo.startsWith('video/') ?
+                    `<video controls class="w-full h-32 rounded-lg">
+                      <source src="${news.imagen}" type="${news.imagenTipo}">
+                    </video>` : ''
+                  }
+                </div>` : ''
+              }
               <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-sochimt-600 transition-colors">${news.titulo}</h3>
               <p class="text-gray-600 leading-relaxed mb-4">${news.resumen}</p>
               <div class="flex items-center text-xs text-gray-500 space-x-6">
@@ -753,6 +844,33 @@
       document.getElementById('news-summary').value = news.resumen;
       document.getElementById('news-url').value = news.url === '#' ? '' : news.url;
 
+      // Manejar imagen existente
+      if (news.imagen && news.imagenNombre && news.imagen.startsWith('data:')) {
+        selectedFileData = news.imagen;
+        const uploadArea = document.getElementById('file-upload-area');
+        const preview = document.getElementById('file-preview');
+        const previewContent = document.getElementById('preview-content');
+
+        uploadArea.style.display = 'none';
+        preview.classList.remove('hidden');
+
+        if (news.imagenTipo && news.imagenTipo.startsWith('image/')) {
+          previewContent.innerHTML = `
+            <img src="${news.imagen}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
+            <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
+            <p class="text-xs text-gray-500">Archivo existente</p>
+          `;
+        } else if (news.imagenTipo && news.imagenTipo.startsWith('video/')) {
+          previewContent.innerHTML = `
+            <video controls class="max-w-full h-48 rounded-lg mx-auto">
+              <source src="${news.imagen}" type="${news.imagenTipo}">
+            </video>
+            <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
+            <p class="text-xs text-gray-500">Archivo existente</p>
+          `;
+        }
+      }
+
       editingId = id;
       document.getElementById('submit-news').innerHTML = '🔄 Actualizar Noticia';
       document.getElementById('cancel-edit').classList.remove('hidden');
@@ -766,6 +884,7 @@
       editingId = null;
       document.getElementById('submit-news').innerHTML = '✨ Publicar Noticia';
       document.getElementById('cancel-edit').classList.add('hidden');
+      removeFile(); // Limpiar archivo seleccionado
     }
 
     // Eliminar noticia
@@ -860,7 +979,8 @@
           resumen: news.resumen,
           url: news.url,
           categoria: news.categoria,
-          imagen: news.imagen
+          imagen: news.imagen || getImageForCategory(news.categoria),
+          imagenTipo: news.imagenTipo || null
         }));
 
       // Guardar las últimas 3 noticias para mostrar en la web
