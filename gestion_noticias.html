@@ -5,57 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración - SOCHIMT</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'sochimt-blue': '#1e40af',
-            'sochimt-red': '#dc2626',
+            'sochimt': {
+              50: '#eff6ff',
+              100: '#dbeafe', 
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            'medical': {
+              50: '#fef2f2',
+              100: '#fee2e2',
+              200: '#fecaca', 
+              300: '#fca5a5',
+              400: '#f87171',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c',
+              800: '#991b1b',
+              900: '#7f1d1d',
+            }
+          },
+          animation: {
+            'slide-in': 'slideIn 0.3s ease-out',
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'bounce-in': 'bounceIn 0.6s ease-out',
+            'glow': 'glow 2s ease-in-out infinite alternate',
           }
         }
       }
     }
   </script>
   <style>
-    .fade-in { opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }
-    @keyframes fadeIn { to { opacity: 1; } }
-    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+      to { box-shadow: 0 0 30px rgba(37, 99, 235, 0.6); }
+    }
+    .gradient-mesh {
+      background: linear-gradient(-45deg, #1e40af, #3b82f6, #dc2626, #ef4444);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .glass-morphism {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
 
   <!-- Login Screen -->
-  <div id="login-screen" class="min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
-      <div class="text-center mb-8">
-        <div class="h-20 w-20 bg-gradient-to-br from-sochimt-blue to-sochimt-red rounded-full flex items-center justify-center mx-auto mb-4">
-          <span class="text-white font-bold text-2xl">SM</span>
+  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white/80 backdrop-blur-lg p-8 rounded-3xl shadow-2xl max-w-md w-full border border-white/20">
+      <div class="text-center mb-8 animate-bounce-in">
+        <div class="h-24 w-24 gradient-mesh rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-glow">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
         </div>
-        <h1 class="text-2xl font-bold text-gray-800">Panel de Administración</h1>
-        <p class="text-gray-600">SOCHIMT - Gestión de Contenido</p>
+        <h1 class="text-3xl font-black text-gray-800 mb-2">Panel Administrativo</h1>
+        <p class="text-gray-600 font-medium">SOCHIMT - Gestión de Contenido</p>
+        <div class="w-20 h-1 bg-gradient-to-r from-sochimt-600 to-medical-600 rounded-full mx-auto mt-4"></div>
       </div>
 
       <form id="login-form" class="space-y-6">
-        <div>
-          <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
+        <div class="relative">
+          <label for="username" class="block text-sm font-bold text-gray-700 mb-2">👤 Usuario</label>
           <input type="text" id="username" required 
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue focus:border-transparent">
+                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
         </div>
-        <div>
-          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
+        <div class="relative">
+          <label for="password" class="block text-sm font-bold text-gray-700 mb-2">🔐 Contraseña</label>
           <input type="password" id="password" required 
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue focus:border-transparent">
+                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
         </div>
         <button type="submit" id="login-btn" 
-                class="w-full bg-gradient-to-r from-sochimt-blue to-blue-700 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold">
-          Iniciar Sesión
+                class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-4 px-6 rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
+          ✨ Acceder al Panel
         </button>
       </form>
 
-      <div id="login-error" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-        Usuario o contraseña incorrectos
+      <div id="login-error" class="hidden mt-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg animate-fade-in">
+        <div class="flex items-center">
+          <span class="text-xl mr-2">⚠️</span>
+          <span>Usuario o contraseña incorrectos</span>
+        </div>
       </div>
     </div>
   </div>
@@ -63,199 +134,183 @@
   <!-- Admin Panel -->
   <div id="admin-panel" class="hidden min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-4">
-          <div class="flex items-center">
-            <div class="h-10 w-10 bg-gradient-to-br from-sochimt-blue to-sochimt-red rounded-full flex items-center justify-center mr-3">
-              <span class="text-white font-bold">SM</span>
+    <header class="bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <div class="h-12 w-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"/>
+              </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold text-gray-800">Panel de Administración</h1>
-              <p class="text-sm text-gray-600">Gestión de Noticias</p>
+              <h1 class="text-2xl font-black text-gray-800">Panel de Administración</h1>
+              <p class="text-sm text-gray-600 font-medium">Gestión de Noticias SOCHIMT</p>
             </div>
           </div>
-          <div class="flex items-center space-x-4">
-            <span class="text-sm text-gray-600">Bienvenido, <span id="current-user" class="font-semibold"></span></span>
-            <button id="logout-btn" class="text-sochimt-red hover:text-red-700 font-medium">
-              Cerrar Sesión
+          <div class="flex items-center space-x-6">
+            <div class="text-right">
+              <span class="text-sm text-gray-600">Bienvenido,</span>
+              <span id="current-user" class="font-bold text-sochimt-600"></span>
+            </div>
+            <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+              🚪 Salir
             </button>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Navigation Tabs -->
-      <div class="mb-8">
-        <div class="border-b border-gray-200">
-          <nav class="-mb-px flex space-x-8">
-            <button class="tab-btn active border-b-2 border-sochimt-blue text-sochimt-blue py-2 px-1 font-medium text-sm" data-tab="noticias">
-              📰 Gestionar Noticias
-            </button>
-            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="configuracion">
-              ⚙️ Configuración
-            </button>
-          </nav>
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- Dashboard Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white card-hover animate-fade-in">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-blue-100 font-medium">Total Noticias</p>
+              <p class="text-3xl font-black" id="total-news">0</p>
+            </div>
+            <div class="text-4xl opacity-80">📰</div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.1s;">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-green-100 font-medium">Este Mes</p>
+              <p class="text-3xl font-black" id="recent-news">0</p>
+            </div>
+            <div class="text-4xl opacity-80">📅</div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.2s;">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-purple-100 font-medium">Categorías</p>
+              <p class="text-3xl font-black" id="categories-count">0</p>
+            </div>
+            <div class="text-4xl opacity-80">🏷️</div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.3s;">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-orange-100 font-medium">Publicadas</p>
+              <p class="text-3xl font-black" id="published-news">0</p>
+            </div>
+            <div class="text-4xl opacity-80">✅</div>
+          </div>
         </div>
       </div>
 
-      <!-- News Management Tab -->
-      <div id="tab-noticias" class="tab-content">
-        <!-- Add News Form -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h2 class="text-xl font-bold text-gray-800 mb-6">➕ Agregar Nueva Noticia</h2>
-          <form id="news-form" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="news-title" class="block text-sm font-semibold text-gray-700 mb-2">Título *</label>
-                <input type="text" id="news-title" required 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-              </div>
-              <div>
-                <label for="news-category" class="block text-sm font-semibold text-gray-700 mb-2">Categoría *</label>
-                <select id="news-category" required 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-                  <option value="">Seleccionar categoría</option>
-                  <option value="Evento">Evento</option>
-                  <option value="Publicación">Publicación</option>
-                  <option value="Webinar">Webinar</option>
-                  <option value="Congreso">Congreso</option>
-                  <option value="Noticia">Noticia General</option>
-                </select>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="news-date" class="block text-sm font-semibold text-gray-700 mb-2">Fecha *</label>
-                <input type="date" id="news-date" required 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-              </div>
-              <div>
-                <label for="news-url" class="block text-sm font-semibold text-gray-700 mb-2">URL (opcional)</label>
-                <input type="url" id="news-url" placeholder="https://..." 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-              </div>
+      <!-- Add News Form -->
+      <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border border-white/20 animate-fade-in">
+        <div class="flex items-center space-x-3 mb-8">
+          <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
+            <span class="text-white text-xl">➕</span>
+          </div>
+          <h2 class="text-2xl font-black text-gray-800">Agregar Nueva Noticia</h2>
+        </div>
+        
+        <form id="news-form" class="space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label>
+              <input type="text" id="news-title" required 
+                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300"
+                     placeholder="Ingresa el título de la noticia...">
             </div>
             <div>
-              <label for="news-summary" class="block text-sm font-semibold text-gray-700 mb-2">Resumen *</label>
-              <textarea id="news-summary" rows="4" required 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue resize-none"
-                        placeholder="Describe brevemente la noticia..."></textarea>
-            </div>
-            <div class="flex justify-end space-x-3">
-              <button type="button" id="cancel-edit" class="hidden px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                Cancelar
-              </button>
-              <button type="submit" id="submit-news" 
-                      class="px-6 py-2 bg-gradient-to-r from-sochimt-blue to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300">
-                Publicar Noticia
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- News List -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold text-gray-800">📋 Noticias Publicadas</h2>
-            <div class="flex items-center space-x-3">
-              <input type="text" id="search-news" placeholder="Buscar noticias..." 
-                     class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sochimt-blue">
-              <button id="export-data" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
-                📤 Exportar
-              </button>
+              <label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label>
+              <select id="news-category" required 
+                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
+                <option value="">Seleccionar categoría</option>
+                <option value="Evento">🎉 Evento</option>
+                <option value="Publicación">📚 Publicación</option>
+                <option value="Webinar">💻 Webinar</option>
+                <option value="Congreso">🏛️ Congreso</option>
+                <option value="Noticia">📰 Noticia General</option>
+              </select>
             </div>
           </div>
-
-          <div id="news-list" class="space-y-4">
-            <!-- News items will be loaded here -->
-          </div>
-
-          <div id="no-news" class="hidden text-center py-12">
-            <div class="text-gray-400 text-6xl mb-4">📰</div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias publicadas</h3>
-            <p class="text-gray-500">Agrega tu primera noticia usando el formulario de arriba.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Configuration Tab -->
-      <div id="tab-configuracion" class="tab-content hidden">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <h2 class="text-xl font-bold text-gray-800 mb-6">⚙️ Configuración del Sistema</h2>
           
-          <div class="space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-3">👥 Gestión de Usuarios</h3>
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="font-medium text-gray-800">admin</p>
-                    <p class="text-sm text-gray-600">Administrador principal</p>
-                  </div>
-                  <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Activo</span>
-                </div>
-              </div>
+              <label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label>
+              <input type="date" id="news-date" required 
+                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
             </div>
-
             <div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-3">🔒 Cambiar Contraseña</h3>
-              <form id="change-password-form" class="max-w-md space-y-4">
-                <div>
-                  <label for="current-password" class="block text-sm font-semibold text-gray-700 mb-2">Contraseña Actual</label>
-                  <input type="password" id="current-password" required 
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-                </div>
-                <div>
-                  <label for="new-password" class="block text-sm font-semibold text-gray-700 mb-2">Nueva Contraseña</label>
-                  <input type="password" id="new-password" required 
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-                </div>
-                <div>
-                  <label for="confirm-password" class="block text-sm font-semibold text-gray-700 mb-2">Confirmar Contraseña</label>
-                  <input type="password" id="confirm-password" required 
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sochimt-blue">
-                </div>
-                <button type="submit" 
-                        class="px-6 py-2 bg-gradient-to-r from-sochimt-red to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300">
-                  Cambiar Contraseña
-                </button>
-              </form>
-            </div>
-
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-3">📊 Estadísticas</h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-blue-50 p-4 rounded-lg">
-                  <div class="text-2xl font-bold text-sochimt-blue" id="total-news">0</div>
-                  <div class="text-sm text-gray-600">Total de noticias</div>
-                </div>
-                <div class="bg-green-50 p-4 rounded-lg">
-                  <div class="text-2xl font-bold text-green-600" id="recent-news">0</div>
-                  <div class="text-sm text-gray-600">Este mes</div>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-lg">
-                  <div class="text-2xl font-bold text-purple-600" id="categories-count">0</div>
-                  <div class="text-sm text-gray-600">Categorías activas</div>
-                </div>
-              </div>
+              <label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label>
+              <input type="url" id="news-url" placeholder="https://..." 
+                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
             </div>
           </div>
+          
+          <div>
+            <label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label>
+            <textarea id="news-summary" rows="4" required 
+                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 resize-none"
+                      placeholder="Describe brevemente la noticia..."></textarea>
+          </div>
+          
+          <div class="flex justify-end space-x-4">
+            <button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium">
+              ❌ Cancelar
+            </button>
+            <button type="submit" id="submit-news" 
+                    class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
+              ✨ Publicar Noticia
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- News List -->
+      <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
+        <div class="flex justify-between items-center mb-8">
+          <div class="flex items-center space-x-3">
+            <div class="h-12 w-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center">
+              <span class="text-white text-xl">📋</span>
+            </div>
+            <h2 class="text-2xl font-black text-gray-800">Noticias Publicadas</h2>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <input type="text" id="search-news" placeholder="🔍 Buscar noticias..." 
+                     class="px-6 py-3 pl-12 border-2 border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 w-80">
+              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                🔍
+              </div>
+            </div>
+            <button id="export-data" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm font-bold transition-all duration-300 transform hover:scale-105">
+              📤 Exportar
+            </button>
+          </div>
+        </div>
+
+        <div id="news-list" class="space-y-4">
+          <!-- News items will be loaded here -->
+        </div>
+
+        <div id="no-news" class="hidden text-center py-16">
+          <div class="text-gray-400 text-8xl mb-6">📰</div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">No hay noticias publicadas</h3>
+          <p class="text-gray-500 text-lg">Agrega tu primera noticia usando el formulario de arriba.</p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Success/Error Notifications -->
-  <div id="notification" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg hidden z-50"></div>
+  <div id="notification" class="fixed top-4 right-4 p-6 rounded-2xl shadow-2xl hidden z-50 transform transition-all duration-300"></div>
 
   <script>
     // Configuración
     const CONFIG = {
       users: {
-        'admin': 'sochimt2025', // Cambiar por contraseña segura
-        'editor': 'editor123'   // Usuario adicional
+        'admin': 'sochimt2025',
+        'editor': 'editor123',
+        'gestor': 'gestor2025'
       },
       storageKey: 'sochimt_news_data',
       sessionKey: 'sochimt_session'
@@ -279,7 +334,14 @@
       checkSession();
       setupEventListeners();
       updateStats();
+      setDefaultDate();
     });
+
+    // Establecer fecha por defecto
+    function setDefaultDate() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('news-date').value = today;
+    }
 
     // Verificar sesión existente
     function checkSession() {
@@ -292,23 +354,12 @@
 
     // Configurar event listeners
     function setupEventListeners() {
-      // Login
       loginForm.addEventListener('submit', handleLogin);
       document.getElementById('logout-btn').addEventListener('click', logout);
-
-      // Tabs
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-      });
-
-      // News management
       newsForm.addEventListener('submit', handleNewsSubmit);
       document.getElementById('cancel-edit').addEventListener('click', cancelEdit);
       document.getElementById('search-news').addEventListener('input', filterNews);
       document.getElementById('export-data').addEventListener('click', exportData);
-
-      // Password change
-      document.getElementById('change-password-form').addEventListener('submit', handlePasswordChange);
     }
 
     // Manejo de login
@@ -321,7 +372,7 @@
         currentUser = username;
         sessionStorage.setItem(CONFIG.sessionKey, username);
         showAdminPanel();
-        showNotification('Bienvenido al panel de administración', 'success');
+        showNotification('¡Bienvenido al panel de administración! 🎉', 'success');
       } else {
         document.getElementById('login-error').classList.remove('hidden');
         setTimeout(() => {
@@ -346,21 +397,7 @@
       adminPanel.classList.add('hidden');
       loginScreen.classList.remove('hidden');
       loginForm.reset();
-    }
-
-    // Cambiar tabs
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active', 'border-sochimt-blue', 'text-sochimt-blue');
-        btn.classList.add('border-transparent', 'text-gray-500');
-      });
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-
-      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active', 'border-sochimt-blue', 'text-sochimt-blue');
-      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent', 'text-gray-500');
-      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      showNotification('Sesión cerrada correctamente 👋', 'info');
     }
 
     // Manejo de formulario de noticias
@@ -375,26 +412,40 @@
         fechaRaw: document.getElementById('news-date').value,
         resumen: document.getElementById('news-summary').value,
         url: document.getElementById('news-url').value || '#',
+        imagen: getImageForCategory(document.getElementById('news-category').value),
         autor: currentUser,
-        fechaCreacion: editingId ? newsData.find(n => n.id === editingId).fechaCreacion : new Date().toISOString()
+        fechaCreacion: editingId ? newsData.find(n => n.id === editingId).fechaCreacion : new Date().toISOString(),
+        estado: 'publicada'
       };
 
       if (editingId) {
-        // Editar noticia existente
         const index = newsData.findIndex(n => n.id === editingId);
         newsData[index] = formData;
-        showNotification('Noticia actualizada correctamente', 'success');
+        showNotification('✅ Noticia actualizada correctamente', 'success');
       } else {
-        // Agregar nueva noticia
         newsData.unshift(formData);
-        showNotification('Noticia publicada correctamente', 'success');
+        showNotification('🎉 ¡Noticia publicada exitosamente!', 'success');
       }
 
       saveData();
       loadNews();
       newsForm.reset();
+      setDefaultDate();
       cancelEdit();
       updateStats();
+      generateWebData();
+    }
+
+    // Obtener imagen según categoría
+    function getImageForCategory(category) {
+      const images = {
+        'Evento': 'https://via.placeholder.com/400x200/3b82f6/white?text=Evento',
+        'Publicación': 'https://via.placeholder.com/400x200/dc2626/white?text=Publicación',
+        'Webinar': 'https://via.placeholder.com/400x200/059669/white?text=Webinar',
+        'Congreso': 'https://via.placeholder.com/400x200/7c3aed/white?text=Congreso',
+        'Noticia': 'https://via.placeholder.com/400x200/f59e0b/white?text=Noticia'
+      };
+      return images[category] || images['Noticia'];
     }
 
     // Formatear fecha
@@ -418,31 +469,38 @@
 
       noNews.classList.add('hidden');
       newsList.innerHTML = newsData.map(news => `
-        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div class="bg-white/60 backdrop-blur-sm border-2 border-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 card-hover">
           <div class="flex justify-between items-start">
             <div class="flex-1">
-              <div class="flex items-center space-x-3 mb-2">
-                <span class="px-3 py-1 bg-sochimt-blue/10 text-sochimt-blue rounded-full text-sm font-medium">
+              <div class="flex items-center space-x-3 mb-4">
+                <span class="px-4 py-2 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-full text-sm font-bold">
                   ${news.categoria}
                 </span>
-                <span class="text-sm text-gray-500">${news.fecha}</span>
+                <span class="text-sm text-gray-600 font-medium">📅 ${news.fecha}</span>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">✅ Publicada</span>
               </div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-2">${news.titulo}</h3>
-              <p class="text-gray-600 text-sm leading-relaxed mb-3">${news.resumen}</p>
-              <div class="flex items-center text-xs text-gray-500 space-x-4">
-                <span>Por: ${news.autor}</span>
-                <span>Creado: ${new Date(news.fechaCreacion).toLocaleDateString('es-CL')}</span>
+              <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-sochimt-600 transition-colors">${news.titulo}</h3>
+              <p class="text-gray-600 leading-relaxed mb-4">${news.resumen}</p>
+              <div class="flex items-center text-xs text-gray-500 space-x-6">
+                <span class="flex items-center space-x-1">
+                  <span>👤</span>
+                  <span>Por: ${news.autor}</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                  <span>🕒</span>
+                  <span>Creado: ${new Date(news.fechaCreacion).toLocaleDateString('es-CL')}</span>
+                </span>
               </div>
             </div>
-            <div class="flex items-center space-x-2 ml-4">
+            <div class="flex items-center space-x-3 ml-6">
               <button onclick="editNews('${news.id}')" 
-                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
-                      title="Editar">
+                      class="p-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 transform hover:scale-110" 
+                      title="Editar noticia">
                 ✏️
               </button>
               <button onclick="deleteNews('${news.id}')" 
-                      class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
-                      title="Eliminar">
+                      class="p-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 transform hover:scale-110" 
+                      title="Eliminar noticia">
                 🗑️
               </button>
             </div>
@@ -463,28 +521,29 @@
       document.getElementById('news-url').value = news.url === '#' ? '' : news.url;
 
       editingId = id;
-      document.getElementById('submit-news').textContent = 'Actualizar Noticia';
+      document.getElementById('submit-news').innerHTML = '🔄 Actualizar Noticia';
       document.getElementById('cancel-edit').classList.remove('hidden');
 
-      // Scroll to form
       newsForm.scrollIntoView({ behavior: 'smooth' });
+      showNotification('📝 Modo edición activado', 'info');
     }
 
     // Cancelar edición
     function cancelEdit() {
       editingId = null;
-      document.getElementById('submit-news').textContent = 'Publicar Noticia';
+      document.getElementById('submit-news').innerHTML = '✨ Publicar Noticia';
       document.getElementById('cancel-edit').classList.add('hidden');
     }
 
     // Eliminar noticia
     function deleteNews(id) {
-      if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
+      if (confirm('🗑️ ¿Estás seguro de que quieres eliminar esta noticia?')) {
         newsData = newsData.filter(n => n.id !== id);
         saveData();
         loadNews();
         updateStats();
-        showNotification('Noticia eliminada correctamente', 'success');
+        generateWebData();
+        showNotification('🗑️ Noticia eliminada correctamente', 'success');
       }
     }
 
@@ -498,9 +557,14 @@
       );
       
       if (filteredNews.length === 0 && query) {
-        newsList.innerHTML = '<div class="text-center py-8 text-gray-500">No se encontraron noticias que coincidan con tu búsqueda.</div>';
+        newsList.innerHTML = `
+          <div class="text-center py-16">
+            <div class="text-gray-400 text-6xl mb-4">🔍</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">No se encontraron noticias</h3>
+            <p class="text-gray-500">No hay noticias que coincidan con tu búsqueda.</p>
+          </div>
+        `;
       } else {
-        // Re-render with filtered data
         const originalData = [...newsData];
         newsData = filteredNews;
         loadNews();
@@ -518,35 +582,7 @@
       link.download = `sochimt_noticias_${new Date().toISOString().split('T')[0]}.json`;
       link.click();
       URL.revokeObjectURL(url);
-      showNotification('Datos exportados correctamente', 'success');
-    }
-
-    // Cambiar contraseña
-    function handlePasswordChange(e) {
-      e.preventDefault();
-      const current = document.getElementById('current-password').value;
-      const newPass = document.getElementById('new-password').value;
-      const confirm = document.getElementById('confirm-password').value;
-
-      if (CONFIG.users[currentUser] !== current) {
-        showNotification('Contraseña actual incorrecta', 'error');
-        return;
-      }
-
-      if (newPass !== confirm) {
-        showNotification('Las contraseñas no coinciden', 'error');
-        return;
-      }
-
-      if (newPass.length < 6) {
-        showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
-        return;
-      }
-
-      // En una implementación real, esto se haría en el backend
-      CONFIG.users[currentUser] = newPass;
-      document.getElementById('change-password-form').reset();
-      showNotification('Contraseña cambiada correctamente', 'success');
+      showNotification('📤 Datos exportados correctamente', 'success');
     }
 
     // Actualizar estadísticas
@@ -559,35 +595,37 @@
       }).length;
 
       const categories = [...new Set(newsData.map(news => news.categoria))].length;
+      const published = newsData.filter(news => news.estado === 'publicada').length;
 
       document.getElementById('total-news').textContent = newsData.length;
       document.getElementById('recent-news').textContent = thisMonth;
       document.getElementById('categories-count').textContent = categories;
+      document.getElementById('published-news').textContent = published;
     }
 
     // Guardar datos
     function saveData() {
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(newsData));
-      
-      // También generar el archivo JSON para la web pública
-      generatePublicJSON();
     }
 
-    // Generar JSON para la web pública
-    function generatePublicJSON() {
-      const publicData = newsData.map(news => ({
-        titulo: news.titulo,
-        fecha: news.fecha,
-        resumen: news.resumen,
-        url: news.url,
-        categoria: news.categoria
-      }));
+    // Generar datos para la web pública (últimas 3 noticias)
+    function generateWebData() {
+      const publicData = newsData
+        .filter(news => news.estado === 'publicada')
+        .slice(0, 3)
+        .map(news => ({
+          titulo: news.titulo,
+          fecha: news.fecha,
+          resumen: news.resumen,
+          url: news.url,
+          categoria: news.categoria,
+          imagen: news.imagen
+        }));
 
-      // En una implementación real, esto se subiría automáticamente al repositorio
-      console.log('JSON para web pública:', publicData);
+      // Guardar las últimas 3 noticias para mostrar en la web
+      localStorage.setItem('sochimt_public_news', JSON.stringify(publicData));
       
-      // Mostrar en consola para que el usuario pueda copiarlo
-      console.log('Copia este JSON y reemplaza el contenido en tu archivo noticias.json:');
+      console.log('🌐 Últimas 3 noticias para la web pública:');
       console.log(JSON.stringify(publicData, null, 2));
     }
 
@@ -595,20 +633,31 @@
     function showNotification(message, type = 'info') {
       const notification = document.getElementById('notification');
       const colors = {
-        success: 'bg-green-500 text-white',
-        error: 'bg-red-500 text-white',
-        info: 'bg-blue-500 text-white'
+        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
+        error: 'bg-gradient-to-r from-red-500 to-red-600 text-white',
+        info: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
       };
 
-      notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${colors[type]}`;
-      notification.textContent = message;
+      notification.className = `fixed top-4 right-4 p-6 rounded-2xl shadow-2xl z-50 transform transition-all duration-300 ${colors[type]}`;
+      notification.innerHTML = `
+        <div class="flex items-center space-x-3">
+          <div class="text-2xl">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
+          <div class="font-bold">${message}</div>
+        </div>
+      `;
       notification.classList.remove('hidden');
+      notification.style.transform = 'translateX(0)';
 
       setTimeout(() => {
-        notification.classList.add('hidden');
-      }, 5000);
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          notification.classList.add('hidden');
+        }, 300);
+      }, 4000);
     }
 
+    // Generar datos iniciales al cargar
+    generateWebData();
   </script>
 </body>
 </html>
