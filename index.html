@@ -785,33 +785,20 @@
     }
   }
 
-// EN GESTION_NOTICIAS.HTML
-function generateWebData() {
-  const publicData = newsData
-    .filter(news => news.estado === 'publicada')
-    .slice(0, 3)
-    .map(news => ({
-      titulo: news.titulo,
-      fecha: news.fecha,
-      resumen: news.resumen,
-      url: news.url,
-      categoria: news.categoria,
-      imagen: news.imagen,
-      imagenTipo: news.imagenTipo
-    }));
-
-  localStorage.setItem('sochimt_public_news', JSON.stringify(publicData));
-}
-
-// EN INDEX.HTML
+// Fetch noticias dinámicas desde el panel de administración
 async function fetchNoticias() {
-  const publicNews = localStorage.getItem('sochimt_public_news');
-  if (publicNews) {
-    return JSON.parse(publicNews);
-  }
-  // Noticias por defecto si no hay datos...
-}
-  
+  try {
+    // Intentar obtener noticias del panel de administración
+    const publicNews = localStorage.getItem('sochimt_public_news');
+    
+    if (publicNews) {
+      const noticias = JSON.parse(publicNews);
+      if (noticias.length > 0) {
+        return noticias;
+      }
+    }
+    
+    // Si no hay noticias guardadas, mostrar noticias por defecto
     return [
       {
         titulo: 'Sociedad Chilena de Medicina Transfusional',
