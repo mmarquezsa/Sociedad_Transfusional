@@ -318,27 +318,10 @@
   </section>
 
 <!-- Quiénes Somos - Inspirado en NTT DATA -->
-<section id="quienes-somos" class="relative py-20 lg:py-32 overflow-hidden">
+<section id="quienes-somos" class="py-20 lg:py-32 bg-gray-50">
   
-  <!-- Video de fondo -->
-  <div class="absolute inset-0 z-0">
-    <video 
-      autoplay 
-      muted 
-      loop 
-      playsinline
-      class="absolute inset-0 w-full h-full object-cover"
-    >
-      <source src="Intro.Sochimt.mp4" type="video/mp4">
-      <!-- Fallback para navegadores que no soporten el video -->
-      Tu navegador no soporta videos HTML5.
-    </video>
-    
-    <!-- Overlay para mejorar legibilidad -->
-    <div class="absolute inset-0 bg-white/85 backdrop-blur-sm"></div>
-  </div>
 
-  <!-- Contenido principal -->
+ <!-- Contenido principal -->
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
     <!-- Header -->
@@ -620,267 +603,263 @@
   </footer>
 
 <!-- Scripts -->
-  <script>
-    // Configuración global
-    const CONFIG = {
-      apiEndpoint: 'https://api.netlify.com/api/v1/forms/noticias/submissions?access_token=YOUR_TOKEN',
-      animations: {
-        duration: 800,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+<script>
+  // Configuración global
+  const CONFIG = {
+    apiEndpoint: 'https://api.netlify.com/api/v1/forms/noticias/submissions?access_token=YOUR_TOKEN',
+    animations: {
+      duration: 800,
+      easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+    }
+  };
+
+  // Inicialización
+  document.addEventListener('DOMContentLoaded', () => {
+    initNavbar();
+    initMobileMenu();
+    initScrollAnimations();
+    loadNoticias();
+    initSmoothScrolling();
+    initCounterAnimations();
+  });
+
+  // Navbar scroll effect
+  function initNavbar() {
+    const navbar = document.getElementById('navbar');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        navbar.style.backdropFilter = 'blur(20px)';
+        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+      } else {
+        navbar.style.backdropFilter = 'blur(10px)';
+        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
       }
+
+      // Auto-hide on scroll down
+      if (window.scrollY > lastScrollY && window.scrollY > 200) {
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        navbar.style.transform = 'translateY(0)';
+      }
+      
+      lastScrollY = window.scrollY;
+    });
+  }
+
+  // Mobile menu
+  function initMobileMenu() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close on link click
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  }
+
+  // Smooth scrolling
+  function initSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  }
+
+  // Scroll animations
+  function initScrollAnimations() {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -100px 0px',
+      threshold: 0.1
     };
 
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', () => {
-      initNavbar();
-      initMobileMenu();
-      initScrollAnimations();
-      loadNoticias();
-      initSmoothScrolling();
-      initCounterAnimations();
-    });
-
-    // Navbar scroll effect
-    function initNavbar() {
-      const navbar = document.getElementById('navbar');
-      let lastScrollY = window.scrollY;
-
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-          navbar.style.backdropFilter = 'blur(20px)';
-          navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-        } else {
-          navbar.style.backdropFilter = 'blur(10px)';
-          navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
         }
-
-        // Auto-hide on scroll down
-        if (window.scrollY > lastScrollY && window.scrollY > 200) {
-          navbar.style.transform = 'translateY(-100%)';
-        } else {
-          navbar.style.transform = 'translateY(0)';
-        }
-        
-        lastScrollY = window.scrollY;
       });
-    }
+    }, observerOptions);
 
-    // Mobile menu
-    function initMobileMenu() {
-      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
-
-      mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
-
-      // Close on link click
-      mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          mobileMenu.classList.add('hidden');
-        });
-      });
-    }
-
-    // Smooth scrolling
-    function initSmoothScrolling() {
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          }
-        });
-      });
-    }
-
-    // Scroll animations
-    function initScrollAnimations() {
-      const observerOptions = {
-        root: null,
-        rootMargin: '0px 0px -100px 0px',
-        threshold: 0.1
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-          }
-        });
-      }, observerOptions);
-
-      document.querySelectorAll('.reveal').forEach(el => {
-        observer.observe(el);
-      });
-    }
-
-    // Animación de contadores
-function initCounterAnimations() {
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.3
-  };
-  const counterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const counters = entry.target.querySelectorAll('.counter');
-        counters.forEach(counter => {
-          animateCounter(counter);
-        });
-        counterObserver.unobserve(entry.target);
-      }
+    document.querySelectorAll('.reveal').forEach(el => {
+      observer.observe(el);
     });
-  }, observerOptions);
-
-  const statsSection = document.getElementById('stats-section');
-  const statsSectionAbout = document.getElementById('stats-section-about');
-
-  if (statsSection) {
-    counterObserver.observe(statsSection);
   }
 
-  if (statsSectionAbout) {
-    counterObserver.observe(statsSectionAbout);
+  // Animación de contadores (CORREGIDA)
+  function initCounterAnimations() {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.3
+    };
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counters = entry.target.querySelectorAll('.counter');
+          counters.forEach(counter => {
+            animateCounter(counter);
+          });
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observar ambas secciones de estadísticas
+    const statsSection = document.getElementById('stats-section');
+    const statsSectionAbout = document.getElementById('stats-section-about');
+
+    if (statsSection) {
+      counterObserver.observe(statsSection);
+    }
+
+    if (statsSectionAbout) {
+      counterObserver.observe(statsSectionAbout);
+    }
   }
-}
 
-      const statsSection = document.getElementById('stats-section');
-      if (statsSection) {
-        counterObserver.observe(statsSection);
+  function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-target'));
+    const duration = 2000; // 2 segundos
+    const step = target / (duration / 16); // 60fps
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        element.textContent = target;
+        clearInterval(timer);
+      } else {
+        element.textContent = Math.floor(current);
       }
-    }
+    }, 16);
+  }
 
-    function animateCounter(element) {
-      const target = parseInt(element.getAttribute('data-target'));
-      const duration = 2000; // 2 segundos
-      const step = target / (duration / 16); // 60fps
-      let current = 0;
+  // Cargar noticias dinámicas
+  async function loadNoticias() {
+    const container = document.getElementById('noticias-container');
+    const loading = document.getElementById('noticias-loading');
 
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-          element.textContent = target;
-          clearInterval(timer);
-        } else {
-          element.textContent = Math.floor(current);
-        }
-      }, 16);
-    }
+    try {
+      // Simular carga de API (reemplazar con tu endpoint real)
+      const noticias = await fetchNoticias();
+      
+      loading.style.display = 'none';
+      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
+      
+      // Aplicar animaciones
+      container.querySelectorAll('.reveal').forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add('active');
+        }, index * 100);
+      });
 
-    // Cargar noticias dinámicas
-    async function loadNoticias() {
-      const container = document.getElementById('noticias-container');
-      const loading = document.getElementById('noticias-loading');
-
-      try {
-        // Simular carga de API (reemplazar con tu endpoint real)
-        const noticias = await fetchNoticias();
-        
-        loading.style.display = 'none';
-        container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
-        
-        // Aplicar animaciones
-        container.querySelectorAll('.reveal').forEach((el, index) => {
-          setTimeout(() => {
-            el.classList.add('active');
-          }, index * 100);
-        });
-
-      } catch (error) {
-        console.error('Error cargando noticias:', error);
-        loading.innerHTML = `
-          <div class="text-center py-12">
-            <div class="text-red-500 text-6xl mb-4">⚠️</div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
-            <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
-              Reintentar
-            </button>
-          </div>
-        `;
-      }
-    }
-
-    // Fetch noticias (conectar con Netlify CMS)
-    async function fetchNoticias() {
-      // Simulación - reemplazar con tu API real
-      return [
-        {
-          titulo: 'Sociedad Chilena de Medicina Transfusional',
-          fecha: '06 de junio de 2025',
-          resumen: 'El pasado viernes 6 de junio de 2025 se realizó la ceremonia de apertura de la Sociedad Chilena de Medicina Transfusional, marcando el inicio de sus actividades académicas, de investigación y difusión en el país',
-          categoria: 'Evento',
-          imagen: 'Sociedad.jpg',
-          url: 'https://www.linkedin.com/posts/guillermo-alfonso-jerez-jerez-860842281_el-pasado-viernes-06-de-junio-en-el-campus-activity-7337676979099328512-kJKU?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAo5MkEBZgxACpfyMnmfUzdGt2_UavSjNM0'
-        },
-        {
-          titulo: 'Nuevas Guías Clínicas Publicadas',
-          fecha: 'Próximamente',
-          resumen: 'Serán publicadas  guías clínicas basadas en evidencia para mejorar la práctica transfusional en Chile.',
-          categoria: 'Publicación',
-          imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Guías+Clínicas',
-          url: '#guias-clinicas'
-        },
-        {
-          titulo: 'Webinar: Seguridad Transfusional',
-          fecha: 'Próximamente',
-          resumen: 'Participa en nuestro próximo webinar sobre seguridad transfusional y las mejores prácticas internacionales.',
-          categoria: 'Webinar',
-          imagen: 'https://via.placeholder.com/400x200/059669/white?text=Webinar',
-          url: '#webinar-seguridad'
-        }
-      ];
-    }
-
-    // Crear HTML para noticia
-    function createNoticiaHTML(noticia) {
-      const categoryColors = {
-        'Evento': 'bg-blue-100 text-blue-800',
-        'Publicación': 'bg-green-100 text-green-800',
-        'Webinar': 'bg-purple-100 text-purple-800',
-        'Congreso': 'bg-red-100 text-red-800'
-      };
-
-      return `
-        <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden">
-          <div class="relative">
-            <img src="${noticia.imagen}" alt="${noticia.titulo}" class="w-full h-48 object-cover">
-            <div class="absolute top-4 left-4">
-              <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-                ${noticia.categoria}
-              </span>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center text-sm text-gray-500 mb-3">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              ${noticia.fecha}
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
-              ${noticia.titulo}
-            </h3>
-            <p class="text-gray-600 leading-relaxed mb-4">
-              ${noticia.resumen}
-            </p>
-            <a href="${noticia.url}" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group">
-              <span>Leer más</span>
-              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-        </article>
+    } catch (error) {
+      console.error('Error cargando noticias:', error);
+      loading.innerHTML = `
+        <div class="text-center py-12">
+          <div class="text-red-500 text-6xl mb-4">⚠️</div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
+          <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
+            Reintentar
+          </button>
+        </div>
       `;
     }
+  }
 
-    console.log('🚀 SOCHIMT renovado cargado exitosamente!');
-  </script>
+  // Fetch noticias (conectar con Netlify CMS)
+  async function fetchNoticias() {
+    // Simulación - reemplazar con tu API real
+    return [
+      {
+        titulo: 'Sociedad Chilena de Medicina Transfusional',
+        fecha: '06 de junio de 2025',
+        resumen: 'El pasado viernes 6 de junio de 2025 se realizó la ceremonia de apertura de la Sociedad Chilena de Medicina Transfusional, marcando el inicio de sus actividades académicas, de investigación y difusión en el país',
+        categoria: 'Evento',
+        imagen: 'Sociedad.jpg',
+        url: 'https://www.linkedin.com/posts/guillermo-alfonso-jerez-jerez-860842281_el-pasado-viernes-06-de-junio-en-el-campus-activity-7337676979099328512-kJKU?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAo5MkEBZgxACpfyMnmfUzdGt2_UavSjNM0'
+      },
+      {
+        titulo: 'Nuevas Guías Clínicas Publicadas',
+        fecha: 'Próximamente',
+        resumen: 'Serán publicadas  guías clínicas basadas en evidencia para mejorar la práctica transfusional en Chile.',
+        categoria: 'Publicación',
+        imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Guías+Clínicas',
+        url: '#guias-clinicas'
+      },
+      {
+        titulo: 'Webinar: Seguridad Transfusional',
+        fecha: 'Próximamente',
+        resumen: 'Participa en nuestro próximo webinar sobre seguridad transfusional y las mejores prácticas internacionales.',
+        categoria: 'Webinar',
+        imagen: 'https://via.placeholder.com/400x200/059669/white?text=Webinar',
+        url: '#webinar-seguridad'
+      }
+    ];
+  }
+
+  // Crear HTML para noticia
+  function createNoticiaHTML(noticia) {
+    const categoryColors = {
+      'Evento': 'bg-blue-100 text-blue-800',
+      'Publicación': 'bg-green-100 text-green-800',
+      'Webinar': 'bg-purple-100 text-purple-800',
+      'Congreso': 'bg-red-100 text-red-800'
+    };
+
+    return `
+      <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden">
+        <div class="relative">
+          <img src="${noticia.imagen}" alt="${noticia.titulo}" class="w-full h-48 object-cover">
+          <div class="absolute top-4 left-4">
+            <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
+              ${noticia.categoria}
+            </span>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center text-sm text-gray-500 mb-3">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            ${noticia.fecha}
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
+            ${noticia.titulo}
+          </h3>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            ${noticia.resumen}
+          </p>
+          <a href="${noticia.url}" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group">
+            <span>Leer más</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    `;
+  }
+
+  console.log('🚀 SOCHIMT renovado cargado exitosamente!');
+</script>
 </body>
 </html>
