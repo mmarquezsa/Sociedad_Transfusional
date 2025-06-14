@@ -162,140 +162,267 @@
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-8">
-      <!-- Dashboard Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white card-hover animate-fade-in">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-blue-100 font-medium">Total Noticias</p>
-              <p class="text-3xl font-black" id="total-news">0</p>
+      <!-- Navigation Tabs -->
+      <div class="mb-8">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8">
+            <button class="tab-btn active border-b-2 border-sochimt-600 text-sochimt-600 py-2 px-1 font-medium text-sm" data-tab="dashboard">
+              📊 Dashboard
+            </button>
+            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="noticias">
+              📰 Gestionar Noticias
+            </button>
+            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="configuracion">
+              ⚙️ Configuración
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div id="tab-dashboard" class="tab-content">
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white card-hover animate-fade-in">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-100 font-medium">Total Noticias</p>
+                <p class="text-3xl font-black" id="total-news">0</p>
+              </div>
+              <div class="text-4xl opacity-80">📰</div>
             </div>
-            <div class="text-4xl opacity-80">📰</div>
+          </div>
+          <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-green-100 font-medium">Este Mes</p>
+                <p class="text-3xl font-black" id="recent-news">0</p>
+              </div>
+              <div class="text-4xl opacity-80">📅</div>
+            </div>
+          </div>
+          <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-purple-100 font-medium">Categorías</p>
+                <p class="text-3xl font-black" id="categories-count">0</p>
+              </div>
+              <div class="text-4xl opacity-80">🏷️</div>
+            </div>
+          </div>
+          <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-orange-100 font-medium">Publicadas</p>
+                <p class="text-3xl font-black" id="published-news">0</p>
+              </div>
+              <div class="text-4xl opacity-80">✅</div>
+            </div>
           </div>
         </div>
-        <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.1s;">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-green-100 font-medium">Este Mes</p>
-              <p class="text-3xl font-black" id="recent-news">0</p>
-            </div>
-            <div class="text-4xl opacity-80">📅</div>
-          </div>
-        </div>
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.2s;">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-purple-100 font-medium">Categorías</p>
-              <p class="text-3xl font-black" id="categories-count">0</p>
-            </div>
-            <div class="text-4xl opacity-80">🏷️</div>
-          </div>
-        </div>
-        <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.3s;">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-orange-100 font-medium">Publicadas</p>
-              <p class="text-3xl font-black" id="published-news">0</p>
-            </div>
-            <div class="text-4xl opacity-80">✅</div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
+          <h2 class="text-2xl font-black text-gray-800 mb-6">🚀 Acciones Rápidas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <button onclick="switchTab('noticias')" class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 text-left card-hover">
+              <div class="text-3xl mb-3">📝</div>
+              <h3 class="font-bold text-gray-800 mb-2">Nueva Noticia</h3>
+              <p class="text-sm text-gray-600">Agregar una nueva noticia al sitio</p>
+            </button>
+            <button onclick="switchTab('configuracion')" class="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-300 text-left card-hover">
+              <div class="text-3xl mb-3">🔐</div>
+              <h3 class="font-bold text-gray-800 mb-2">Cambiar Contraseña</h3>
+              <p class="text-sm text-gray-600">Actualizar credenciales de acceso</p>
+            </button>
+            <button onclick="exportData()" class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 text-left card-hover">
+              <div class="text-3xl mb-3">📤</div>
+              <h3 class="font-bold text-gray-800 mb-2">Exportar Datos</h3>
+              <p class="text-sm text-gray-600">Descargar backup de noticias</p>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Add News Form -->
-      <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border border-white/20 animate-fade-in">
-        <div class="flex items-center space-x-3 mb-8">
-          <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
-            <span class="text-white text-xl">➕</span>
-          </div>
-          <h2 class="text-2xl font-black text-gray-800">Agregar Nueva Noticia</h2>
-        </div>
-        
-        <form id="news-form" class="space-y-6">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label>
-              <input type="text" id="news-title" required 
-                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300"
-                     placeholder="Ingresa el título de la noticia...">
+      <!-- News Management Tab -->
+      <div id="tab-noticias" class="tab-content hidden">
+        <!-- Add News Form -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border border-white/20 animate-fade-in">
+          <div class="flex items-center space-x-3 mb-8">
+            <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
+              <span class="text-white text-xl">➕</span>
             </div>
-            <div>
-              <label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label>
-              <select id="news-category" required 
-                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-                <option value="">Seleccionar categoría</option>
-                <option value="Evento">🎉 Evento</option>
-                <option value="Publicación">📚 Publicación</option>
-                <option value="Webinar">💻 Webinar</option>
-                <option value="Congreso">🏛️ Congreso</option>
-                <option value="Noticia">📰 Noticia General</option>
-              </select>
-            </div>
+            <h2 class="text-2xl font-black text-gray-800">Agregar Nueva Noticia</h2>
           </div>
           
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label>
-              <input type="date" id="news-date" required 
-                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-            </div>
-            <div>
-              <label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label>
-              <input type="url" id="news-url" placeholder="https://..." 
-                     class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-            </div>
-          </div>
-          
-          <div>
-            <label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label>
-            <textarea id="news-summary" rows="4" required 
-                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 resize-none"
-                      placeholder="Describe brevemente la noticia..."></textarea>
-          </div>
-          
-          <div class="flex justify-end space-x-4">
-            <button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium">
-              ❌ Cancelar
-            </button>
-            <button type="submit" id="submit-news" 
-                    class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-              ✨ Publicar Noticia
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- News List -->
-      <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-        <div class="flex justify-between items-center mb-8">
-          <div class="flex items-center space-x-3">
-            <div class="h-12 w-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center">
-              <span class="text-white text-xl">📋</span>
-            </div>
-            <h2 class="text-2xl font-black text-gray-800">Noticias Publicadas</h2>
-          </div>
-          <div class="flex items-center space-x-4">
-            <div class="relative">
-              <input type="text" id="search-news" placeholder="🔍 Buscar noticias..." 
-                     class="px-6 py-3 pl-12 border-2 border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 w-80">
-              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                🔍
+          <form id="news-form" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label>
+                <input type="text" id="news-title" required 
+                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300"
+                       placeholder="Ingresa el título de la noticia...">
+              </div>
+              <div>
+                <label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label>
+                <select id="news-category" required 
+                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
+                  <option value="">Seleccionar categoría</option>
+                  <option value="Evento">🎉 Evento</option>
+                  <option value="Publicación">📚 Publicación</option>
+                  <option value="Webinar">💻 Webinar</option>
+                  <option value="Congreso">🏛️ Congreso</option>
+                  <option value="Noticia">📰 Noticia General</option>
+                </select>
               </div>
             </div>
-            <button id="export-data" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm font-bold transition-all duration-300 transform hover:scale-105">
-              📤 Exportar
-            </button>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label>
+                <input type="date" id="news-date" required 
+                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
+              </div>
+              <div>
+                <label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label>
+                <input type="url" id="news-url" placeholder="https://..." 
+                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
+              </div>
+            </div>
+            
+            <div>
+              <label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label>
+              <textarea id="news-summary" rows="4" required 
+                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 resize-none"
+                        placeholder="Describe brevemente la noticia..."></textarea>
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+              <button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium">
+                ❌ Cancelar
+              </button>
+              <button type="submit" id="submit-news" 
+                      class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
+                ✨ Publicar Noticia
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- News List -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
+          <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center space-x-3">
+              <div class="h-12 w-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center">
+                <span class="text-white text-xl">📋</span>
+              </div>
+              <h2 class="text-2xl font-black text-gray-800">Noticias Publicadas</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="relative">
+                <input type="text" id="search-news" placeholder="🔍 Buscar noticias..." 
+                       class="px-6 py-3 pl-12 border-2 border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 w-80">
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  🔍
+                </div>
+              </div>
+              <button id="export-data" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm font-bold transition-all duration-300 transform hover:scale-105">
+                📤 Exportar
+              </button>
+            </div>
+          </div>
+
+          <div id="news-list" class="space-y-4">
+            <!-- News items will be loaded here -->
+          </div>
+
+          <div id="no-news" class="hidden text-center py-16">
+            <div class="text-gray-400 text-8xl mb-6">📰</div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">No hay noticias publicadas</h3>
+            <p class="text-gray-500 text-lg">Agrega tu primera noticia usando el formulario de arriba.</p>
           </div>
         </div>
+      </div>
 
-        <div id="news-list" class="space-y-4">
-          <!-- News items will be loaded here -->
-        </div>
+      <!-- Configuration Tab -->
+      <div id="tab-configuracion" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          <!-- Change Password Section -->
+          <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
+            <div class="flex items-center space-x-3 mb-8">
+              <div class="h-12 w-12 bg-gradient-to-br from-medical-600 to-medical-700 rounded-xl flex items-center justify-center">
+                <span class="text-white text-xl">🔐</span>
+              </div>
+              <h2 class="text-2xl font-black text-gray-800">Cambiar Contraseña</h2>
+            </div>
+            
+            <form id="change-password-form" class="space-y-6">
+              <div>
+                <label for="current-password" class="block text-sm font-bold text-gray-700 mb-3">🔑 Contraseña Actual *</label>
+                <input type="password" id="current-password" required 
+                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
+                       placeholder="Ingresa tu contraseña actual">
+              </div>
+              <div>
+                <label for="new-password" class="block text-sm font-bold text-gray-700 mb-3">🆕 Nueva Contraseña *</label>
+                <input type="password" id="new-password" required 
+                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
+                       placeholder="Mínimo 6 caracteres">
+                <div class="mt-2 text-xs text-gray-500">
+                  <p>✓ Mínimo 6 caracteres</p>
+                  <p>✓ Se recomienda usar números y símbolos</p>
+                </div>
+              </div>
+              <div>
+                <label for="confirm-password" class="block text-sm font-bold text-gray-700 mb-3">✅ Confirmar Contraseña *</label>
+                <input type="password" id="confirm-password" required 
+                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
+                       placeholder="Repite la nueva contraseña">
+              </div>
+              <button type="submit" 
+                      class="w-full px-8 py-4 bg-gradient-to-r from-medical-600 to-medical-700 text-white rounded-xl hover:from-medical-700 hover:to-medical-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
+                🔄 Actualizar Contraseña
+              </button>
+            </form>
+          </div>
 
-        <div id="no-news" class="hidden text-center py-16">
-          <div class="text-gray-400 text-8xl mb-6">📰</div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-4">No hay noticias publicadas</h3>
-          <p class="text-gray-500 text-lg">Agrega tu primera noticia usando el formulario de arriba.</p>
+          <!-- User Management Section -->
+          <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
+            <div class="flex items-center space-x-3 mb-8">
+              <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
+                <span class="text-white text-xl">👥</span>
+              </div>
+              <h2 class="text-2xl font-black text-gray-800">Gestión de Usuarios</h2>
+            </div>
+            
+            <div id="users-list" class="space-y-4">
+              <!-- Users will be loaded here -->
+            </div>
+
+            <!-- Statistics -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <h3 class="text-lg font-bold text-gray-800 mb-4">📊 Estadísticas del Sistema</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-blue-50 p-4 rounded-xl">
+                  <div class="text-2xl font-bold text-sochimt-600" id="total-news-stat">0</div>
+                  <div class="text-sm text-gray-600">Total de noticias</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-xl">
+                  <div class="text-2xl font-bold text-green-600" id="recent-news-stat">0</div>
+                  <div class="text-sm text-gray-600">Este mes</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl">
+                  <div class="text-2xl font-bold text-purple-600" id="categories-count-stat">0</div>
+                  <div class="text-sm text-gray-600">Categorías activas</div>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-xl">
+                  <div class="text-2xl font-bold text-orange-600" id="users-count-stat">0</div>
+                  <div class="text-sm text-gray-600">Usuarios activos</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -313,8 +440,24 @@
         'gestor': 'gestor2025'
       },
       storageKey: 'sochimt_news_data',
-      sessionKey: 'sochimt_session'
+      sessionKey: 'sochimt_session',
+      usersKey: 'sochimt_users_data'
     };
+
+    // Cargar usuarios desde localStorage o usar por defecto
+    function loadUsers() {
+      const savedUsers = localStorage.getItem(CONFIG.usersKey);
+      if (savedUsers) {
+        CONFIG.users = JSON.parse(savedUsers);
+      } else {
+        saveUsers();
+      }
+    }
+
+    // Guardar usuarios en localStorage
+    function saveUsers() {
+      localStorage.setItem(CONFIG.usersKey, JSON.stringify(CONFIG.users));
+    }
 
     // Estado global
     let currentUser = null;
@@ -331,6 +474,7 @@
 
     // Inicialización
     document.addEventListener('DOMContentLoaded', () => {
+      loadUsers();
       checkSession();
       setupEventListeners();
       updateStats();
@@ -360,6 +504,31 @@
       document.getElementById('cancel-edit').addEventListener('click', cancelEdit);
       document.getElementById('search-news').addEventListener('input', filterNews);
       document.getElementById('export-data').addEventListener('click', exportData);
+      document.getElementById('change-password-form').addEventListener('submit', handlePasswordChange);
+
+      // Tab navigation
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+    }
+
+    // Cambiar tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-sochimt-600', 'text-sochimt-600');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active', 'border-sochimt-600', 'text-sochimt-600');
+      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent', 'text-gray-500');
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+      if (tabName === 'configuracion') {
+        loadUsersList();
+      }
     }
 
     // Manejo de login
@@ -398,6 +567,67 @@
       loginScreen.classList.remove('hidden');
       loginForm.reset();
       showNotification('Sesión cerrada correctamente 👋', 'info');
+    }
+
+    // Cambio de contraseña
+    function handlePasswordChange(e) {
+      e.preventDefault();
+      const currentPassword = document.getElementById('current-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      // Validaciones
+      if (CONFIG.users[currentUser] !== currentPassword) {
+        showNotification('❌ La contraseña actual es incorrecta', 'error');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        showNotification('❌ La nueva contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showNotification('❌ Las contraseñas no coinciden', 'error');
+        return;
+      }
+
+      if (newPassword === currentPassword) {
+        showNotification('❌ La nueva contraseña debe ser diferente a la actual', 'error');
+        return;
+      }
+
+      // Actualizar contraseña
+      CONFIG.users[currentUser] = newPassword;
+      saveUsers();
+      
+      // Limpiar formulario
+      document.getElementById('change-password-form').reset();
+      
+      showNotification('✅ Contraseña actualizada exitosamente', 'success');
+    }
+
+    // Cargar lista de usuarios
+    function loadUsersList() {
+      const usersContainer = document.getElementById('users-list');
+      usersContainer.innerHTML = Object.keys(CONFIG.users).map(username => `
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-sm">${username.charAt(0).toUpperCase()}</span>
+            </div>
+            <div>
+              <p class="font-bold text-gray-800">${username}</p>
+              <p class="text-sm text-gray-600">${username === currentUser ? 'Sesión actual' : 'Usuario activo'}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
+              ${username === currentUser ? '🟢 Actual' : '✅ Activo'}
+            </span>
+          </div>
+        </div>
+      `).join('');
     }
 
     // Manejo de formulario de noticias
@@ -514,6 +744,9 @@
       const news = newsData.find(n => n.id === id);
       if (!news) return;
 
+      // Cambiar a la pestaña de noticias
+      switchTab('noticias');
+
       document.getElementById('news-title').value = news.titulo;
       document.getElementById('news-category').value = news.categoria;
       document.getElementById('news-date').value = news.fechaRaw;
@@ -596,11 +829,19 @@
 
       const categories = [...new Set(newsData.map(news => news.categoria))].length;
       const published = newsData.filter(news => news.estado === 'publicada').length;
+      const usersCount = Object.keys(CONFIG.users).length;
 
+      // Dashboard stats
       document.getElementById('total-news').textContent = newsData.length;
       document.getElementById('recent-news').textContent = thisMonth;
       document.getElementById('categories-count').textContent = categories;
       document.getElementById('published-news').textContent = published;
+
+      // Configuration stats
+      document.getElementById('total-news-stat').textContent = newsData.length;
+      document.getElementById('recent-news-stat').textContent = thisMonth;
+      document.getElementById('categories-count-stat').textContent = categories;
+      document.getElementById('users-count-stat').textContent = usersCount;
     }
 
     // Guardar datos
