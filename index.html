@@ -803,62 +803,7 @@ async function fetchNoticias() {
     }
   }
 
-// Fetch noticias dinámicas desde el panel de administración
-async function fetchNoticias() {
-  try {
-    // Intentar obtener noticias del panel de administración
-    const publicNews = localStorage.getItem('sochimt_public_news');
-    
-    if (publicNews) {
-      const noticias = JSON.parse(publicNews);
-      if (noticias.length > 0) {
-        return noticias;
-      }
-    }
-    
-    // Si no hay noticias guardadas, mostrar noticias por defecto
-    return [
-      {
-        titulo: 'Sociedad Chilena de Medicina Transfusional',
-        fecha: '06 de junio de 2025',
-        resumen: 'El pasado viernes 6 de junio de 2025 se realizó la ceremonia de apertura de la Sociedad Chilena de Medicina Transfusional, marcando el inicio de sus actividades académicas, de investigación y difusión en el país',
-        categoria: 'Evento',
-        imagen: 'Sociedad.jpg',
-        url: 'https://www.linkedin.com/posts/guillermo-alfonso-jerez-jerez-860842281_el-pasado-viernes-06-de-junio-en-el-campus-activity-7337676979099328512-kJKU?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAo5MkEBZgxACpfyMnmfUzdGt2_UavSjNM0'
-      },
-      {
-        titulo: 'Panel de Administración Disponible',
-        fecha: 'Ahora',
-        resumen: 'Accede al panel de administración para gestionar las noticias de la sociedad de manera fácil y profesional.',
-        categoria: 'Noticia',
-        imagen: 'https://via.placeholder.com/400x200/3b82f6/white?text=Panel+Admin',
-        url: 'admin.html'
-      },
-      {
-        titulo: 'Próximas Actividades',
-        fecha: 'Próximamente',
-        resumen: 'Mantente atento a nuestras próximas actividades, webinars y eventos científicos.',
-        categoria: 'Evento',
-        imagen: 'https://via.placeholder.com/400x200/059669/white?text=Próximamente',
-        url: '#'
-      }
-    ];
-    
-  } catch (error) {
-    console.error('Error cargando noticias:', error);
-    // Retornar noticias por defecto en caso de error
-    return [
-      {
-        titulo: 'Error al cargar noticias',
-        fecha: 'Ahora',
-        resumen: 'Hubo un problema al cargar las noticias. Por favor, contacta al administrador.',
-        categoria: 'Error',
-        imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Error',
-        url: '#'
-      }
-    ];
-  }
-}
+
 
   // Crear HTML para noticia
   function createNoticiaHTML(noticia) {
