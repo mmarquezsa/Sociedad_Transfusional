@@ -442,11 +442,12 @@
   </div>
 </section>
 
+
 <!-- Dentro de tu sección "Noticias" -->
 <section id="noticias" class="py-20 lg:py-32 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Header restaurado -->
+    <!-- Header -->
     <div class="text-center mb-16 reveal">
       <span class="text-sochimt-600 font-semibold uppercase tracking-wider text-sm">Últimas Noticias</span>
       <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-6">
@@ -463,20 +464,45 @@
       <!-- Noticias dinámicas insertadas por JS -->
     </div>
 
-    <!-- Botón de gestión de noticias (fuera del grid para no romper columnas) -->
+    <!-- Botón para gestión -->
     <div class="text-center mt-12">
       <a href="gestion_noticias.html" target="_blank"
          class="inline-flex items-center bg-gray-100 text-gray-700 px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all duration-300 group">
         <span>Gestionar Noticias</span>
         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                d="M10.325 4.317c...z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
       </a>
     </div>
   </div>
 </section>
+
+<!-- Script dinámico de carga de noticias -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const noticias = JSON.parse(localStorage.getItem("sochimt_news_data")) || [];
+    const contenedor = document.getElementById("noticias-container");
+
+    if (contenedor && noticias.length > 0) {
+      noticias.forEach(noticia => {
+        const card = document.createElement("div");
+        card.className = "bg-white shadow-md rounded-xl p-6 flex flex-col justify-between";
+        card.innerHTML = `
+          <h3 class="font-bold text-lg text-sochimt-700 mb-2">${noticia.titulo}</h3>
+          <p class="text-sm text-gray-600 mb-4">${noticia.resumen}</p>
+          ${noticia.url ? `<a href="${noticia.url}" class="text-sm text-sochimt-600 font-semibold hover:underline">Leer más →</a>` : ''}
+        `;
+        contenedor.appendChild(card);
+      });
+    } else {
+      contenedor.innerHTML = "<p class='text-center text-gray-500 col-span-full'>No hay noticias disponibles.</p>";
+    }
+  });
+</script>
+
 
 
  <!-- CTA Section / Sección Socios -->
