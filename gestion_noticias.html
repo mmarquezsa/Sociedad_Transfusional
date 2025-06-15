@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración - SOCHIMT</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -35,70 +34,23 @@
               800: '#991b1b',
               900: '#7f1d1d',
             }
-          },
-          animation: {
-            'slide-in': 'slideIn 0.3s ease-out',
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'bounce-in': 'bounceIn 0.6s ease-out',
-            'glow': 'glow 2s ease-in-out infinite alternate',
-            'pulse-success': 'pulseSuccess 1s ease-in-out',
           }
         }
       }
     }
   </script>
   <style>
-    @keyframes slideIn {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    /* Estilos base */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes bounceIn {
-      0% { transform: scale(0.3); opacity: 0; }
-      50% { transform: scale(1.05); }
-      70% { transform: scale(0.9); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes glow {
-      from { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
-      to { box-shadow: 0 0 30px rgba(37, 99, 235, 0.6); }
-    }
-    @keyframes pulseSuccess {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    .gradient-mesh {
-      background: linear-gradient(-45deg, #1e40af, #3b82f6, #dc2626, #ef4444);
-      background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .glass-morphism {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .card-hover {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .card-hover:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-
+    
     /* Indicadores de sincronización */
-    .sync-indicator {
+    .sync-badge {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: rgba(37, 99, 235, 0.9);
+      background: rgba(34, 197, 94, 0.9);
       color: white;
       padding: 8px 16px;
       border-radius: 20px;
@@ -109,20 +61,16 @@
       backdrop-filter: blur(10px);
     }
     
-    .sync-indicator.show {
+    .sync-badge.show {
       opacity: 1;
     }
 
-    .sync-indicator.success {
-      background: rgba(34, 197, 94, 0.9);
-    }
-
-    .sync-indicator.error {
+    .sync-badge.error {
       background: rgba(239, 68, 68, 0.9);
     }
 
-    /* Botón de actualización manual */
-    .manual-sync-btn {
+    /* Botón flotante de sincronización */
+    .fab-sync {
       position: fixed;
       bottom: 20px;
       right: 20px;
@@ -136,20 +84,72 @@
       cursor: pointer;
       z-index: 1000;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .manual-sync-btn:hover {
+    .fab-sync:hover {
       background: #1d4ed8;
       transform: scale(1.1);
     }
 
-    .manual-sync-btn.syncing {
+    .fab-sync.syncing {
       animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
+    }
+
+    /* Mejoras para móviles */
+    @media (max-width: 640px) {
+      .sync-badge {
+        top: 10px;
+        right: 10px;
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+      
+      .fab-sync {
+        bottom: 70px;
+        right: 15px;
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Estados de debug */
+    .debug-panel {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 300px;
+      font-size: 12px;
+      display: none;
+      z-index: 999;
+    }
+
+    .debug-panel.show {
+      display: block;
     }
   </style>
 </head>
@@ -158,35 +158,34 @@
   <!-- Login Screen -->
   <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-white/80 backdrop-blur-lg p-8 rounded-3xl shadow-2xl max-w-md w-full border border-white/20">
-      <div class="text-center mb-8 animate-bounce-in">
-        <div class="h-24 w-24 gradient-mesh rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-glow">
+      <div class="text-center mb-8">
+        <div class="h-24 w-24 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
           <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
         </div>
         <h1 class="text-3xl font-black text-gray-800 mb-2">Panel Administrativo</h1>
         <p class="text-gray-600 font-medium">SOCHIMT - Gestión de Contenido</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-sochimt-600 to-medical-600 rounded-full mx-auto mt-4"></div>
       </div>
 
       <form id="login-form" class="space-y-6">
-        <div class="relative">
+        <div>
           <label for="username" class="block text-sm font-bold text-gray-700 mb-2">👤 Usuario</label>
           <input type="text" id="username" required 
-                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
         </div>
-        <div class="relative">
+        <div>
           <label for="password" class="block text-sm font-bold text-gray-700 mb-2">🔐 Contraseña</label>
           <input type="password" id="password" required 
-                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
         </div>
-        <button type="submit" id="login-btn" 
+        <button type="submit" 
                 class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-4 px-6 rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
           ✨ Acceder al Panel
         </button>
       </form>
 
-      <div id="login-error" class="hidden mt-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg animate-fade-in">
+      <div id="login-error" class="hidden mt-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg">
         <div class="flex items-center">
           <span class="text-xl mr-2">⚠️</span>
           <span>Usuario o contraseña incorrectos</span>
@@ -198,361 +197,154 @@
   <!-- Admin Panel -->
   <div id="admin-panel" class="hidden min-h-screen">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-6 py-4">
+    <header class="bg-white/80 backdrop-blur-lg shadow-lg sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div class="flex justify-between items-center">
           <div class="flex items-center space-x-4">
-            <div class="h-12 w-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"/>
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-2xl font-black text-gray-800">Panel de Administración</h1>
-              <p class="text-sm text-gray-600 font-medium">Gestión de Noticias SOCHIMT</p>
-            </div>
+            <h1 class="text-xl sm:text-2xl font-black text-gray-800">Panel de Administración</h1>
           </div>
-          <div class="flex items-center space-x-6">
-            <!-- Indicador de sincronización -->
-            <div id="sync-status" class="flex items-center space-x-2">
+          <div class="flex items-center space-x-4">
+            <div id="sync-status" class="hidden sm:flex items-center space-x-2">
               <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <span class="text-sm text-gray-600">Sincronizado</span>
             </div>
-            <div class="text-right">
-              <span class="text-sm text-gray-600">Bienvenido,</span>
-              <span id="current-user" class="font-bold text-sochimt-600"></span>
-            </div>
-            <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
-              🚪 Salir
+            <span id="current-user" class="font-bold text-sochimt-600 text-sm sm:text-base"></span>
+            <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+              Salir
             </button>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-6 py-8">
-      <!-- Navigation Tabs -->
-      <div class="mb-8">
-        <div class="border-b border-gray-200">
-          <nav class="-mb-px flex space-x-8">
-            <button class="tab-btn active border-b-2 border-sochimt-600 text-sochimt-600 py-2 px-1 font-medium text-sm" data-tab="dashboard">
-              📊 Dashboard
-            </button>
-            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="noticias">
-              📰 Gestionar Noticias
-            </button>
-            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="configuracion">
-              ⚙️ Configuración
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      <!-- Dashboard Tab -->
-      <div id="tab-dashboard" class="tab-content">
-        <!-- Dashboard Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white card-hover animate-fade-in">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-blue-100 font-medium">Total Noticias</p>
-                <p class="text-3xl font-black" id="total-news">0</p>
-              </div>
-              <div class="text-4xl opacity-80">📰</div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <!-- Add News Form -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-8">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6">➕ Agregar Nueva Noticia</h2>
+        
+        <form id="news-form" class="space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <label for="news-title" class="block text-sm font-bold text-gray-700 mb-2">📝 Título *</label>
+              <input type="text" id="news-title" required 
+                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300"
+                     placeholder="Título de la noticia...">
             </div>
-          </div>
-          <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-green-100 font-medium">Este Mes</p>
-                <p class="text-3xl font-black" id="recent-news">0</p>
-              </div>
-              <div class="text-4xl opacity-80">📅</div>
+            <div>
+              <label for="news-category" class="block text-sm font-bold text-gray-700 mb-2">🏷️ Categoría *</label>
+              <select id="news-category" required 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
+                <option value="">Seleccionar categoría</option>
+                <option value="Evento">🎉 Evento</option>
+                <option value="Publicación">📚 Publicación</option>
+                <option value="Webinar">💻 Webinar</option>
+                <option value="Congreso">🏛️ Congreso</option>
+                <option value="Noticia">📰 Noticia General</option>
+              </select>
             </div>
-          </div>
-          <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.2s;">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-purple-100 font-medium">Categorías</p>
-                <p class="text-3xl font-black" id="categories-count">0</p>
-              </div>
-              <div class="text-4xl opacity-80">🏷️</div>
-            </div>
-          </div>
-          <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.3s;">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-orange-100 font-medium">Publicadas</p>
-                <p class="text-3xl font-black" id="published-news">0</p>
-              </div>
-              <div class="text-4xl opacity-80">✅</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-          <h2 class="text-2xl font-black text-gray-800 mb-6">🚀 Acciones Rápidas</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button onclick="switchTab('noticias')" class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 text-left card-hover">
-              <div class="text-3xl mb-3">📝</div>
-              <h3 class="font-bold text-gray-800 mb-2">Nueva Noticia</h3>
-              <p class="text-sm text-gray-600">Agregar una nueva noticia al sitio</p>
-            </button>
-            <button onclick="forceSyncWithWebsite()" class="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-300 text-left card-hover">
-              <div class="text-3xl mb-3">🔄</div>
-              <h3 class="font-bold text-gray-800 mb-2">Sincronizar Web</h3>
-              <p class="text-sm text-gray-600">Actualizar sitio web manualmente</p>
-            </button>
-            <button onclick="exportData()" class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 text-left card-hover">
-              <div class="text-3xl mb-3">📤</div>
-              <h3 class="font-bold text-gray-800 mb-2">Exportar Datos</h3>
-              <p class="text-sm text-gray-600">Descargar backup de noticias</p>
-            </button>
-          </div>
-
-          <!-- Estado de sincronización -->
-          <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">📡 Estado de Sincronización</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="text-center">
-                <div class="text-2xl font-bold text-blue-600" id="last-sync-time">--:--</div>
-                <div class="text-sm text-gray-600">Última sincronización</div>
-              </div>
-              <div class="text-center">
-                <div class="text-2xl font-bold text-green-600" id="published-count">0</div>
-                <div class="text-sm text-gray-600">Noticias en web</div>
-              </div>
-              <div class="text-center">
-                <div class="text-2xl font-bold text-purple-600" id="pending-sync">0</div>
-                <div class="text-sm text-gray-600">Pendientes de sync</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- News Management Tab -->
-      <div id="tab-noticias" class="tab-content hidden">
-        <!-- Add News Form -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border border-white/20 animate-fade-in">
-          <div class="flex items-center space-x-3 mb-8">
-            <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
-              <span class="text-white text-xl">➕</span>
-            </div>
-            <h2 class="text-2xl font-black text-gray-800">Agregar Nueva Noticia</h2>
           </div>
           
-          <form id="news-form" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label>
-                <input type="text" id="news-title" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300"
-                       placeholder="Ingresa el título de la noticia...">
-              </div>
-              <div>
-                <label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label>
-                <select id="news-category" required 
-                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-                  <option value="">Seleccionar categoría</option>
-                  <option value="Evento">🎉 Evento</option>
-                  <option value="Publicación">📚 Publicación</option>
-                  <option value="Webinar">💻 Webinar</option>
-                  <option value="Congreso">🏛️ Congreso</option>
-                  <option value="Noticia">📰 Noticia General</option>
-                </select>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label>
-                <input type="date" id="news-date" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-              </div>
-              <div>
-                <label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label>
-                <input type="url" id="news-url" placeholder="https://..." 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-              </div>
-            </div>
-            
-            <!-- SECCIÓN DE CARGA DE ARCHIVOS -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <label for="news-image" class="block text-sm font-bold text-gray-700 mb-3">🖼️ Imagen o Video (opcional)</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sochimt-500 transition-all duration-300">
-                <input type="file" id="news-image" accept="image/*,video/*" 
-                       class="hidden" onchange="handleFileUpload(this)">
-                <div id="file-upload-area" onclick="document.getElementById('news-image').click()" class="cursor-pointer">
-                  <div class="text-4xl mb-4">📎</div>
-                  <p class="text-gray-600 font-medium mb-2">Haz clic para seleccionar archivo</p>
-                  <p class="text-sm text-gray-500">Imágenes: JPG, PNG, GIF | Videos: MP4, WebM (Máx. 10MB)</p>
-                </div>
-                <div id="file-preview" class="hidden mt-4">
-                  <div id="preview-content"></div>
-                  <button type="button" onclick="removeFile()" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
-                    🗑️ Eliminar archivo
-                  </button>
-                </div>
-              </div>
+              <label for="news-date" class="block text-sm font-bold text-gray-700 mb-2">📅 Fecha *</label>
+              <input type="date" id="news-date" required 
+                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
             </div>
-            
             <div>
-              <label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label>
-              <textarea id="news-summary" rows="4" required 
-                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 resize-none"
-                        placeholder="Describe brevemente la noticia..."></textarea>
+              <label for="news-url" class="block text-sm font-bold text-gray-700 mb-2">🔗 URL (opcional)</label>
+              <input type="url" id="news-url" placeholder="https://..." 
+                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
             </div>
-            
-            <div class="flex justify-end space-x-4">
-              <button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium">
-                ❌ Cancelar
-              </button>
-              <button type="submit" id="submit-news" 
-                      class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-                ✨ Publicar Noticia
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- News List -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-          <div class="flex justify-between items-center mb-8">
-            <div class="flex items-center space-x-3">
-              <div class="h-12 w-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center">
-                <span class="text-white text-xl">📋</span>
+          </div>
+          
+          <!-- Sección de carga de archivos simplificada -->
+          <div>
+            <label for="news-image" class="block text-sm font-bold text-gray-700 mb-2">🖼️ Imagen (opcional)</label>
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sochimt-500 transition-all duration-300">
+              <input type="file" id="news-image" accept="image/*" 
+                     class="hidden" onchange="handleFileUpload(this)">
+              <div id="file-upload-area" onclick="document.getElementById('news-image').click()" class="cursor-pointer">
+                <div class="text-4xl mb-4">📎</div>
+                <p class="text-gray-600 font-medium mb-2">Haz clic para seleccionar imagen</p>
+                <p class="text-sm text-gray-500">JPG, PNG, GIF (Máx. 5MB)</p>
               </div>
-              <h2 class="text-2xl font-black text-gray-800">Noticias Publicadas</h2>
-            </div>
-            <div class="flex items-center space-x-4">
-              <div class="relative">
-                <input type="text" id="search-news" placeholder="🔍 Buscar noticias..." 
-                       class="px-6 py-3 pl-12 border-2 border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 w-80">
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  🔍
-                </div>
+              <div id="file-preview" class="hidden mt-4">
+                <div id="preview-content"></div>
+                <button type="button" onclick="removeFile()" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
+                  🗑️ Eliminar
+                </button>
               </div>
-              <button id="export-data" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm font-bold transition-all duration-300 transform hover:scale-105">
-                📤 Exportar
-              </button>
             </div>
           </div>
-
-          <div id="news-list" class="space-y-4">
-            <!-- News items will be loaded here -->
+          
+          <div>
+            <label for="news-summary" class="block text-sm font-bold text-gray-700 mb-2">📄 Resumen *</label>
+            <textarea id="news-summary" rows="4" required 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 resize-none"
+                      placeholder="Describe brevemente la noticia..."></textarea>
           </div>
-
-          <div id="no-news" class="hidden text-center py-16">
-            <div class="text-gray-400 text-8xl mb-6">📰</div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">No hay noticias publicadas</h3>
-            <p class="text-gray-500 text-lg">Agrega tu primera noticia usando el formulario de arriba.</p>
+          
+          <div class="flex justify-end space-x-4">
+            <button type="button" id="cancel-edit" class="hidden px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium">
+              Cancelar
+            </button>
+            <button type="submit" id="submit-news" 
+                    class="px-6 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl">
+              ✨ Publicar Noticia
+            </button>
           </div>
-        </div>
+        </form>
       </div>
 
-      <!-- Configuration Tab -->
-      <div id="tab-configuracion" class="tab-content hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          <!-- Change Password Section -->
-          <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-            <div class="flex items-center space-x-3 mb-8">
-              <div class="h-12 w-12 bg-gradient-to-br from-medical-600 to-medical-700 rounded-xl flex items-center justify-center">
-                <span class="text-white text-xl">🔐</span>
-              </div>
-              <h2 class="text-2xl font-black text-gray-800">Cambiar Contraseña</h2>
-            </div>
-            
-            <form id="change-password-form" class="space-y-6">
-              <div>
-                <label for="current-password" class="block text-sm font-bold text-gray-700 mb-3">🔑 Contraseña Actual *</label>
-                <input type="password" id="current-password" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
-                       placeholder="Ingresa tu contraseña actual">
-              </div>
-              <div>
-                <label for="new-password" class="block text-sm font-bold text-gray-700 mb-3">🆕 Nueva Contraseña *</label>
-                <input type="password" id="new-password" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
-                       placeholder="Mínimo 6 caracteres">
-                <div class="mt-2 text-xs text-gray-500">
-                  <p>✓ Mínimo 6 caracteres</p>
-                  <p>✓ Se recomienda usar números y símbolos</p>
-                </div>
-              </div>
-              <div>
-                <label for="confirm-password" class="block text-sm font-bold text-gray-700 mb-3">✅ Confirmar Contraseña *</label>
-                <input type="password" id="confirm-password" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
-                       placeholder="Repite la nueva contraseña">
-              </div>
-              <button type="submit" 
-                      class="w-full px-8 py-4 bg-gradient-to-r from-medical-600 to-medical-700 text-white rounded-xl hover:from-medical-700 hover:to-medical-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-                🔄 Actualizar Contraseña
-              </button>
-            </form>
+      <!-- News List -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-800">📋 Noticias Publicadas</h2>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+            <input type="text" id="search-news" placeholder="🔍 Buscar..." 
+                   class="px-4 py-2 border-2 border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 w-full sm:w-64">
+            <button onclick="exportData()" class="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 text-sm font-bold transition-all duration-300 w-full sm:w-auto">
+              📤 Exportar
+            </button>
           </div>
+        </div>
 
-          <!-- User Management Section -->
-          <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-            <div class="flex items-center space-x-3 mb-8">
-              <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
-                <span class="text-white text-xl">👥</span>
-              </div>
-              <h2 class="text-2xl font-black text-gray-800">Gestión de Usuarios</h2>
-            </div>
-            
-            <div id="users-list" class="space-y-4">
-              <!-- Users will be loaded here -->
-            </div>
+        <div id="news-list" class="space-y-4">
+          <!-- News items will be loaded here -->
+        </div>
 
-            <!-- Statistics -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <h3 class="text-lg font-bold text-gray-800 mb-4">📊 Estadísticas del Sistema</h3>
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-blue-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-sochimt-600" id="total-news-stat">0</div>
-                  <div class="text-sm text-gray-600">Total de noticias</div>
-                </div>
-                <div class="bg-green-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-green-600" id="recent-news-stat">0</div>
-                  <div class="text-sm text-gray-600">Este mes</div>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-purple-600" id="categories-count-stat">0</div>
-                  <div class="text-sm text-gray-600">Categorías activas</div>
-                </div>
-                <div class="bg-orange-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-orange-600" id="users-count-stat">0</div>
-                  <div class="text-sm text-gray-600">Usuarios activos</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div id="no-news" class="hidden text-center py-16">
+          <div class="text-gray-400 text-6xl mb-4">📰</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">No hay noticias publicadas</h3>
+          <p class="text-gray-500">Agrega tu primera noticia usando el formulario de arriba.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Success/Error Notifications -->
-  <div id="notification" class="fixed top-4 right-4 p-6 rounded-2xl shadow-2xl hidden z-50 transform transition-all duration-300"></div>
-
-  <!-- Sync Indicator -->
-  <div id="sync-indicator" class="sync-indicator">
+  <!-- Notification Badge -->
+  <div id="sync-badge" class="sync-badge">
     <span id="sync-message">Sincronizando...</span>
   </div>
 
-  <!-- Manual Sync Button -->
-  <button id="manual-sync-btn" class="manual-sync-btn" onclick="forceSyncWithWebsite()" title="Sincronizar con el sitio web">
+  <!-- Floating Action Button for Sync -->
+  <button id="fab-sync" class="fab-sync" onclick="forceSyncWithWebsite()" title="Sincronizar con el sitio web">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
     </svg>
   </button>
 
+  <!-- Debug Panel -->
+  <div id="debug-panel" class="debug-panel">
+    <h4 class="font-bold mb-2">🔧 Debug Info</h4>
+    <div id="debug-content"></div>
+  </div>
+
+  <!-- Success/Error Notifications -->
+  <div id="notification" class="fixed top-4 right-4 p-6 rounded-2xl shadow-2xl hidden z-50 transform transition-all duration-300"></div>
+
   <script>
-    // Configuración mejorada
+    // Configuración global
     const CONFIG = {
       users: {
         'admin': 'marcelo',
@@ -560,236 +352,18 @@
         'gestor': 'marcelo'
       },
       storageKey: 'sochimt_news_data',
+      publicKey: 'sochimt_public_news',
       sessionKey: 'sochimt_session',
-      usersKey: 'sochimt_users_data',
-      // Configuración de sincronización
-      sync: {
-        publicKey: 'sochimt_public_news',
-        timestampKey: 'sochimt_last_sync',
-        versionKey: 'sochimt_data_version',
-        broadcastChannel: 'sochimt_updates'
-      }
+      maxImageSize: 5 * 1024 * 1024, // 5MB
+      debugMode: true // Activar modo debug
     };
-
-    // Variables globales de sincronización
-    let broadcastChannel = null;
-    let syncInterval = null;
-    let lastSyncTime = null;
-    let dataVersion = 1;
-
-    // Cargar usuarios desde localStorage o usar por defecto
-    function loadUsers() {
-      const savedUsers = localStorage.getItem(CONFIG.usersKey);
-      if (savedUsers) {
-        CONFIG.users = JSON.parse(savedUsers);
-      } else {
-        saveUsers();
-      }
-    }
-
-    // Guardar usuarios en localStorage
-    function saveUsers() {
-      localStorage.setItem(CONFIG.usersKey, JSON.stringify(CONFIG.users));
-    }
 
     // Estado global
     let currentUser = null;
     let editingId = null;
-    let newsData = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
-
-    // Variables globales para archivos
+    let newsData = [];
     let selectedFile = null;
     let selectedFileData = null;
-
-    // Inicializar sistema de sincronización
-    function initSyncSystem() {
-      // Crear canal de broadcast para comunicación entre pestañas
-      if (typeof BroadcastChannel !== 'undefined') {
-        broadcastChannel = new BroadcastChannel(CONFIG.sync.broadcastChannel);
-        console.log('📡 Sistema de comunicación entre pestañas iniciado');
-      }
-
-      // Recuperar timestamp de última sincronización
-      lastSyncTime = localStorage.getItem(CONFIG.sync.timestampKey);
-      
-      // Recuperar versión de datos
-      const savedVersion = localStorage.getItem(CONFIG.sync.versionKey);
-      if (savedVersion) {
-        dataVersion = parseInt(savedVersion);
-      }
-
-      // Configurar sincronización automática cada 30 segundos
-      syncInterval = setInterval(() => {
-        autoSyncWithWebsite();
-      }, 30000);
-
-      // Escuchar eventos de storage para sincronización entre pestañas
-      window.addEventListener('storage', handleStorageChange);
-
-      console.log('🔄 Sistema de sincronización iniciado');
-      updateSyncStatus();
-    }
-
-    // Manejar cambios en localStorage
-    function handleStorageChange(e) {
-      if (e.key === CONFIG.sync.publicKey || e.key === CONFIG.storageKey) {
-        console.log('📡 Detectado cambio en datos, actualizando...');
-        updateSyncStatus();
-      }
-    }
-
-    // Sincronización automática silenciosa
-    function autoSyncWithWebsite() {
-      if (newsData.length > 0) {
-        generateWebData(true); // true para sincronización silenciosa
-      }
-    }
-
-    // Forzar sincronización manual
-    function forceSyncWithWebsite() {
-      const btn = document.getElementById('manual-sync-btn');
-      const indicator = document.getElementById('sync-indicator');
-      
-      btn.classList.add('syncing');
-      showSyncIndicator('🔄 Sincronizando con el sitio web...', 'info');
-      
-      setTimeout(() => {
-        generateWebData(false); // false para mostrar notificación
-        btn.classList.remove('syncing');
-        showSyncIndicator('✅ Sitio web actualizado correctamente', 'success');
-        
-        // Enviar evento a otras pestañas
-        if (broadcastChannel) {
-          broadcastChannel.postMessage({
-            type: 'news_updated',
-            timestamp: Date.now(),
-            user: currentUser
-          });
-        }
-        
-        setTimeout(() => {
-          hideSyncIndicator();
-        }, 2000);
-      }, 1500);
-    }
-
-    // Mostrar indicador de sincronización
-    function showSyncIndicator(message, type = 'info') {
-      const indicator = document.getElementById('sync-indicator');
-      const messageEl = document.getElementById('sync-message');
-      
-      indicator.className = `sync-indicator show ${type}`;
-      messageEl.textContent = message;
-    }
-
-    // Ocultar indicador de sincronización
-    function hideSyncIndicator() {
-      const indicator = document.getElementById('sync-indicator');
-      indicator.classList.remove('show');
-    }
-
-    // Actualizar estado de sincronización en dashboard
-    function updateSyncStatus() {
-      const lastSyncEl = document.getElementById('last-sync-time');
-      const publishedCountEl = document.getElementById('published-count');
-      const pendingSyncEl = document.getElementById('pending-sync');
-      const syncStatus = document.getElementById('sync-status');
-
-      if (lastSyncTime) {
-        const time = new Date(parseInt(lastSyncTime));
-        lastSyncEl.textContent = time.toLocaleTimeString('es-CL', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        });
-      }
-
-      // Contar noticias publicadas en web
-      const publicData = JSON.parse(localStorage.getItem(CONFIG.sync.publicKey) || '[]');
-      publishedCountEl.textContent = publicData.length;
-
-      // Calcular pendientes (siempre 0 por ahora ya que sincronizamos automáticamente)
-      pendingSyncEl.textContent = '0';
-
-      // Actualizar indicador visual
-      if (syncStatus) {
-        const indicator = syncStatus.querySelector('.w-3');
-        const text = syncStatus.querySelector('span');
-        
-        if (lastSyncTime && (Date.now() - parseInt(lastSyncTime)) < 60000) {
-          indicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
-          text.textContent = 'Sincronizado';
-        } else {
-          indicator.className = 'w-3 h-3 bg-yellow-500 rounded-full animate-pulse';
-          text.textContent = 'Pendiente sync';
-        }
-      }
-    }
-
-    // Manejar carga de archivos
-    function handleFileUpload(input) {
-      const file = input.files[0];
-      if (!file) return;
-
-      // Validar tamaño (10MB máximo)
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        showNotification('❌ El archivo es demasiado grande. Máximo 10MB permitido.', 'error');
-        input.value = '';
-        return;
-      }
-
-      // Validar tipo de archivo
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm'];
-      if (!validTypes.includes(file.type)) {
-        showNotification('❌ Tipo de archivo no válido. Solo se permiten imágenes y videos.', 'error');
-        input.value = '';
-        return;
-      }
-
-      selectedFile = file;
-      
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        selectedFileData = e.target.result;
-        showFilePreview(file, e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // Mostrar preview del archivo
-    function showFilePreview(file, dataUrl) {
-      const uploadArea = document.getElementById('file-upload-area');
-      const preview = document.getElementById('file-preview');
-      const previewContent = document.getElementById('preview-content');
-
-      uploadArea.style.display = 'none';
-      preview.classList.remove('hidden');
-
-      if (file.type.startsWith('image/')) {
-        previewContent.innerHTML = `
-          <img src="${dataUrl}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
-          <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
-          <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-        `;
-      } else if (file.type.startsWith('video/')) {
-        previewContent.innerHTML = `
-          <video controls class="max-w-full h-48 rounded-lg mx-auto">
-            <source src="${dataUrl}" type="${file.type}">
-          </video>
-          <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
-          <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-        `;
-      }
-    }
-
-    // Eliminar archivo seleccionado
-    function removeFile() {
-      selectedFile = null;
-      selectedFileData = null;
-      document.getElementById('news-image').value = '';
-      document.getElementById('file-upload-area').style.display = 'block';
-      document.getElementById('file-preview').classList.add('hidden');
-    }
 
     // Elementos DOM
     const loginScreen = document.getElementById('login-screen');
@@ -801,18 +375,41 @@
 
     // Inicialización
     document.addEventListener('DOMContentLoaded', () => {
-      loadUsers();
+      console.log('🚀 Iniciando Panel de Administración SOCHIMT');
+      
+      // Cargar datos existentes
+      loadDataFromStorage();
+      
+      // Verificar sesión
       checkSession();
+      
+      // Configurar event listeners
       setupEventListeners();
-      updateStats();
+      
+      // Establecer fecha por defecto
       setDefaultDate();
-      initSyncSystem();
+      
+      // Iniciar sincronización automática
+      setInterval(autoSync, 30000); // Cada 30 segundos
+      
+      // Debug inicial
+      if (CONFIG.debugMode) {
+        updateDebugPanel();
+      }
     });
 
-    // Establecer fecha por defecto
-    function setDefaultDate() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('news-date').value = today;
+    // Cargar datos desde localStorage
+    function loadDataFromStorage() {
+      try {
+        const stored = localStorage.getItem(CONFIG.storageKey);
+        if (stored) {
+          newsData = JSON.parse(stored);
+          console.log(`📰 ${newsData.length} noticias cargadas desde localStorage`);
+        }
+      } catch (e) {
+        console.error('Error cargando datos:', e);
+        newsData = [];
+      }
     }
 
     // Verificar sesión existente
@@ -831,34 +428,19 @@
       newsForm.addEventListener('submit', handleNewsSubmit);
       document.getElementById('cancel-edit').addEventListener('click', cancelEdit);
       document.getElementById('search-news').addEventListener('input', filterNews);
-      document.getElementById('export-data').addEventListener('click', exportData);
-      document.getElementById('change-password-form').addEventListener('submit', handlePasswordChange);
-
-      // Tab navigation
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      
+      // Debug mode toggle
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+          toggleDebugPanel();
+        }
       });
     }
 
-    // Cambiar tabs
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active', 'border-sochimt-600', 'text-sochimt-600');
-        btn.classList.add('border-transparent', 'text-gray-500');
-      });
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-
-      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active', 'border-sochimt-600', 'text-sochimt-600');
-      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent', 'text-gray-500');
-      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-
-      if (tabName === 'configuracion') {
-        loadUsersList();
-      } else if (tabName === 'dashboard') {
-        updateSyncStatus();
-      }
+    // Establecer fecha por defecto
+    function setDefaultDate() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('news-date').value = today;
     }
 
     // Manejo de login
@@ -886,20 +468,10 @@
       adminPanel.classList.remove('hidden');
       document.getElementById('current-user').textContent = currentUser;
       loadNews();
-      updateStats();
-      updateSyncStatus();
     }
 
     // Logout
     function logout() {
-      // Limpiar sincronización
-      if (syncInterval) {
-        clearInterval(syncInterval);
-      }
-      if (broadcastChannel) {
-        broadcastChannel.close();
-      }
-      
       sessionStorage.removeItem(CONFIG.sessionKey);
       currentUser = null;
       adminPanel.classList.add('hidden');
@@ -908,65 +480,94 @@
       showNotification('Sesión cerrada correctamente 👋', 'info');
     }
 
-    // Cambio de contraseña
-    function handlePasswordChange(e) {
-      e.preventDefault();
-      const currentPassword = document.getElementById('current-password').value;
-      const newPassword = document.getElementById('new-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
+    // Manejar carga de archivos
+    function handleFileUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
 
-      // Validaciones
-      if (CONFIG.users[currentUser] !== currentPassword) {
-        showNotification('❌ La contraseña actual es incorrecta', 'error');
+      // Validar tamaño
+      if (file.size > CONFIG.maxImageSize) {
+        showNotification('❌ La imagen es demasiado grande. Máximo 5MB permitido.', 'error');
+        input.value = '';
         return;
       }
 
-      if (newPassword.length < 6) {
-        showNotification('❌ La nueva contraseña debe tener al menos 6 caracteres', 'error');
+      // Validar tipo
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        showNotification('❌ Tipo de archivo no válido. Solo se permiten imágenes.', 'error');
+        input.value = '';
         return;
       }
 
-      if (newPassword !== confirmPassword) {
-        showNotification('❌ Las contraseñas no coinciden', 'error');
-        return;
-      }
-
-      if (newPassword === currentPassword) {
-        showNotification('❌ La nueva contraseña debe ser diferente a la actual', 'error');
-        return;
-      }
-
-      // Actualizar contraseña
-      CONFIG.users[currentUser] = newPassword;
-      saveUsers();
+      selectedFile = file;
       
-      // Limpiar formulario
-      document.getElementById('change-password-form').reset();
-      
-      showNotification('✅ Contraseña actualizada exitosamente', 'success');
+      // Comprimir y convertir a base64
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Comprimir imagen si es necesario
+        compressImage(e.target.result, (compressedData) => {
+          selectedFileData = compressedData;
+          showFilePreview(file, compressedData);
+        });
+      };
+      reader.readAsDataURL(file);
     }
 
-    // Cargar lista de usuarios
-    function loadUsersList() {
-      const usersContainer = document.getElementById('users-list');
-      usersContainer.innerHTML = Object.keys(CONFIG.users).map(username => `
-        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-full flex items-center justify-center">
-              <span class="text-white font-bold text-sm">${username.charAt(0).toUpperCase()}</span>
-            </div>
-            <div>
-              <p class="font-bold text-gray-800">${username}</p>
-              <p class="text-sm text-gray-600">${username === currentUser ? 'Sesión actual' : 'Usuario activo'}</p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-              ${username === currentUser ? '🟢 Actual' : '✅ Activo'}
-            </span>
-          </div>
-        </div>
-      `).join('');
+    // Comprimir imagen
+    function compressImage(dataUrl, callback) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        // Limitar tamaño máximo
+        const maxSize = 800;
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width;
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height;
+          height = maxSize;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Comprimir a JPEG con calidad del 80%
+        const compressedData = canvas.toDataURL('image/jpeg', 0.8);
+        callback(compressedData);
+      };
+      img.src = dataUrl;
+    }
+
+    // Mostrar preview del archivo
+    function showFilePreview(file, dataUrl) {
+      const uploadArea = document.getElementById('file-upload-area');
+      const preview = document.getElementById('file-preview');
+      const previewContent = document.getElementById('preview-content');
+
+      uploadArea.style.display = 'none';
+      preview.classList.remove('hidden');
+
+      previewContent.innerHTML = `
+        <img src="${dataUrl}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
+        <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
+        <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+      `;
+    }
+
+    // Eliminar archivo seleccionado
+    function removeFile() {
+      selectedFile = null;
+      selectedFileData = null;
+      document.getElementById('news-image').value = '';
+      document.getElementById('file-upload-area').style.display = 'block';
+      document.getElementById('file-preview').classList.add('hidden');
     }
 
     // Manejo de formulario de noticias
@@ -981,7 +582,7 @@
         fechaRaw: document.getElementById('news-date').value,
         resumen: document.getElementById('news-summary').value,
         url: document.getElementById('news-url').value || '#',
-        imagen: selectedFileData || getImageForCategory(document.getElementById('news-category').value),
+        imagen: selectedFileData || getDefaultImageForCategory(document.getElementById('news-category').value),
         imagenNombre: selectedFile ? selectedFile.name : null,
         imagenTipo: selectedFile ? selectedFile.type : null,
         autor: currentUser,
@@ -991,7 +592,6 @@
 
       if (editingId) {
         const index = newsData.findIndex(n => n.id === editingId);
-        // Mantener imagen anterior si no se subió una nueva
         if (!selectedFileData) {
           const oldNews = newsData[index];
           formData.imagen = oldNews.imagen;
@@ -1005,42 +605,26 @@
         showNotification('🎉 ¡Noticia publicada exitosamente!', 'success');
       }
 
-      // Incrementar versión de datos
-      dataVersion++;
-      localStorage.setItem(CONFIG.sync.versionKey, dataVersion.toString());
-
       saveData();
+      syncWithWebsite();
       loadNews();
       newsForm.reset();
       setDefaultDate();
       cancelEdit();
-      updateStats();
-      
-      // Sincronizar inmediatamente
-      generateWebData(false);
-      
-      // Forzar actualización en todas las pestañas abiertas
-      if (broadcastChannel) {
-        broadcastChannel.postMessage({
-          type: 'news_updated',
-          timestamp: Date.now(),
-          user: currentUser,
-          action: editingId ? 'updated' : 'created',
-          newsId: formData.id
-        });
-      }
+      removeFile();
     }
 
-    // Obtener imagen según categoría
-    function getImageForCategory(category) {
+    // Obtener imagen por defecto según categoría
+    function getDefaultImageForCategory(category) {
+      // URLs de imágenes locales o por defecto
       const images = {
-        'Evento': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj7wn44pIEV2ZW50bzwvdGV4dD4KPC9zdmc+',
-        'Publicación': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjREMyNjI2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj7wn5OaIFB1YmxpY2FjacOzbjwvdGV4dD4KPC9zdmc+',
-        'Webinar': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDU5NjY5Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMiIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj7wn5KrIFdlYmluYXI8L3RleHQ+Cjwvc3ZnPg==',
-        'Congreso': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjN0MzQUVEIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj7wn48bIENvbmdyZXNvPC90ZXh0Pgo8L3N2Zz4=',
-        'Noticia': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjU5RTBCIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMiIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj7wn5OYIE5vdGljaWE8L3RleHQ+Cjwvc3ZnPg=='
+        'Evento': 'evento-default.jpg',
+        'Publicación': 'publicacion-default.jpg',
+        'Webinar': 'webinar-default.jpg',
+        'Congreso': 'congreso-default.jpg',
+        'Noticia': 'noticia-default.jpg'
       };
-      return images[category] || images['Noticia'];
+      return images[category] || 'noticia-default.jpg';
     }
 
     // Formatear fecha
@@ -1064,61 +648,33 @@
 
       noNews.classList.add('hidden');
       newsList.innerHTML = newsData.map(news => `
-        <div class="bg-white/60 backdrop-blur-sm border-2 border-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 card-hover">
-          <div class="flex justify-between items-start">
-            <div class="flex-1">
-              <div class="flex items-center space-x-3 mb-4">
-                <span class="px-4 py-2 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-full text-sm font-bold">
+        <div class="bg-gray-50 rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex flex-col sm:flex-row justify-between items-start">
+            <div class="flex-1 mb-4 sm:mb-0">
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-sochimt-600 text-white rounded-full text-xs font-bold">
                   ${news.categoria}
                 </span>
-                <span class="text-sm text-gray-600 font-medium">📅 ${news.fecha}</span>
-                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">✅ Publicada</span>
-                ${news.imagenNombre ? '<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">📎 Con archivo</span>' : ''}
+                <span class="text-xs text-gray-600">📅 ${news.fecha}</span>
+                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">✅ Publicada</span>
               </div>
-              ${news.imagen && news.imagenNombre && news.imagen.startsWith('data:') ? 
-                `<div class="mb-4">
-                  ${news.imagenTipo && news.imagenTipo.startsWith('image/') ? 
-                    `<img src="${news.imagen}" alt="${news.titulo}" class="w-full h-32 object-cover rounded-lg">` :
-                    news.imagenTipo && news.imagenTipo.startsWith('video/') ?
-                    `<video controls class="w-full h-32 rounded-lg">
-                      <source src="${news.imagen}" type="${news.imagenTipo}">
-                    </video>` : ''
-                  }
-                </div>` : ''
-              }
-              <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-sochimt-600 transition-colors">${news.titulo}</h3>
-              <p class="text-gray-600 leading-relaxed mb-4">${news.resumen}</p>
-              ${news.url && news.url !== '#' ? 
-                `<div class="mb-4">
-                  <a href="${news.url}" target="_blank" rel="noopener noreferrer" 
-                     class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-lg hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 text-sm font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-                    📖 Leer más
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
-                  </a>
-                </div>` : ''
-              }
-              <div class="flex items-center text-xs text-gray-500 space-x-6">
-                <span class="flex items-center space-x-1">
-                  <span>👤</span>
-                  <span>Por: ${news.autor}</span>
-                </span>
-                <span class="flex items-center space-x-1">
-                  <span>🕒</span>
-                  <span>Creado: ${new Date(news.fechaCreacion).toLocaleDateString('es-CL')}</span>
-                </span>
+              <h3 class="text-lg font-bold text-gray-800 mb-2">${news.titulo}</h3>
+              <p class="text-sm text-gray-600 mb-3 line-clamp-2">${news.resumen}</p>
+              <div class="text-xs text-gray-500">
+                <span>👤 ${news.autor}</span>
+                <span class="mx-2">•</span>
+                <span>🕒 ${new Date(news.fechaCreacion).toLocaleDateString('es-CL')}</span>
               </div>
             </div>
-            <div class="flex items-center space-x-3 ml-6">
+            <div class="flex items-center space-x-2">
               <button onclick="editNews('${news.id}')" 
-                      class="p-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 transform hover:scale-110" 
-                      title="Editar noticia">
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300" 
+                      title="Editar">
                 ✏️
               </button>
               <button onclick="deleteNews('${news.id}')" 
-                      class="p-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 transform hover:scale-110" 
-                      title="Eliminar noticia">
+                      class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300" 
+                      title="Eliminar">
                 🗑️
               </button>
             </div>
@@ -1132,40 +688,24 @@
       const news = newsData.find(n => n.id === id);
       if (!news) return;
 
-      // Cambiar a la pestaña de noticias
-      switchTab('noticias');
-
       document.getElementById('news-title').value = news.titulo;
       document.getElementById('news-category').value = news.categoria;
       document.getElementById('news-date').value = news.fechaRaw;
       document.getElementById('news-summary').value = news.resumen;
       document.getElementById('news-url').value = news.url === '#' ? '' : news.url;
 
-      // Manejar imagen existente
       if (news.imagen && news.imagenNombre && news.imagen.startsWith('data:')) {
         selectedFileData = news.imagen;
-        const uploadArea = document.getElementById('file-upload-area');
         const preview = document.getElementById('file-preview');
         const previewContent = document.getElementById('preview-content');
 
-        uploadArea.style.display = 'none';
+        document.getElementById('file-upload-area').style.display = 'none';
         preview.classList.remove('hidden');
 
-        if (news.imagenTipo && news.imagenTipo.startsWith('image/')) {
-          previewContent.innerHTML = `
-            <img src="${news.imagen}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
-            <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
-            <p class="text-xs text-gray-500">Archivo existente</p>
-          `;
-        } else if (news.imagenTipo && news.imagenTipo.startsWith('video/')) {
-          previewContent.innerHTML = `
-            <video controls class="max-w-full h-48 rounded-lg mx-auto">
-              <source src="${news.imagen}" type="${news.imagenTipo}">
-            </video>
-            <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
-            <p class="text-xs text-gray-500">Archivo existente</p>
-          `;
-        }
+        previewContent.innerHTML = `
+          <img src="${news.imagen}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
+          <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
+        `;
       }
 
       editingId = id;
@@ -1173,7 +713,6 @@
       document.getElementById('cancel-edit').classList.remove('hidden');
 
       newsForm.scrollIntoView({ behavior: 'smooth' });
-      showNotification('📝 Modo edición activado', 'info');
     }
 
     // Cancelar edición
@@ -1181,33 +720,16 @@
       editingId = null;
       document.getElementById('submit-news').innerHTML = '✨ Publicar Noticia';
       document.getElementById('cancel-edit').classList.add('hidden');
-      removeFile(); // Limpiar archivo seleccionado
+      removeFile();
     }
 
     // Eliminar noticia
     function deleteNews(id) {
-      if (confirm('🗑️ ¿Estás seguro de que quieres eliminar esta noticia?')) {
+      if (confirm('¿Estás seguro de eliminar esta noticia?')) {
         newsData = newsData.filter(n => n.id !== id);
-        
-        // Incrementar versión
-        dataVersion++;
-        localStorage.setItem(CONFIG.sync.versionKey, dataVersion.toString());
-        
         saveData();
+        syncWithWebsite();
         loadNews();
-        updateStats();
-        generateWebData(false);
-        
-        // Notificar a otras pestañas
-        if (broadcastChannel) {
-          broadcastChannel.postMessage({
-            type: 'news_deleted',
-            timestamp: Date.now(),
-            user: currentUser,
-            newsId: id
-          });
-        }
-        
         showNotification('🗑️ Noticia eliminada correctamente', 'success');
       }
     }
@@ -1226,7 +748,6 @@
           <div class="text-center py-16">
             <div class="text-gray-400 text-6xl mb-4">🔍</div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">No se encontraron noticias</h3>
-            <p class="text-gray-500">No hay noticias que coincidan con tu búsqueda.</p>
           </div>
         `;
       } else {
@@ -1250,119 +771,88 @@
       showNotification('📤 Datos exportados correctamente', 'success');
     }
 
-    // Actualizar estadísticas
-    function updateStats() {
-      const now = new Date();
-      const thisMonth = newsData.filter(news => {
-        const newsDate = new Date(news.fechaCreacion);
-        return newsDate.getMonth() === now.getMonth() && 
-               newsDate.getFullYear() === now.getFullYear();
-      }).length;
-
-      const categories = [...new Set(newsData.map(news => news.categoria))].length;
-      const published = newsData.filter(news => news.estado === 'publicada').length;
-      const usersCount = Object.keys(CONFIG.users).length;
-
-      // Dashboard stats
-      document.getElementById('total-news').textContent = newsData.length;
-      document.getElementById('recent-news').textContent = thisMonth;
-      document.getElementById('categories-count').textContent = categories;
-      document.getElementById('published-news').textContent = published;
-
-      // Configuration stats
-      document.getElementById('total-news-stat').textContent = newsData.length;
-      document.getElementById('recent-news-stat').textContent = thisMonth;
-      document.getElementById('categories-count-stat').textContent = categories;
-      document.getElementById('users-count-stat').textContent = usersCount;
-    }
-
     // Guardar datos
     function saveData() {
-      localStorage.setItem(CONFIG.storageKey, JSON.stringify(newsData));
+      try {
+        localStorage.setItem(CONFIG.storageKey, JSON.stringify(newsData));
+        console.log('💾 Datos guardados en localStorage');
+      } catch (e) {
+        console.error('Error guardando datos:', e);
+        showNotification('❌ Error al guardar datos', 'error');
+      }
     }
 
-    // Generar datos para la web pública (MEJORADO)
-    function generateWebData(silent = false) {
-      const publicData = newsData
-        .filter(news => news.estado === 'publicada')
-        .slice(0, 6) // Aumentar a 6 noticias para mejor variedad
-        .map(news => ({
-          id: news.id,
-          titulo: news.titulo,
-          fecha: news.fecha,
-          fechaRaw: news.fechaRaw,
-          resumen: news.resumen,
-          url: news.url,
-          categoria: news.categoria,
-          imagen: news.imagen || getImageForCategory(news.categoria),
-          imagenTipo: news.imagenTipo || null,
-          imagenNombre: news.imagenNombre || null,
-          autor: news.autor,
-          fechaCreacion: news.fechaCreacion,
-          version: dataVersion
-        }));
-
-      // Guardar con timestamp y versión
-      const publicDataWithMeta = {
-        noticias: publicData,
-        lastUpdate: Date.now(),
-        version: dataVersion,
-        generatedBy: currentUser
-      };
-
+    // Sincronizar con el sitio web
+    function syncWithWebsite() {
       try {
-        // Guardar datos principales
-        localStorage.setItem(CONFIG.sync.publicKey, JSON.stringify(publicData));
-        
-        // Guardar metadata de sincronización
-        localStorage.setItem(CONFIG.sync.timestampKey, Date.now().toString());
-        localStorage.setItem(CONFIG.sync.versionKey, dataVersion.toString());
-        
-        // Guardar datos completos para debug
-        localStorage.setItem('sochimt_sync_meta', JSON.stringify(publicDataWithMeta));
-
-        // Intentar notificar al sitio web principal
-        try {
-          // Usar Custom Event para notificar cambios
-          const event = new CustomEvent('sochimt_data_updated', {
-            detail: {
-              noticias: publicData,
-              timestamp: Date.now(),
-              version: dataVersion
-            }
-          });
-          window.dispatchEvent(event);
-
-          // También usar storage event para cross-tab communication
-          window.dispatchEvent(new StorageEvent('storage', {
-            key: CONFIG.sync.publicKey,
-            newValue: JSON.stringify(publicData),
-            url: window.location.href
+        // Preparar datos públicos (solo las noticias publicadas)
+        const publicData = newsData
+          .filter(news => news.estado === 'publicada')
+          .slice(0, 6) // Limitar a 6 noticias más recientes
+          .map(news => ({
+            id: news.id,
+            titulo: news.titulo,
+            fecha: news.fecha,
+            fechaRaw: news.fechaRaw,
+            resumen: news.resumen,
+            url: news.url,
+            categoria: news.categoria,
+            imagen: news.imagen,
+            imagenTipo: news.imagenTipo,
+            imagenNombre: news.imagenNombre,
+            autor: news.autor,
+            fechaCreacion: news.fechaCreacion
           }));
 
-        } catch (eventError) {
-          console.warn('No se pudo enviar evento de actualización:', eventError);
-        }
-
-        lastSyncTime = Date.now();
+        // Guardar en localStorage para que el sitio web pueda leerlo
+        localStorage.setItem(CONFIG.publicKey, JSON.stringify(publicData));
         
-        if (!silent) {
-          console.log('🌐 Datos públicos actualizados:');
-          console.log(`📊 ${publicData.length} noticias sincronizadas`);
-          console.log(`🕒 Timestamp: ${new Date(lastSyncTime).toLocaleString('es-CL')}`);
-          console.log(`📝 Versión: ${dataVersion}`);
-          
-          showNotification('🌐 Sitio web actualizado correctamente', 'success');
-        }
-
-        updateSyncStatus();
-
-      } catch (error) {
-        console.error('Error sincronizando datos:', error);
-        if (!silent) {
-          showNotification('❌ Error al sincronizar con el sitio web', 'error');
-        }
+        // Guardar timestamp de última sincronización
+        localStorage.setItem('sochimt_last_sync', Date.now().toString());
+        
+        console.log(`🔄 ${publicData.length} noticias sincronizadas con el sitio web`);
+        
+        // Actualizar UI
+        showSyncBadge('✅ Sincronizado', 'success');
+        updateDebugPanel();
+        
+      } catch (e) {
+        console.error('Error sincronizando:', e);
+        showSyncBadge('❌ Error al sincronizar', 'error');
       }
+    }
+
+    // Forzar sincronización manual
+    function forceSyncWithWebsite() {
+      const btn = document.getElementById('fab-sync');
+      btn.classList.add('syncing');
+      
+      showSyncBadge('🔄 Sincronizando...', 'info');
+      
+      setTimeout(() => {
+        syncWithWebsite();
+        btn.classList.remove('syncing');
+      }, 1000);
+    }
+
+    // Sincronización automática
+    function autoSync() {
+      if (newsData.length > 0) {
+        syncWithWebsite();
+      }
+    }
+
+    // Mostrar badge de sincronización
+    function showSyncBadge(message, type = 'info') {
+      const badge = document.getElementById('sync-badge');
+      const messageEl = document.getElementById('sync-message');
+      
+      badge.className = `sync-badge show ${type === 'error' ? 'error' : ''}`;
+      messageEl.textContent = message;
+      
+      setTimeout(() => {
+        badge.classList.remove('show');
+      }, 3000);
     }
 
     // Mostrar notificaciones
@@ -1374,52 +864,59 @@
         info: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
       };
 
-      notification.className = `fixed top-4 right-4 p-6 rounded-2xl shadow-2xl z-50 transform transition-all duration-300 ${colors[type]}`;
+      notification.className = `fixed top-4 right-4 p-4 sm:p-6 rounded-2xl shadow-2xl z-50 transform transition-all duration-300 ${colors[type]}`;
       notification.innerHTML = `
         <div class="flex items-center space-x-3">
-          <div class="text-2xl">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
-          <div class="font-bold">${message}</div>
+          <div class="text-xl">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
+          <div class="font-bold text-sm sm:text-base">${message}</div>
         </div>
       `;
       notification.classList.remove('hidden');
-      notification.style.transform = 'translateX(0)';
 
       setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-          notification.classList.add('hidden');
-        }, 300);
+        notification.classList.add('hidden');
       }, 4000);
     }
 
-    // Función de debug global
-    window.debugSyncSystem = function() {
-      console.log('🔍 Debug Sistema de Sincronización:');
-      console.log('- Canal broadcast:', !!broadcastChannel);
-      console.log('- Última sincronización:', lastSyncTime ? new Date(parseInt(lastSyncTime)).toLocaleString('es-CL') : 'Nunca');
-      console.log('- Versión de datos:', dataVersion);
-      console.log('- Total noticias:', newsData.length);
+    // Debug panel
+    function toggleDebugPanel() {
+      const panel = document.getElementById('debug-panel');
+      panel.classList.toggle('show');
+      if (panel.classList.contains('show')) {
+        updateDebugPanel();
+      }
+    }
+
+    function updateDebugPanel() {
+      const content = document.getElementById('debug-content');
+      const publicData = JSON.parse(localStorage.getItem(CONFIG.publicKey) || '[]');
+      const lastSync = localStorage.getItem('sochimt_last_sync');
       
-      const publicData = JSON.parse(localStorage.getItem(CONFIG.sync.publicKey) || '[]');
-      console.log('- Noticias públicas:', publicData.length);
-      
-      const syncMeta = JSON.parse(localStorage.getItem('sochimt_sync_meta') || '{}');
-      console.log('- Metadata de sync:', syncMeta);
-      
+      content.innerHTML = `
+        <p><strong>Noticias totales:</strong> ${newsData.length}</p>
+        <p><strong>Noticias públicas:</strong> ${publicData.length}</p>
+        <p><strong>Última sync:</strong> ${lastSync ? new Date(parseInt(lastSync)).toLocaleTimeString() : 'Nunca'}</p>
+        <p><strong>Usuario:</strong> ${currentUser || 'No logueado'}</p>
+        <p><strong>Storage usado:</strong> ${(JSON.stringify(newsData).length / 1024).toFixed(2)} KB</p>
+      `;
+    }
+
+    // Función global de debug
+    window.debugSOCHIMT = function() {
+      console.log('🔍 Debug SOCHIMT Panel:');
+      console.log('- Noticias totales:', newsData.length);
+      console.log('- Datos privados:', localStorage.getItem(CONFIG.storageKey));
+      console.log('- Datos públicos:', localStorage.getItem(CONFIG.publicKey));
+      console.log('- Última sync:', localStorage.getItem('sochimt_last_sync'));
       return {
-        lastSync: lastSyncTime,
-        version: dataVersion,
-        totalNews: newsData.length,
-        publicNews: publicData.length,
-        hasBroadcastChannel: !!broadcastChannel
+        newsCount: newsData.length,
+        publicData: JSON.parse(localStorage.getItem(CONFIG.publicKey) || '[]'),
+        lastSync: localStorage.getItem('sochimt_last_sync')
       };
     };
 
-    // Generar datos iniciales al cargar
-    generateWebData(true);
-    
-    console.log('🚀 Panel de administración SOCHIMT v2.0 cargado');
-    console.log('📱 Comandos de debug disponibles: debugSyncSystem()');
+    console.log('🚀 Panel SOCHIMT v3.0 - Mobile Optimized');
+    console.log('📱 Debug: Ctrl+Shift+D o ejecuta debugSOCHIMT()');
   </script>
 </body>
 </html>
