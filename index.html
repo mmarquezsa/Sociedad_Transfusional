@@ -1020,187 +1020,98 @@
     });
   }
 
-  // Sistema de contadores simplificado y más confiable
+  // Animación de contadores mejorada
   function initCounterAnimations() {
-    // Usar un setTimeout para asegurarse de que el DOM esté completamente cargado
-    setTimeout(() => {
-      console.log('🔢 Iniciando animación de contadores...');
-      
-      // Encontrar todos los contadores en la página
-      const allCounters = document.querySelectorAll('.counter');
-      console.log(`📊 Encontrados ${allCounters.length} contadores`);
-      
-      if (allCounters.length === 0) {
-        console.warn('⚠️ No se encontraron contadores en la página');
-        return;
-      }
-      
-      // Configurar Intersection Observer
-      const observerOptions = {
-        root: null,
-        rootMargin: '0px 0px -20px 0px',
-        threshold: 0.1
-      };
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.3
+    };
 
-      const counterObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const section = entry.target;
-            const counters = section.querySelectorAll('.counter');
-            
-            console.log(`🎯 Sección visible: ${section.id}, contadores: ${counters.length}`);
-            
-            counters.forEach((counter, index) => {
-              // Pequeño delay entre contadores para efecto visual
-              setTimeout(() => {
-                animateCounter(counter);
-              }, index * 200);
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          
+          // Verificar si ya se animó esta sección específica
+          if (sectionId === 'stats-section' && !countersAnimated.hero) {
+            const counters = entry.target.querySelectorAll('.counter');
+            counters.forEach(counter => {
+              animateCounter(counter);
             });
-            
-            // Desconectar después de animar
-            counterObserver.unobserve(section);
+            countersAnimated.hero = true;
+            console.log('✨ Contadores hero animados');
           }
-        });
-      }, observerOptions);
-
-      // Observar secciones que contienen contadores
-      const sectionsWithCounters = [
-        document.getElementById('stats-section'),
-        document.getElementById('stats-section-about')
-      ].filter(Boolean);
-
-      sectionsWithCounters.forEach(section => {
-        console.log(`👀 Observando sección: ${section.id}`);
-        counterObserver.observe(section);
+          
+          if (sectionId === 'stats-section-about' && !countersAnimated.about) {
+            const counters = entry.target.querySelectorAll('.counter');
+            counters.forEach(counter => {
+              animateCounter(counter);
+            });
+            countersAnimated.about = true;
+            console.log('✨ Contadores about animados');
+          }
+          
+          // Desconectar solo después de animar ambas secciones
+          if (countersAnimated.hero && countersAnimated.about) {
+            counterObserver.disconnect();
+          }
+        }
       });
+    }, observerOptions);
 
-      // Fallback: Si no hay Intersection Observer, animar después de un tiempo
-      if (!window.IntersectionObserver) {
-        console.log('📱 Intersection Observer no disponible, usando fallback');
-        setTimeout(() => {
-          allCounters.forEach(counter => animateCounter(counter));
-        }, 2000);
-      }
-      
-    }, 1000); // Esperar 1 segundo después de que el DOM esté listo
+    // Observar ambas secciones por separado
+    const statsSection = document.getElementById('stats-section');
+    const statsSectionAbout = document.getElementById('stats-section-about');
+
+    if (statsSection) {
+      counterObserver.observe(statsSection);
+      console.log('👀 Observando contadores hero');
+    }
+    if (statsSectionAbout) {
+      counterObserver.observe(statsSectionAbout);
+      console.log('👀 Observando contadores about');
+    }
   }
 
-  // Función de animación de contador mejorada
   function animateCounter(element) {
     const target = parseInt(element.getAttribute('data-target'));
-    const duration = isMobile ? 1200 : 1800; // Más rápido en móviles
-    const startTime = performance.now();
-    
-    console.log(`🎬 Animando contador hacia: ${target}`);
-    
-    function updateCounter(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      // Usar easing para animación más suave
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentValue = Math.floor(target * easeOutQuart);
-      
-      element.textContent = currentValue;
-      
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      } else {
+    const duration = isMobile ? 1500 : 2000; // Más rápido en móviles
+    const step = target / (duration / 16);
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
         element.textContent = target;
-        console.log(`✅ Contador animado completamente: ${target}`);
+        clearInterval(timer);
+      } else {
+        element.textContent = Math.floor(current);
+      }
+    }, 16);
+  }
+
+  // Carga de noticias con sistema de retry
+  async function loadNoticiasWithRetry(maxRetries = 3) {
+    let retries = 0;
+    
+    while (retries < maxRetries && !noticiasLoaded) {
+      try {
+        await loadNoticias();
+        noticiasLoaded = true;
+        break;
+      } catch (error) {
+        retries++;
+        console.warn(`Error cargando noticias (intento ${retries}/${maxRetries}):`, error);
+        
+        if (retries < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+        }
       }
     }
     
-    requestAnimationFrame(updateCounter);
-  }
-
-  // Carga de noticias con sistema de retry más robusto
-  async function loadNoticiasWithRetry(maxRetries = 2) {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-    const errorDiv = document.getElementById('noticias-error');
-
-    console.log('🔄 Iniciando carga de noticias...');
-
-    try {
-      // Mostrar loading solo si no hay contenido
-      if (container && container.innerHTML.trim() === '') {
-        if (loading) loading.style.display = 'block';
-        if (errorDiv) errorDiv.style.display = 'none';
-      }
-
-      // Intentar cargar noticias con timeout
-      const noticias = await Promise.race([
-        fetchNoticias(),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
-      ]);
-      
-      if (!Array.isArray(noticias) || noticias.length === 0) {
-        console.warn('⚠️ No se encontraron noticias, usando datos por defecto');
-        const defaultNews = getDefaultNoticias();
-        renderNoticias(defaultNews);
-      } else {
-        console.log(`✅ ${noticias.length} noticias cargadas exitosamente`);
-        renderNoticias(noticias);
-      }
-      
-      noticiasLoaded = true;
-      
-    } catch (error) {
-      console.error('❌ Error cargando noticias:', error);
-      
-      // En caso de error, mostrar noticias por defecto
-      const defaultNews = getDefaultNoticias();
-      renderNoticias(defaultNews);
-      noticiasLoaded = true;
-    }
-  }
-
-  // Renderizar noticias separado para mejor control
-  function renderNoticias(noticias) {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-    const errorDiv = document.getElementById('noticias-error');
-
-    try {
-      // Ocultar loading
-      if (loading) loading.style.display = 'none';
-      if (errorDiv) errorDiv.style.display = 'none';
-      
-      if (!container) {
-        console.error('❌ Container de noticias no encontrado');
-        return;
-      }
-
-      // Renderizar noticias
-      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
-      
-      // Aplicar animaciones con delay para móviles
-      const reveals = container.querySelectorAll('.reveal');
-      reveals.forEach((el, index) => {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, isMobile ? index * 50 : index * 100);
-      });
-
-      console.log(`🎨 ${noticias.length} noticias renderizadas correctamente`);
-
-    } catch (error) {
-      console.error('❌ Error renderizando noticias:', error);
-      if (container) {
-        container.innerHTML = `
-          <div class="text-center py-12">
-            <div class="text-red-500 text-6xl mb-4">⚠️</div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Error mostrando noticias</h3>
-            <p class="text-gray-600 mb-4">Por favor, recarga la página</p>
-            <button onclick="location.reload()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
-              Recargar Página
-            </button>
-          </div>
-        `;
-      }
+    if (!noticiasLoaded) {
+      showNoticiasError();
     }
   }
 
@@ -1256,31 +1167,38 @@
     if (errorDiv) errorDiv.style.display = 'block';
   }
 
-  // Función fetchNoticias simplificada y más robusta
+  // Fetch noticias con sistema de comunicación avanzado
   async function fetchNoticias() {
     try {
-      console.log('📰 Buscando noticias...');
+      console.log('📰 Iniciando fetch de noticias...');
       
-      // 1. Primero intentar datos de sincronización recientes
+      // Verificar datos principales de sincronización
       const syncMeta = getSyncMetadata();
-      if (syncMeta && syncMeta.noticias && Array.isArray(syncMeta.noticias) && syncMeta.noticias.length > 0) {
-        console.log(`📰 Encontradas ${syncMeta.noticias.length} noticias del sistema de sync`);
+      if (syncMeta && syncMeta.noticias && syncMeta.noticias.length > 0) {
+        console.log(`📰 Noticias desde sync metadata: ${syncMeta.noticias.length}`);
+        console.log(`🕒 Última actualización: ${new Date(syncMeta.lastUpdate).toLocaleString('es-CL')}`);
         return syncMeta.noticias;
       }
       
-      // 2. Luego intentar localStorage principal
+      // Verificar localStorage principal
       const localData = getValidLocalStorageData();
       if (localData && localData.length > 0) {
-        console.log(`📰 Encontradas ${localData.length} noticias en localStorage`);
+        console.log(`📰 Noticias desde localStorage: ${localData.length}`);
         return localData;
       }
       
-      // 3. Como último recurso, usar noticias por defecto
+      // Intentar cargar desde evento personalizado (comunicación con gestión)
+      const eventData = checkForNewsUpdate();
+      if (eventData && eventData.length > 0) {
+        console.log(`📰 Noticias desde evento: ${eventData.length}`);
+        return eventData;
+      }
+      
       console.log('📰 Usando noticias por defecto');
       return getDefaultNoticias();
       
     } catch (error) {
-      console.error('❌ Error en fetchNoticias:', error);
+      console.error('Error en fetchNoticias:', error);
       return getDefaultNoticias();
     }
   }
@@ -1445,88 +1363,35 @@
     }
   }
 
-  // Noticias por defecto garantizadas
+  // Noticias por defecto
   function getDefaultNoticias() {
-    console.log('📰 Generando noticias por defecto...');
-    
     return [
       {
-        id: 'default-1',
-        titulo: 'Bienvenidos a SOCHIMT',
-        fecha: '15 de junio de 2025',
-        resumen: 'La Sociedad Chilena de Medicina Transfusional da la bienvenida a todos los profesionales del área. Estamos comprometidos con la excelencia y la seguridad en medicina transfusional.',
-        categoria: 'Noticia',
-        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5TT0NISU1UPC90ZXh0Pgo8L3N2Zz4=',
-        url: '#quienes-somos'
+        titulo: 'Sociedad Chilena de Medicina Transfusional',
+        fecha: '06 de junio de 2025',
+        resumen: 'El pasado viernes 6 de junio de 2025 se realizó la ceremonia de apertura de la Sociedad Chilena de Medicina Transfusional, marcando el inicio de sus actividades académicas, de investigación y difusión en el país',
+        categoria: 'Evento',
+        imagen: 'Sociedad.jpg',
+        url: 'https://www.linkedin.com/posts/guillermo-alfonso-jerez-jerez-860842281_el-pasado-viernes-06-de-junio-en-el-campus-activity-7337676979099328512-kJKU?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAo5MkEBZgxACpfyMnmfUzdGt2_UavSjNM0'
       },
       {
-        id: 'default-2',
-        titulo: 'Panel de Administración',
-        fecha: 'Disponible',
-        resumen: 'Los administradores pueden gestionar noticias a través del panel de administración. Contacta al equipo para obtener acceso.',
+        titulo: 'Panel de Administración Disponible',
+        fecha: 'Disponible ahora',
+        resumen: 'Accede al panel de administración para gestionar las noticias de la sociedad de manera fácil y profesional.',
         categoria: 'Noticia',
-        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDU5NjY5Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5QYSW5lbCBBZG1pbjwvdGV4dD4KPC9zdmc+',
+        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5QYW5lbCBBZG1pbjwvdGV4dD4KPC9zdmc+',
         url: 'gestion_noticias.html'
       },
       {
-        id: 'default-3',
         titulo: 'Próximas Actividades',
-        fecha: 'Por confirmar',
-        resumen: 'Mantente atento a nuestro calendario de eventos, webinars y actividades de formación continua.',
+        fecha: 'Próximamente',
+        resumen: 'Mantente atento a nuestras próximas actividades, webinars y eventos científicos.',
         categoria: 'Evento',
-        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjU5RTBCIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5Qcsw7eGltYW1lbnRlPC90ZXh0Pgo8L3N2Zz4=',
-        url: '#socios'
+        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDU5NjY5Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5QcsOzeGltYW1lbnRlPC90ZXh0Pgo8L3N2Zz4=',
+        url: '#'
       }
     ];
   }
-
-  // Función simplificada para refrescar noticias
-  window.refreshNoticias = function() {
-    console.log('🔄 Refrescando noticias manualmente...');
-    
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-    
-    // Mostrar indicador
-    showLoadingIndicator('🔄 Actualizando contenido...', 'info');
-    
-    // Limpiar contenido actual
-    if (container) {
-      container.innerHTML = '';
-    }
-    
-    // Resetear estado
-    noticiasLoaded = false;
-    
-    // Recargar
-    setTimeout(() => {
-      loadNoticiasWithRetry();
-    }, 500);
-  };
-
-  // Función simplificada para resetear contadores
-  window.forceCountersReset = function() {
-    console.log('🔄 Reiniciando contadores manualmente...');
-    
-    // Resetear variables de estado
-    countersAnimated = { hero: false, about: false };
-    
-    // Encontrar y resetear todos los contadores
-    const allCounters = document.querySelectorAll('.counter');
-    console.log(`🔢 Reseteando ${allCounters.length} contadores`);
-    
-    allCounters.forEach(counter => {
-      counter.textContent = '0';
-    });
-    
-    // Mostrar feedback
-    showLoadingIndicator('🔄 Contadores reiniciados', 'success');
-    
-    // Reinicializar después de un momento
-    setTimeout(() => {
-      initCounterAnimations();
-    }, 500);
-  };
 
   // Crear HTML para noticia con mejores imágenes responsivas
   function createNoticiaHTML(noticia) {
@@ -1657,10 +1522,93 @@
     // Reinicializar observador
     setTimeout(() => {
       initCounterAnimations();
+      forceAnimateAllCounters();
     }, 100);
     
     showLoadingIndicator('🔄 Contadores reiniciados');
   };
+
+  // Función de diagnóstico automático
+  function runDiagnostics() {
+    console.log('🔍 Ejecutando diagnósticos...');
+    
+    const issues = [];
+    
+    // Verificar elementos críticos del DOM
+    const criticalElements = [
+      'noticias-container',
+      'noticias-loading', 
+      'stats-section',
+      'stats-section-about'
+    ];
+    
+    criticalElements.forEach(id => {
+      const element = document.getElementById(id);
+      if (!element) {
+        issues.push(`Elemento crítico no encontrado: ${id}`);
+      }
+    });
+    
+    // Verificar contadores
+    const heroCounters = document.querySelectorAll('#stats-section .counter');
+    const aboutCounters = document.querySelectorAll('#stats-section-about .counter');
+    
+    if (heroCounters.length === 0) {
+      issues.push('No se encontraron contadores en la sección hero');
+    }
+    
+    if (aboutCounters.length === 0) {
+      issues.push('No se encontraron contadores en la sección about');
+    }
+    
+    // Verificar localStorage
+    try {
+      localStorage.setItem('test', 'test');
+      localStorage.removeItem('test');
+    } catch (e) {
+      issues.push('LocalStorage no funciona correctamente');
+    }
+    
+    // Verificar si hay noticias cargándose indefinidamente
+    const loadingElement = document.getElementById('noticias-loading');
+    if (loadingElement && loadingElement.style.display !== 'none') {
+      issues.push('Noticias están cargándose indefinidamente');
+      
+      // Forzar resolución
+      setTimeout(() => {
+        console.log('🚨 Forzando resolución de carga de noticias...');
+        loadNoticias(getDefaultNoticias());
+      }, 2000);
+    }
+    
+    if (issues.length > 0) {
+      console.warn('⚠️ Problemas detectados:', issues);
+      
+      // Intentar soluciones automáticas
+      setTimeout(() => {
+        console.log('🔧 Aplicando soluciones automáticas...');
+        
+        // Forzar animación de contadores
+        forceAnimateAllCounters();
+        
+        // Forzar carga de noticias si no están cargadas
+        if (!noticiasLoaded) {
+          loadNoticias(getDefaultNoticias());
+        }
+        
+      }, 1000);
+      
+    } else {
+      console.log('✅ Todos los diagnósticos pasaron');
+    }
+    
+    return issues;
+  }
+
+  // Ejecutar diagnósticos después de la carga inicial
+  setTimeout(() => {
+    runDiagnostics();
+  }, 3000);
 
   // Función para test de comunicación
   window.testCommunication = function() {
@@ -1746,181 +1694,20 @@
     }, 1000);
   };
 
-  console.log('🚀 SOCHIMT v3.0 cargado exitosamente!');
+  console.log('🚀 SOCHIMT v2.0 cargado exitosamente!');
+  console.log('📱 Comandos disponibles:');
+  console.log('  - debugSOCHIMT() - Ver estado completo del sistema');
+  console.log('  - refreshNoticias() - Refrescar noticias manualmente');
+  console.log('  - getNoticiasStatus() - Estado actual de noticias');
+  console.log('  - forceCountersReset() - Reiniciar contadores');
+  console.log('  - testCommunication() - Test de sistemas de comunicación');
+  console.log('  - forceSyncFromPanel() - Forzar sincronización con panel');
+  console.log('  - resetSOCHIMT() - Limpiar datos y reiniciar');
   console.log('');
-  console.log('📋 COMANDOS DISPONIBLES:');
-  console.log('┌─────────────────────────────────────────────┐');
-  console.log('│ refreshNoticias() - Recargar noticias       │');
-  console.log('│ forceCountersReset() - Reiniciar contadores │');
-  console.log('│ forceInit() - Reinicialización completa     │');
-  console.log('│ debugSOCHIMT() - Ver estado del sistema     │');
-  console.log('│ testCommunication() - Test de comunicación  │');
-  console.log('└─────────────────────────────────────────────┘');
-  console.log('');
-  console.log('🔧 SI HAY PROBLEMAS:');
-  console.log('1. Ejecuta debugSOCHIMT() para ver el estado');
-  console.log('2. Si las noticias no cargan: refreshNoticias()');
-  console.log('3. Si los contadores no se mueven: forceCountersReset()');
-  console.log('4. Si nada funciona: forceInit()');
-  console.log('5. Para limpiar todo: resetSOCHIMT()');
-  console.log('');
-  console.log('📱 En móviles: Usa el botón azul flotante');
-  console.log('🎯 Para debug rápido: Simplemente escribe debugSOCHIMT() en la consola');
-
-  // Función de debug simple y clara
-  window.debugSOCHIMT = function() {
-    console.clear();
-    console.log('🔍 DIAGNÓSTICO DEL SISTEMA SOCHIMT');
-    console.log('════════════════════════════════════');
-    
-    // Estado básico
-    console.log(`📱 Dispositivo: ${isMobile ? 'Móvil' : 'Desktop'}`);
-    console.log(`🌐 Conexión: ${navigator.onLine ? 'Online' : 'Offline'}`);
-    console.log(`💾 LocalStorage: ${typeof(Storage) !== "undefined" ? 'Disponible' : 'No disponible'}`);
-    
-    // Estado de noticias
-    console.log(`📰 Noticias cargadas: ${noticiasLoaded ? '✅ Sí' : '❌ No'}`);
-    const container = document.getElementById('noticias-container');
-    const newsCount = container ? container.children.length : 0;
-    console.log(`📊 Noticias en pantalla: ${newsCount}`);
-    
-    // Estado de contadores
-    const allCounters = document.querySelectorAll('.counter');
-    console.log(`🔢 Contadores encontrados: ${allCounters.length}`);
-    
-    if (allCounters.length > 0) {
-      const counterValues = Array.from(allCounters).map(c => c.textContent);
-      console.log(`📈 Valores actuales: [${counterValues.join(', ')}]`);
-      
-      const allZero = counterValues.every(v => v === '0');
-      if (allZero) {
-        console.log('⚠️ PROBLEMA: Todos los contadores están en 0');
-        console.log('💡 SOLUCIÓN: Ejecuta forceCountersReset()');
-      } else {
-        console.log('✅ Los contadores parecen estar funcionando');
-      }
-    }
-    
-    // Estado de elementos críticos
-    const criticalElements = [
-      'noticias-container',
-      'noticias-loading', 
-      'stats-section',
-      'stats-section-about'
-    ];
-    
-    console.log('\n🏗️ ELEMENTOS CRÍTICOS:');
-    criticalElements.forEach(id => {
-      const element = document.getElementById(id);
-      console.log(`  ${id}: ${element ? '✅ Encontrado' : '❌ Faltante'}`);
-    });
-    
-    // Datos de localStorage
-    const localData = getValidLocalStorageData();
-    const syncMeta = getSyncMetadata();
-    console.log(`\n💾 DATOS GUARDADOS:`);
-    console.log(`  LocalStorage: ${localData ? localData.length + ' noticias' : 'Sin datos'}`);
-    console.log(`  Sync Meta: ${syncMeta ? 'Disponible' : 'No disponible'}`);
-    
-    // Recomendaciones
-    console.log('\n🎯 RECOMENDACIONES:');
-    if (!noticiasLoaded) {
-      console.log('  • Ejecuta refreshNoticias() para cargar noticias');
-    }
-    if (allCounters.length > 0 && Array.from(allCounters).every(c => c.textContent === '0')) {
-      console.log('  • Ejecuta forceCountersReset() para animar contadores');
-    }
-    if (newsCount === 0) {
-      console.log('  • Verifica que el elemento noticias-container exista');
-    }
-    
-    console.log('\n✨ Sistema diagnosticado. Usa las recomendaciones para solucionar problemas.');
-    
-    return {
-      mobile: isMobile,
-      online: navigator.onLine,
-      noticiasLoaded,
-      newsCount,
-      countersFound: allCounters.length,
-      localStorage: !!localData,
-      syncMeta: !!syncMeta
-    };
-  };
-
-  // Función de inicialización manual forzada
-  window.forceInit = function() {
-    console.log('🔧 FORZANDO INICIALIZACIÓN COMPLETA...');
-    
-    try {
-      // 1. Limpiar estado
-      noticiasLoaded = false;
-      countersAnimated = { hero: false, about: false };
-      
-      // 2. Forzar carga de noticias
-      console.log('📰 Forzando carga de noticias...');
-      const container = document.getElementById('noticias-container');
-      const loading = document.getElementById('noticias-loading');
-      
-      if (loading) loading.style.display = 'none';
-      if (container) {
-        const defaultNews = getDefaultNoticias();
-        renderNoticias(defaultNews);
-        noticiasLoaded = true;
-      }
-      
-      // 3. Forzar animación de contadores
-      console.log('🔢 Forzando animación de contadores...');
-      const allCounters = document.querySelectorAll('.counter');
-      allCounters.forEach((counter, index) => {
-        setTimeout(() => {
-          counter.textContent = '0';
-          animateCounter(counter);
-        }, index * 300);
-      });
-      
-      // 4. Inicializar UI elements
-      initUIElements();
-      
-      console.log('✅ Inicialización forzada completada');
-      showLoadingIndicator('✅ Sistema reinicializado', 'success');
-      
-    } catch (error) {
-      console.error('❌ Error en inicialización forzada:', error);
-      showLoadingIndicator('❌ Error en reinicialización', 'error');
-    }
-  };
-
-  // Auto-diagnóstico inteligente y menos agresivo
-  setTimeout(() => {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-    
-    // Si después de 8 segundos aún está cargando, ejecutar corrección automática
-    if (loading && loading.style.display !== 'none' && !noticiasLoaded) {
-      console.warn('⚠️ Detectado problema de carga después de 8 segundos');
-      console.log('🔧 Ejecutando corrección automática...');
-      showLoadingIndicator('🔧 Solucionando problema de carga...', 'info');
-      
-      setTimeout(() => {
-        forceInit();
-      }, 1000);
-    }
-    
-  }, 8000); // Verificar después de 8 segundos
-
-  // Verificar contadores por separado después de más tiempo
-  setTimeout(() => {
-    const allCounters = document.querySelectorAll('.counter');
-    if (allCounters.length > 0) {
-      const allZero = Array.from(allCounters).every(c => c.textContent === '0');
-      if (allZero) {
-        console.warn('⚠️ Contadores aún en 0 después de 12 segundos');
-        console.log('🔢 Ejecutando animación de contadores...');
-        showLoadingIndicator('🔢 Activando contadores...', 'info');
-        forceCountersReset();
-      }
-    }
-  }, 12000); // Verificar contadores después de 12 segundos
+  console.log('🔗 Para conectar con el panel de gestión:');
+  console.log('  1. Abrir gestion_noticias.html en otra pestaña');
+  console.log('  2. Los cambios se sincronizarán automáticamente');
+  console.log('  3. Usar el botón flotante para sincronización manual');
 
   // Cleanup al cerrar la página
   window.addEventListener('beforeunload', () => {
