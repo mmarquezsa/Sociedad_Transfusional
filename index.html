@@ -753,16 +753,34 @@
   }
 
   // Cargar noticias dinámicas
-  async function loadNoticias() {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-
-    try {
-      // Simular carga de API (reemplazar con tu endpoint real)
-      const noticias = await fetchNoticias();
-      
-      loading.style.display = 'none';
-      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
+ // REEMPLAZA TU ANTIGUA FUNCIÓN CON ESTA:
+async function fetchNoticias() {
+  try {
+    // Llama a nuestra nueva API de Netlify
+    const response = await fetch('/.netlify/functions/noticias');
+    
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud: ${response.status}`);
+    }
+    
+    const noticias = await response.json();
+    return noticias;
+    
+  } catch (error) {
+    console.error('No se pudieron cargar las noticias desde la API:', error);
+    // Si la API falla, muestra un error en la página
+    return [
+      {
+        titulo: 'Error al Cargar Noticias',
+        fecha: 'Ahora',
+        resumen: 'Hubo un problema al conectar con el servidor. Por favor, inténtalo más tarde.',
+        categoria: 'Error',
+        imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Error',
+        url: '#'
+      }
+    ];
+  }
+}
       
       // Aplicar animaciones
       container.querySelectorAll('.reveal').forEach((el, index) => {
