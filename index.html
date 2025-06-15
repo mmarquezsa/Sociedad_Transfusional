@@ -664,6 +664,30 @@
     </div>
   </footer>
 
+  <!-- Elementos de UI adicionales para móviles y sincronización -->
+  <div id="loading-indicator" class="loading-indicator">
+    <span>Actualizando...</span>
+  </div>
+
+  <!-- Indicador de estado de sincronización -->
+  <div id="sync-status-indicator" class="sync-status">
+    <div class="status-dot connected"></div>
+    <span>Conectado</span>
+  </div>
+
+  <button id="mobile-refresh-btn" class="mobile-refresh tooltip" data-tooltip="Sincronizar con panel de gestión" title="Refrescar contenido">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+    </svg>
+  </button>
+
+  <!-- Botones de debug para desarrollo (ocultos por defecto) -->
+  <div id="debug-controls" class="fixed bottom-20 left-4 space-y-2 opacity-20 hover:opacity-100 transition-opacity duration-300" style="display: none;">
+    <button onclick="debugSOCHIMT()" class="bg-gray-600 text-white p-2 rounded-lg text-xs font-mono">Debug</button>
+    <button onclick="testCommunication()" class="bg-blue-600 text-white p-2 rounded-lg text-xs font-mono">Test</button>
+    <button onclick="forceCountersReset()" class="bg-purple-600 text-white p-2 rounded-lg text-xs font-mono">Reset</button>
+  </div>
+
 <!-- Scripts -->
 <script>
   // Configuración global con mejor compatibilidad
@@ -672,9 +696,12 @@
       duration: 800,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
     },
-    localStorage: {
-      key: 'sochimt_public_news',
-      version: '1.0'
+    sync: {
+      publicKey: 'sochimt_public_news',
+      timestampKey: 'sochimt_last_sync',
+      versionKey: 'sochimt_data_version',
+      broadcastChannel: 'sochimt_updates',
+      metaKey: 'sochimt_sync_meta'
     }
   };
 
@@ -683,7 +710,13 @@
 
   // Variables globales
   let noticiasLoaded = false;
-  let countersAnimated = false;
+  let countersAnimated = {
+    hero: false,
+    about: false
+  };
+  let lastDataVersion = 0;
+  let broadcastChannel = null;
+  let autoSyncInterval = null;
 
   // Inicialización mejorada
   document.addEventListener('DOMContentLoaded', () => {
@@ -696,10 +729,183 @@
     initSmoothScrolling();
     initCounterAnimations();
     
+    // Inicializar sistema de comunicación avanzado
+    initAdvancedCommunication();
+    
     // Cargar noticias con retry
     loadNoticiasWithRetry();
     
+    // Forzar actualización de noticias en móviles
+    if (isMobile) {
+      setTimeout(() => {
+        if (!noticiasLoaded) {
+          console.log('🔄 Reintentando carga en móvil...');
+          loadNoticiasWithRetry();
+        }
+      }, 2000);
+      
+      // Mostrar botón de refresh en móviles
+      showMobileRefreshButton();
+    }
+    
+    // Inicializar elementos de UI adicionales
+    initUIElements();
+    
     console.log('✅ SOCHIMT cargado exitosamente');
+  });
+
+  // Inicializar sistema de comunicación avanzado
+  function initAdvancedCommunication() {
+    // Inicializar BroadcastChannel si está disponible
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        broadcastChannel = new BroadcastChannel(CONFIG.sync.broadcastChannel);
+        broadcastChannel.onmessage = handleBroadcastMessage;
+        console.log('📡 BroadcastChannel inicializado');
+      } catch (error) {
+        console.warn('No se pudo inicializar BroadcastChannel:', error);
+      }
+    }
+
+    // Escuchar eventos personalizados
+    window.addEventListener('sochimt_data_updated', handleDataUpdate);
+    
+    // Escuchar cambios en localStorage
+    window.addEventListener('storage', handleStorageUpdate);
+    
+    // Verificar versión de datos inicial
+    checkDataVersion();
+    
+    // Configurar auto-sync cada 15 segundos
+    autoSyncInterval = setInterval(() => {
+      checkForUpdates();
+    }, 15000);
+    
+    console.log('🔄 Sistema de comunicación avanzado inicializado');
+  }
+
+  // Manejar mensajes del BroadcastChannel
+  function handleBroadcastMessage(event) {
+    console.log('📡 Mensaje recibido:', event.data);
+    
+    const { type, timestamp, user, action } = event.data;
+    
+    switch (type) {
+      case 'news_updated':
+        console.log(`📰 Noticias actualizadas por ${user} (${action || 'modificado'})`);
+        showLoadingIndicator('🔄 Actualizando noticias...');
+        setTimeout(() => {
+          loadNoticiasWithRetry();
+        }, 500);
+        break;
+        
+      case 'news_deleted':
+        console.log(`🗑️ Noticia eliminada por ${user}`);
+        showLoadingIndicator('🔄 Sincronizando cambios...');
+        setTimeout(() => {
+          loadNoticiasWithRetry();
+        }, 500);
+        break;
+    }
+  }
+
+  // Manejar eventos personalizados de actualización
+  function handleDataUpdate(event) {
+    console.log('📡 Evento de actualización recibido:', event.detail);
+    
+    if (event.detail && event.detail.noticias) {
+      const newVersion = event.detail.version || 0;
+      
+      if (newVersion > lastDataVersion) {
+        console.log(`🔄 Nueva versión detectada: ${newVersion} (actual: ${lastDataVersion})`);
+        lastDataVersion = newVersion;
+        showLoadingIndicator('✨ Contenido actualizado');
+        loadNoticiasWithRetry();
+      }
+    }
+  }
+
+  // Manejar cambios en localStorage
+  function handleStorageUpdate(event) {
+    if (event.key === CONFIG.sync.publicKey && event.newValue) {
+      console.log('💾 Cambio en localStorage detectado');
+      showLoadingIndicator('🔄 Sincronizando...');
+      setTimeout(() => {
+        loadNoticiasWithRetry();
+      }, 300);
+    }
+  }
+
+  // Verificar versión de datos
+  function checkDataVersion() {
+    const savedVersion = localStorage.getItem(CONFIG.sync.versionKey);
+    if (savedVersion) {
+      lastDataVersion = parseInt(savedVersion);
+    }
+    
+    const lastSync = localStorage.getItem(CONFIG.sync.timestampKey);
+    if (lastSync) {
+      const syncTime = new Date(parseInt(lastSync));
+      console.log(`📊 Última sincronización: ${syncTime.toLocaleString('es-CL')}`);
+    }
+  }
+
+  // Verificar actualizaciones automáticamente
+  function checkForUpdates() {
+    const currentVersion = localStorage.getItem(CONFIG.sync.versionKey);
+    if (currentVersion && parseInt(currentVersion) > lastDataVersion) {
+      console.log('🔄 Nueva versión disponible, actualizando...');
+      lastDataVersion = parseInt(currentVersion);
+      loadNoticiasWithRetry();
+    }
+  }
+
+  // Inicializar elementos de UI
+  function initUIElements() {
+    const refreshBtn = document.getElementById('mobile-refresh-btn');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        showLoadingIndicator();
+        refreshNoticias();
+        forceCountersReset();
+      });
+    }
+  }
+
+  // Mostrar botón de refresh en móviles
+  function showMobileRefreshButton() {
+    const refreshBtn = document.getElementById('mobile-refresh-btn');
+    if (refreshBtn && isMobile) {
+      setTimeout(() => {
+        refreshBtn.classList.add('show');
+      }, 3000); // Mostrar después de 3 segundos
+    }
+  }
+
+  // Mostrar indicador de carga mejorado
+  function showLoadingIndicator(text = 'Actualizando...', type = 'info') {
+    const indicator = document.getElementById('loading-indicator');
+    if (indicator) {
+      // Limpiar clases anteriores
+      indicator.className = 'loading-indicator show';
+      
+      // Agregar clase de tipo
+      if (type === 'success') {
+        indicator.classList.add('success');
+      } else if (type === 'error') {
+        indicator.classList.add('error');
+      }
+      
+      indicator.textContent = text;
+      
+      // Auto-ocultar después de un tiempo
+      const duration = type === 'error' ? 4000 : 2000;
+      setTimeout(() => {
+        indicator.classList.remove('show');
+      }, duration);
+    }
   });
 
   // Navbar con mejor rendimiento
@@ -816,8 +1022,6 @@
 
   // Animación de contadores mejorada
   function initCounterAnimations() {
-    if (countersAnimated) return;
-
     const observerOptions = {
       root: null,
       rootMargin: '0px',
@@ -826,23 +1030,48 @@
 
     const counterObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && !countersAnimated) {
-          const counters = entry.target.querySelectorAll('.counter');
-          counters.forEach(counter => {
-            animateCounter(counter);
-          });
-          countersAnimated = true;
-          counterObserver.disconnect();
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          
+          // Verificar si ya se animó esta sección específica
+          if (sectionId === 'stats-section' && !countersAnimated.hero) {
+            const counters = entry.target.querySelectorAll('.counter');
+            counters.forEach(counter => {
+              animateCounter(counter);
+            });
+            countersAnimated.hero = true;
+            console.log('✨ Contadores hero animados');
+          }
+          
+          if (sectionId === 'stats-section-about' && !countersAnimated.about) {
+            const counters = entry.target.querySelectorAll('.counter');
+            counters.forEach(counter => {
+              animateCounter(counter);
+            });
+            countersAnimated.about = true;
+            console.log('✨ Contadores about animados');
+          }
+          
+          // Desconectar solo después de animar ambas secciones
+          if (countersAnimated.hero && countersAnimated.about) {
+            counterObserver.disconnect();
+          }
         }
       });
     }, observerOptions);
 
-    // Observar ambas secciones
+    // Observar ambas secciones por separado
     const statsSection = document.getElementById('stats-section');
     const statsSectionAbout = document.getElementById('stats-section-about');
 
-    if (statsSection) counterObserver.observe(statsSection);
-    if (statsSectionAbout) counterObserver.observe(statsSectionAbout);
+    if (statsSection) {
+      counterObserver.observe(statsSection);
+      console.log('👀 Observando contadores hero');
+    }
+    if (statsSectionAbout) {
+      counterObserver.observe(statsSectionAbout);
+      console.log('👀 Observando contadores about');
+    }
   }
 
   function animateCounter(element) {
@@ -938,15 +1167,31 @@
     if (errorDiv) errorDiv.style.display = 'block';
   }
 
-  // Fetch noticias con mejor manejo de errores
+  // Fetch noticias con sistema de comunicación avanzado
   async function fetchNoticias() {
     try {
-      // Verificar localStorage con validación
-      const localData = getValidLocalStorageData();
+      console.log('📰 Iniciando fetch de noticias...');
       
+      // Verificar datos principales de sincronización
+      const syncMeta = getSyncMetadata();
+      if (syncMeta && syncMeta.noticias && syncMeta.noticias.length > 0) {
+        console.log(`📰 Noticias desde sync metadata: ${syncMeta.noticias.length}`);
+        console.log(`🕒 Última actualización: ${new Date(syncMeta.lastUpdate).toLocaleString('es-CL')}`);
+        return syncMeta.noticias;
+      }
+      
+      // Verificar localStorage principal
+      const localData = getValidLocalStorageData();
       if (localData && localData.length > 0) {
-        console.log('📰 Noticias cargadas desde localStorage:', localData.length);
+        console.log(`📰 Noticias desde localStorage: ${localData.length}`);
         return localData;
+      }
+      
+      // Intentar cargar desde evento personalizado (comunicación con gestión)
+      const eventData = checkForNewsUpdate();
+      if (eventData && eventData.length > 0) {
+        console.log(`📰 Noticias desde evento: ${eventData.length}`);
+        return eventData;
       }
       
       console.log('📰 Usando noticias por defecto');
@@ -958,7 +1203,123 @@
     }
   }
 
-  // Validar datos del localStorage
+  // Obtener metadata de sincronización
+  function getSyncMetadata() {
+    try {
+      const metaData = localStorage.getItem(CONFIG.sync.metaKey);
+      if (metaData) {
+        const parsed = JSON.parse(metaData);
+        
+        // Verificar que los datos no sean muy antiguos (máximo 1 hora)
+        const oneHourAgo = Date.now() - (60 * 60 * 1000);
+        if (parsed.lastUpdate && parsed.lastUpdate > oneHourAgo) {
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.warn('Error obteniendo metadata de sync:', error);
+    }
+    return null;
+  }
+
+  // Verificar actualizaciones desde gestión de noticias
+  function checkForNewsUpdate() {
+    try {
+      // Escuchar eventos de actualización en tiempo real
+      window.addEventListener('newsUpdated', (event) => {
+        console.log('🔄 Noticias actualizadas desde gestión');
+        if (event.detail && event.detail.news) {
+          saveToLocalStorage(event.detail.news);
+          loadNoticiasWithRetry(); // Recargar automáticamente
+        }
+      });
+
+      // Verificar si hay datos pendientes de actualización
+      const pendingUpdate = localStorage.getItem('sochimt_pending_update');
+      if (pendingUpdate) {
+        console.log('🔄 Procesando actualización pendiente');
+        const data = JSON.parse(pendingUpdate);
+        localStorage.removeItem('sochimt_pending_update');
+        saveToLocalStorage(data);
+        return data;
+      }
+
+      return null;
+    } catch (error) {
+      console.warn('Error verificando actualizaciones:', error);
+      return null;
+    }
+  }
+
+  // Guardar en localStorage de forma segura
+  function saveToLocalStorage(data) {
+    try {
+      if (typeof(Storage) !== "undefined" && Array.isArray(data)) {
+        localStorage.setItem(CONFIG.sync.publicKey, JSON.stringify(data));
+        console.log('💾 Noticias guardadas en localStorage');
+        
+        // Disparar evento para sincronización
+        window.dispatchEvent(new CustomEvent('newsSaved', { 
+          detail: { 
+            count: data.length,
+            timestamp: Date.now() 
+          } 
+        }));
+      }
+    } catch (error) {
+      console.error('Error guardando en localStorage:', error);
+    }
+  }
+
+  // Función para refrescar noticias (llamada externa)
+  window.refreshNoticias = function() {
+    console.log('🔄 Refrescando noticias...');
+    noticiasLoaded = false;
+    showLoadingIndicator('🔄 Actualizando contenido...');
+    loadNoticiasWithRetry();
+  };
+
+  // Función para obtener estado actual
+  window.getNoticiasStatus = function() {
+    const localData = getValidLocalStorageData();
+    const syncMeta = getSyncMetadata();
+    
+    return {
+      loaded: noticiasLoaded,
+      count: localData ? localData.length : 0,
+      isMobile: isMobile,
+      hasLocalStorage: typeof(Storage) !== "undefined",
+      lastDataVersion: lastDataVersion,
+      hasBroadcastChannel: !!broadcastChannel,
+      syncMeta: syncMeta ? {
+        lastUpdate: syncMeta.lastUpdate,
+        version: syncMeta.version,
+        generatedBy: syncMeta.generatedBy
+      } : null
+    };
+  };
+
+  // Función para forzar sincronización desde el panel
+  window.forceSyncFromPanel = function() {
+    console.log('📡 Forzando sincronización desde panel...');
+    showLoadingIndicator('📡 Sincronizando con panel...');
+    
+    // Enviar mensaje al panel si está abierto
+    if (broadcastChannel) {
+      broadcastChannel.postMessage({
+        type: 'request_sync',
+        timestamp: Date.now(),
+        source: 'website'
+      });
+    }
+    
+    // Recargar datos después de un momento
+    setTimeout(() => {
+      loadNoticiasWithRetry();
+    }, 1000);
+  };
+
+  // Validar datos del localStorage con mejor detección
   function getValidLocalStorageData() {
     try {
       if (typeof(Storage) === "undefined") {
@@ -966,7 +1327,14 @@
         return null;
       }
 
-      const data = localStorage.getItem(CONFIG.localStorage.key);
+      // Intentar cargar datos de múltiples fuentes
+      let data = localStorage.getItem(CONFIG.sync.publicKey);
+      
+      if (!data) {
+        // Intentar fuente alternativa (para compatibilidad)
+        data = localStorage.getItem('sochimt_public_news');
+      }
+      
       if (!data) return null;
 
       const parsed = JSON.parse(data);
@@ -974,12 +1342,20 @@
       // Validar estructura de datos
       if (!Array.isArray(parsed)) return null;
       
-      return parsed.filter(noticia => 
+      const validatedNews = parsed.filter(noticia => 
         noticia && 
         typeof noticia.titulo === 'string' && 
         typeof noticia.fecha === 'string' &&
-        typeof noticia.resumen === 'string'
+        typeof noticia.resumen === 'string' &&
+        noticia.titulo.length > 0 &&
+        noticia.resumen.length > 0
       );
+      
+      if (validatedNews.length !== parsed.length) {
+        console.warn(`⚠️ Algunas noticias fueron filtradas: ${parsed.length} -> ${validatedNews.length}`);
+      }
+      
+      return validatedNews;
       
     } catch (error) {
       console.warn('Error validando localStorage:', error);
@@ -1072,17 +1448,223 @@
 
   // Función para debug en consola
   window.debugSOCHIMT = function() {
-    console.log('🔍 Debug SOCHIMT:');
+    console.log('🔍 Debug SOCHIMT v2.0:');
     console.log('- Es móvil:', isMobile);
     console.log('- Noticias cargadas:', noticiasLoaded);
     console.log('- Contadores animados:', countersAnimated);
     console.log('- LocalStorage disponible:', typeof(Storage) !== "undefined");
+    console.log('- BroadcastChannel activo:', !!broadcastChannel);
+    console.log('- Versión de datos actual:', lastDataVersion);
     
     const localData = getValidLocalStorageData();
     console.log('- Noticias en localStorage:', localData ? localData.length : 0);
+    
+    const syncMeta = getSyncMetadata();
+    if (syncMeta) {
+      console.log('- Metadata de sincronización:');
+      console.log('  * Última actualización:', new Date(syncMeta.lastUpdate).toLocaleString('es-CL'));
+      console.log('  * Versión:', syncMeta.version);
+      console.log('  * Generado por:', syncMeta.generatedBy);
+      console.log('  * Noticias disponibles:', syncMeta.noticias ? syncMeta.noticias.length : 0);
+    }
+    
+    // Verificar elementos DOM
+    const statsSection = document.getElementById('stats-section');
+    const statsSectionAbout = document.getElementById('stats-section-about');
+    console.log('- Sección stats hero encontrada:', !!statsSection);
+    console.log('- Sección stats about encontrada:', !!statsSectionAbout);
+    
+    if (statsSection) {
+      const counters = statsSection.querySelectorAll('.counter');
+      console.log('- Contadores en hero:', counters.length);
+      console.log('- Valores actuales:', Array.from(counters).map(c => c.textContent));
+    }
+    
+    if (statsSectionAbout) {
+      const counters = statsSectionAbout.querySelectorAll('.counter');
+      console.log('- Contadores en about:', counters.length);
+      console.log('- Valores actuales:', Array.from(counters).map(c => c.textContent));
+    }
+    
+    // Test de comunicación con gestión
+    const testData = localStorage.getItem('sochimt_public_news');
+    const testMeta = localStorage.getItem('sochimt_sync_meta');
+    console.log('- Datos de gestión disponibles:', !!testData);
+    console.log('- Metadata de gestión disponible:', !!testMeta);
+    
+    // Información de conectividad
+    console.log('- Conexión online:', navigator.onLine);
+    console.log('- User Agent:', navigator.userAgent.substring(0, 50) + '...');
+    
+    return {
+      mobile: isMobile,
+      noticiasLoaded,
+      countersAnimated,
+      localStorageData: localData?.length || 0,
+      hasManagementData: !!testData,
+      broadcastChannelActive: !!broadcastChannel,
+      lastDataVersion,
+      syncMetadata: syncMeta,
+      online: navigator.onLine
+    };
   };
 
-  console.log('🚀 SOCHIMT v2.0 cargado exitosamente! Escribe debugSOCHIMT() para ver el estado.');
+  // Función para forzar reanimación de contadores
+  window.forceCountersReset = function() {
+    console.log('🔄 Reiniciando contadores...');
+    countersAnimated = { hero: false, about: false };
+    
+    // Reiniciar valores a 0
+    document.querySelectorAll('.counter').forEach(counter => {
+      counter.textContent = '0';
+    });
+    
+    // Reinicializar observador
+    setTimeout(() => {
+      initCounterAnimations();
+    }, 100);
+    
+    showLoadingIndicator('🔄 Contadores reiniciados');
+  };
+
+  // Función para test de comunicación
+  window.testCommunication = function() {
+    console.log('🧪 Iniciando test de comunicación...');
+    
+    const tests = [];
+    
+    // Test 1: LocalStorage
+    try {
+      localStorage.setItem('sochimt_test', 'test');
+      const value = localStorage.getItem('sochimt_test');
+      localStorage.removeItem('sochimt_test');
+      tests.push({ name: 'LocalStorage', passed: value === 'test' });
+    } catch (e) {
+      tests.push({ name: 'LocalStorage', passed: false, error: e.message });
+    }
+    
+    // Test 2: BroadcastChannel
+    tests.push({ 
+      name: 'BroadcastChannel', 
+      passed: !!broadcastChannel,
+      note: broadcastChannel ? 'Activo' : 'No disponible'
+    });
+    
+    // Test 3: Custom Events
+    try {
+      const event = new CustomEvent('sochimt_test');
+      window.dispatchEvent(event);
+      tests.push({ name: 'Custom Events', passed: true });
+    } catch (e) {
+      tests.push({ name: 'Custom Events', passed: false, error: e.message });
+    }
+    
+    // Test 4: Datos de sincronización
+    const syncData = getSyncMetadata();
+    tests.push({ 
+      name: 'Sync Data', 
+      passed: !!syncData,
+      note: syncData ? `${syncData.noticias?.length || 0} noticias` : 'Sin datos'
+    });
+    
+    console.table(tests);
+    
+    if (broadcastChannel) {
+      console.log('📡 Enviando mensaje de test...');
+      broadcastChannel.postMessage({
+        type: 'test_message',
+        timestamp: Date.now(),
+        source: 'website',
+        message: 'Test de comunicación desde sitio web'
+      });
+    }
+    
+    return tests;
+  };
+
+  // Función para limpiar datos y reiniciar
+  window.resetSOCHIMT = function() {
+    console.log('🗑️ Limpiando datos y reiniciando...');
+    
+    // Limpiar localStorage
+    const keysToRemove = [
+      'sochimt_public_news',
+      'sochimt_sync_meta', 
+      'sochimt_last_sync',
+      'sochimt_data_version',
+      'sochimt_pending_update'
+    ];
+    
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+    });
+    
+    // Reiniciar variables
+    noticiasLoaded = false;
+    lastDataVersion = 0;
+    countersAnimated = { hero: false, about: false };
+    
+    // Recargar
+    showLoadingIndicator('🔄 Reiniciando sistema...');
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  };
+
+  console.log('🚀 SOCHIMT v2.0 cargado exitosamente!');
+  console.log('📱 Comandos disponibles:');
+  console.log('  - debugSOCHIMT() - Ver estado completo del sistema');
+  console.log('  - refreshNoticias() - Refrescar noticias manualmente');
+  console.log('  - getNoticiasStatus() - Estado actual de noticias');
+  console.log('  - forceCountersReset() - Reiniciar contadores');
+  console.log('  - testCommunication() - Test de sistemas de comunicación');
+  console.log('  - forceSyncFromPanel() - Forzar sincronización con panel');
+  console.log('  - resetSOCHIMT() - Limpiar datos y reiniciar');
+  console.log('');
+  console.log('🔗 Para conectar con el panel de gestión:');
+  console.log('  1. Abrir gestion_noticias.html en otra pestaña');
+  console.log('  2. Los cambios se sincronizarán automáticamente');
+  console.log('  3. Usar el botón flotante para sincronización manual');
+
+  // Cleanup al cerrar la página
+  window.addEventListener('beforeunload', () => {
+    console.log('🧹 Limpiando recursos...');
+    
+    if (broadcastChannel) {
+      broadcastChannel.close();
+      console.log('📡 BroadcastChannel cerrado');
+    }
+    
+    if (autoSyncInterval) {
+      clearInterval(autoSyncInterval);
+      console.log('⏰ Intervalo de auto-sync limpiado');
+    }
+  });
+
+  // Manejar errores globales
+  window.addEventListener('error', (event) => {
+    console.error('❌ Error global capturado:', event.error);
+    
+    // Intentar recuperación automática para errores relacionados con noticias
+    if (event.error && event.error.message && 
+        (event.error.message.includes('noticias') || event.error.message.includes('localStorage'))) {
+      console.log('🔄 Intentando recuperación automática...');
+      setTimeout(() => {
+        loadNoticiasWithRetry();
+      }, 1000);
+    }
+  });
+
+  // Performance monitoring para desarrollo
+  if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+    setTimeout(() => {
+      const perfData = performance.getEntriesByType('navigation')[0];
+      console.log('📊 Performance metrics:');
+      console.log(`- DOM Content Loaded: ${Math.round(perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart)}ms`);
+      console.log(`- Load Complete: ${Math.round(perfData.loadEventEnd - perfData.loadEventStart)}ms`);
+      console.log(`- Total Load Time: ${Math.round(perfData.loadEventEnd - perfData.fetchStart)}ms`);
+    }, 1000);
+  }
 </script>
 
 <style>
@@ -1115,6 +1697,189 @@
     .card-hover:hover {
       transform: translateY(-2px);
     }
+    
+    /* Forzar actualización en móviles */
+    .mobile-refresh {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      cursor: pointer;
+      display: none;
+      transition: all 0.3s ease;
+    }
+    
+    .mobile-refresh.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .mobile-refresh:hover {
+      background: #1d4ed8;
+      transform: scale(1.1);
+    }
+
+    .mobile-refresh.syncing {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  /* Indicador de estado de carga mejorado */
+  .loading-indicator {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: rgba(37, 99, 235, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+  }
+  
+  .loading-indicator.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .loading-indicator.success {
+    background: rgba(34, 197, 94, 0.95);
+    box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3);
+  }
+
+  .loading-indicator.error {
+    background: rgba(239, 68, 68, 0.95);
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+  }
+
+  /* Indicador de sincronización */
+  .sync-status {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .sync-status.show {
+    display: flex;
+  }
+
+  .sync-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .sync-status .status-dot.connected {
+    background: #10b981;
+  }
+
+  .sync-status .status-dot.syncing {
+    background: #f59e0b;
+    animation: pulse 0.5s infinite;
+  }
+
+  .sync-status .status-dot.disconnected {
+    background: #ef4444;
+  }
+
+  /* Animaciones adicionales */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes slideInFromTop {
+    from { 
+      opacity: 0; 
+      transform: translateY(-100%); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .slide-in-top {
+    animation: slideInFromTop 0.5s ease-out;
+  }
+
+  /* Mejoras para elementos interactivos */
+  .interactive-element {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .interactive-element:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .interactive-element:active {
+    transform: translateY(0);
+  }
+
+  /* Tooltip personalizado */
+  .tooltip {
+    position: relative;
+    cursor: help;
+  }
+
+  .tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  .tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    margin-bottom: 3px;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out forwards;
   }
 </style>
 </body>
