@@ -5,1051 +5,313 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración - SOCHIMT</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'sochimt': {
-              50: '#eff6ff',
-              100: '#dbeafe', 
-              200: '#bfdbfe',
-              300: '#93c5fd',
-              400: '#60a5fa',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-            },
-            'medical': {
-              50: '#fef2f2',
-              100: '#fee2e2',
-              200: '#fecaca', 
-              300: '#fca5a5',
-              400: '#f87171',
-              500: '#ef4444',
-              600: '#dc2626',
-              700: '#b91c1c',
-              800: '#991b1b',
-              900: '#7f1d1d',
-            }
-          },
-          animation: {
-            'slide-in': 'slideIn 0.3s ease-out',
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'bounce-in': 'bounceIn 0.6s ease-out',
-            'glow': 'glow 2s ease-in-out infinite alternate',
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    @keyframes slideIn {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes bounceIn {
-      0% { transform: scale(0.3); opacity: 0; }
-      50% { transform: scale(1.05); }
-      70% { transform: scale(0.9); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes glow {
-      from { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
-      to { box-shadow: 0 0 30px rgba(37, 99, 235, 0.6); }
-    }
-    .gradient-mesh {
-      background: linear-gradient(-45deg, #1e40af, #3b82f6, #dc2626, #ef4444);
-      background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .glass-morphism {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .card-hover {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .card-hover:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .btn-spinner { display: inline-block; width: 1.2rem; height: 1.2rem; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .notification { transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-100 to-blue-100 min-h-screen">
 
   <!-- Login Screen -->
   <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white/80 backdrop-blur-lg p-8 rounded-3xl shadow-2xl max-w-md w-full border border-white/20">
-      <div class="text-center mb-8 animate-bounce-in">
-        <div class="h-24 w-24 gradient-mesh rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-glow">
-          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-          </svg>
-        </div>
+    <div class="bg-white/80 backdrop-blur-lg p-8 rounded-3xl shadow-2xl max-w-md w-full border">
+      <div class="text-center mb-8">
         <h1 class="text-3xl font-black text-gray-800 mb-2">Panel Administrativo</h1>
-        <p class="text-gray-600 font-medium">SOCHIMT - Gestión de Contenido</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-sochimt-600 to-medical-600 rounded-full mx-auto mt-4"></div>
+        <p class="text-gray-600 font-medium">SOCHIMT - Gestión de Noticias</p>
       </div>
-
       <form id="login-form" class="space-y-6">
-        <div class="relative">
+        <div>
           <label for="username" class="block text-sm font-bold text-gray-700 mb-2">👤 Usuario</label>
-          <input type="text" id="username" required 
-                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+          <input type="text" id="username" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition-all">
         </div>
-        <div class="relative">
+        <div>
           <label for="password" class="block text-sm font-bold text-gray-700 mb-2">🔐 Contraseña</label>
-          <input type="password" id="password" required 
-                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+          <input type="password" id="password" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition-all">
         </div>
-        <button type="submit" id="login-btn" 
-                class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-4 px-6 rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
+        <button type="submit" id="login-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl">
           ✨ Acceder al Panel
         </button>
       </form>
-
-      <div id="login-error" class="hidden mt-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg animate-fade-in">
-        <div class="flex items-center">
-          <span class="text-xl mr-2">⚠️</span>
-          <span>Usuario o contraseña incorrectos</span>
-        </div>
+      <div id="login-error" class="hidden mt-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg">
+        Usuario o contraseña incorrectos.
       </div>
     </div>
   </div>
 
   <!-- Admin Panel -->
   <div id="admin-panel" class="hidden min-h-screen">
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50">
+    <header class="bg-white/90 backdrop-blur-lg shadow-md border-b sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
-          <div class="flex items-center space-x-4">
-            <div class="h-12 w-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"/>
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-2xl font-black text-gray-800">Panel de Administración</h1>
-              <p class="text-sm text-gray-600 font-medium">Gestión de Noticias SOCHIMT</p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-6">
-            <div class="text-right">
-              <span class="text-sm text-gray-600">Bienvenido,</span>
-              <span id="current-user" class="font-bold text-sochimt-600"></span>
-            </div>
-            <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
-              🚪 Salir
-            </button>
-          </div>
+            <h1 class="text-2xl font-black text-gray-800">Panel SOCHIMT</h1>
+            <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium">🚪 Salir</button>
         </div>
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-6 py-8">
-      <!-- Navigation Tabs -->
-      <div class="mb-8">
-        <div class="border-b border-gray-200">
-          <nav class="-mb-px flex space-x-8">
-            <button class="tab-btn active border-b-2 border-sochimt-600 text-sochimt-600 py-2 px-1 font-medium text-sm" data-tab="dashboard">
-              📊 Dashboard
-            </button>
-            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="noticias">
-              📰 Gestionar Noticias
-            </button>
-            <button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="configuracion">
-              ⚙️ Configuración
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      <!-- Dashboard Tab -->
-      <div id="tab-dashboard" class="tab-content">
-        <!-- Dashboard Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white card-hover animate-fade-in">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-blue-100 font-medium">Total Noticias</p>
-                <p class="text-3xl font-black" id="total-news">0</p>
-              </div>
-              <div class="text-4xl opacity-80">📰</div>
-            </div>
+    <main class="max-w-7xl mx-auto px-6 py-8">
+      <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border">
+        <h2 class="text-2xl font-black text-gray-800 mb-6" id="form-title">Agregar Nueva Noticia</h2>
+        <form id="news-form" class="space-y-6">
+          <input type="hidden" id="news-id">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="text" id="news-title" placeholder="Título *" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="text" id="news-category" placeholder="Categoría (Ej: Evento) *" required class="w-full px-4 py-3 border rounded-lg">
           </div>
-          <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.1s;">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-green-100 font-medium">Este Mes</p>
-                <p class="text-3xl font-black" id="recent-news">0</p>
-              </div>
-              <div class="text-4xl opacity-80">📅</div>
-            </div>
-          </div>
-          <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.2s;">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-purple-100 font-medium">Categorías</p>
-                <p class="text-3xl font-black" id="categories-count">0</p>
-              </div>
-              <div class="text-4xl opacity-80">🏷️</div>
-            </div>
-          </div>
-          <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white card-hover animate-fade-in" style="animation-delay: 0.3s;">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-orange-100 font-medium">Publicadas</p>
-                <p class="text-3xl font-black" id="published-news">0</p>
-              </div>
-              <div class="text-4xl opacity-80">✅</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-          <h2 class="text-2xl font-black text-gray-800 mb-6">🚀 Acciones Rápidas</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button onclick="switchTab('noticias')" class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 text-left card-hover">
-              <div class="text-3xl mb-3">📝</div>
-              <h3 class="font-bold text-gray-800 mb-2">Nueva Noticia</h3>
-              <p class="text-sm text-gray-600">Agregar una nueva noticia al sitio</p>
-            </button>
-            <button onclick="switchTab('configuracion')" class="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-300 text-left card-hover">
-              <div class="text-3xl mb-3">🔐</div>
-              <h3 class="font-bold text-gray-800 mb-2">Cambiar Contraseña</h3>
-              <p class="text-sm text-gray-600">Actualizar credenciales de acceso</p>
-            </button>
-            <button onclick="exportData()" class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 text-left card-hover">
-              <div class="text-3xl mb-3">📤</div>
-              <h3 class="font-bold text-gray-800 mb-2">Exportar Datos</h3>
-              <p class="text-sm text-gray-600">Descargar backup de noticias</p>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- News Management Tab -->
-      <div id="tab-noticias" class="tab-content hidden">
-        <!-- Add News Form -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border border-white/20 animate-fade-in">
-          <div class="flex items-center space-x-3 mb-8">
-            <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
-              <span class="text-white text-xl">➕</span>
-            </div>
-            <h2 class="text-2xl font-black text-gray-800">Agregar Nueva Noticia</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="date" id="news-date" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="url" id="news-url" placeholder="URL de la noticia (opcional)" class="w-full px-4 py-3 border rounded-lg">
           </div>
           
-          <form id="news-form" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label>
-                <input type="text" id="news-title" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300"
-                       placeholder="Ingresa el título de la noticia...">
+          <!-- CAMPO PARA SUBIR ARCHIVOS (RESTAURADO) -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">🖼️ Imagen o Video (opcional)</label>
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition-all">
+              <input type="file" id="news-image-file" accept="image/*,video/*" class="hidden">
+              <div id="file-upload-area" class="cursor-pointer">
+                <div class="text-4xl mb-4">📎</div>
+                <p class="text-gray-600 font-medium mb-2">Haz clic para seleccionar un archivo</p>
+                <p class="text-sm text-gray-500">Imágenes y Videos (Máx. 10MB)</p>
               </div>
-              <div>
-                <label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label>
-                <select id="news-category" required 
-                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-                  <option value="">Seleccionar categoría</option>
-                  <option value="Evento">🎉 Evento</option>
-                  <option value="Publicación">📚 Publicación</option>
-                  <option value="Webinar">💻 Webinar</option>
-                  <option value="Congreso">🏛️ Congreso</option>
-                  <option value="Noticia">📰 Noticia General</option>
-                </select>
+              <div id="file-preview" class="hidden mt-4">
+                <div id="preview-content" class="flex flex-col items-center"></div>
+                <button type="button" id="remove-file-btn" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">
+                  🗑️ Quitar archivo
+                </button>
               </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label>
-                <input type="date" id="news-date" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-              </div>
-              <div>
-                <label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label>
-                <input type="url" id="news-url" placeholder="https://..." 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300">
-              </div>
-            </div>
-            
-            <!-- SECCIÓN DE CARGA DE ARCHIVOS -->
-            <div>
-              <label for="news-image" class="block text-sm font-bold text-gray-700 mb-3">🖼️ Imagen o Video (opcional)</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sochimt-500 transition-all duration-300">
-                <input type="file" id="news-image" accept="image/*,video/*" 
-                       class="hidden" onchange="handleFileUpload(this)">
-                <div id="file-upload-area" onclick="document.getElementById('news-image').click()" class="cursor-pointer">
-                  <div class="text-4xl mb-4">📎</div>
-                  <p class="text-gray-600 font-medium mb-2">Haz clic para seleccionar archivo</p>
-                  <p class="text-sm text-gray-500">Imágenes: JPG, PNG, GIF | Videos: MP4, WebM (Máx. 10MB)</p>
-                </div>
-                <div id="file-preview" class="hidden mt-4">
-                  <div id="preview-content"></div>
-                  <button type="button" onclick="removeFile()" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
-                    🗑️ Eliminar archivo
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label>
-              <textarea id="news-summary" rows="4" required 
-                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 resize-none"
-                        placeholder="Describe brevemente la noticia..."></textarea>
-            </div>
-            
-            <div class="flex justify-end space-x-4">
-              <button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium">
-                ❌ Cancelar
-              </button>
-              <button type="submit" id="submit-news" 
-                      class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-                ✨ Publicar Noticia
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- News List -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-          <div class="flex justify-between items-center mb-8">
-            <div class="flex items-center space-x-3">
-              <div class="h-12 w-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center">
-                <span class="text-white text-xl">📋</span>
-              </div>
-              <h2 class="text-2xl font-black text-gray-800">Noticias Publicadas</h2>
-            </div>
-            <div class="flex items-center space-x-4">
-              <div class="relative">
-                <input type="text" id="search-news" placeholder="🔍 Buscar noticias..." 
-                       class="px-6 py-3 pl-12 border-2 border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-sochimt-200 focus:border-sochimt-500 transition-all duration-300 w-80">
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  🔍
-                </div>
-              </div>
-              <button id="export-data" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm font-bold transition-all duration-300 transform hover:scale-105">
-                📤 Exportar
-              </button>
             </div>
           </div>
 
-          <div id="news-list" class="space-y-4">
-            <!-- News items will be loaded here -->
+          <textarea id="news-summary" rows="4" placeholder="Resumen *" required class="w-full px-4 py-3 border rounded-lg"></textarea>
+          <div class="flex justify-end space-x-4">
+            <button type="button" id="cancel-edit" class="hidden px-6 py-3 border rounded-lg">Cancelar</button>
+            <button type="submit" id="submit-news" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-bold">Publicar Noticia</button>
           </div>
-
-          <div id="no-news" class="hidden text-center py-16">
-            <div class="text-gray-400 text-8xl mb-6">📰</div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">No hay noticias publicadas</h3>
-            <p class="text-gray-500 text-lg">Agrega tu primera noticia usando el formulario de arriba.</p>
-          </div>
-        </div>
+        </form>
       </div>
 
-      <!-- Configuration Tab -->
-      <div id="tab-configuracion" class="tab-content hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          <!-- Change Password Section -->
-          <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-            <div class="flex items-center space-x-3 mb-8">
-              <div class="h-12 w-12 bg-gradient-to-br from-medical-600 to-medical-700 rounded-xl flex items-center justify-center">
-                <span class="text-white text-xl">🔐</span>
-              </div>
-              <h2 class="text-2xl font-black text-gray-800">Cambiar Contraseña</h2>
-            </div>
-            
-            <form id="change-password-form" class="space-y-6">
-              <div>
-                <label for="current-password" class="block text-sm font-bold text-gray-700 mb-3">🔑 Contraseña Actual *</label>
-                <input type="password" id="current-password" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
-                       placeholder="Ingresa tu contraseña actual">
-              </div>
-              <div>
-                <label for="new-password" class="block text-sm font-bold text-gray-700 mb-3">🆕 Nueva Contraseña *</label>
-                <input type="password" id="new-password" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
-                       placeholder="Mínimo 6 caracteres">
-                <div class="mt-2 text-xs text-gray-500">
-                  <p>✓ Mínimo 6 caracteres</p>
-                  <p>✓ Se recomienda usar números y símbolos</p>
-                </div>
-              </div>
-              <div>
-                <label for="confirm-password" class="block text-sm font-bold text-gray-700 mb-3">✅ Confirmar Contraseña *</label>
-                <input type="password" id="confirm-password" required 
-                       class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-medical-200 focus:border-medical-500 transition-all duration-300"
-                       placeholder="Repite la nueva contraseña">
-              </div>
-              <button type="submit" 
-                      class="w-full px-8 py-4 bg-gradient-to-r from-medical-600 to-medical-700 text-white rounded-xl hover:from-medical-700 hover:to-medical-800 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-                🔄 Actualizar Contraseña
-              </button>
-            </form>
-          </div>
-
-          <!-- User Management Section -->
-          <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border border-white/20 animate-fade-in">
-            <div class="flex items-center space-x-3 mb-8">
-              <div class="h-12 w-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center">
-                <span class="text-white text-xl">👥</span>
-              </div>
-              <h2 class="text-2xl font-black text-gray-800">Gestión de Usuarios</h2>
-            </div>
-            
-            <div id="users-list" class="space-y-4">
-              <!-- Users will be loaded here -->
-            </div>
-
-            <!-- Statistics -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <h3 class="text-lg font-bold text-gray-800 mb-4">📊 Estadísticas del Sistema</h3>
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-blue-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-sochimt-600" id="total-news-stat">0</div>
-                  <div class="text-sm text-gray-600">Total de noticias</div>
-                </div>
-                <div class="bg-green-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-green-600" id="recent-news-stat">0</div>
-                  <div class="text-sm text-gray-600">Este mes</div>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-purple-600" id="categories-count-stat">0</div>
-                  <div class="text-sm text-gray-600">Categorías activas</div>
-                </div>
-                <div class="bg-orange-50 p-4 rounded-xl">
-                  <div class="text-2xl font-bold text-orange-600" id="users-count-stat">0</div>
-                  <div class="text-sm text-gray-600">Usuarios activos</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border">
+        <h2 class="text-2xl font-black text-gray-800 mb-6">Noticias Publicadas</h2>
+        <div id="news-list" class="space-y-4"></div>
       </div>
-    </div>
+    </main>
   </div>
+  
+  <div id="notification" class="notification fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white transform translate-x-[120%] opacity-0"></div>
 
-  <!-- Success/Error Notifications -->
-  <div id="notification" class="fixed top-4 right-4 p-6 rounded-2xl shadow-2xl hidden z-50 transform transition-all duration-300"></div>
+  <!-- Librerías de Firebase v8 (Compatibilidad) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script> <!-- SCRIPT PARA STORAGE -->
 
   <script>
-    // Configuración
-    const CONFIG = {
-      users: {
-        'admin': 'marcelo',
-        'editora': 'silvia',
-        'gestor': 'marcelo'
-      },
-      storageKey: 'sochimt_news_data',
-      sessionKey: 'sochimt_session',
-      usersKey: 'sochimt_users_data'
+    // --- 1. CONFIGURACIÓN DE FIREBASE ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyB3r2gOAOMrNI5eo4ySgUQGxjhH_-ZPsn0",
+      authDomain: "sochimt-web.firebaseapp.com",
+      projectId: "sochimt-web",
+      storageBucket: "sochimt-web.appspot.com",
+      messagingSenderId: "661066579984",
+      appId: "1:661066579984:web:9d447cd49939151aac4a95",
+      measurementId: "G-6TMLQQR9L0"
     };
 
-    // Cargar usuarios desde localStorage o usar por defecto
-    function loadUsers() {
-      const savedUsers = localStorage.getItem(CONFIG.usersKey);
-      if (savedUsers) {
-        CONFIG.users = JSON.parse(savedUsers);
-      } else {
-        saveUsers();
-      }
-    }
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage(); // INICIALIZAR STORAGE
+    const noticiasCollection = db.collection("noticias");
 
-    // Guardar usuarios en localStorage
-    function saveUsers() {
-      localStorage.setItem(CONFIG.usersKey, JSON.stringify(CONFIG.users));
-    }
-
-    // Estado global
-    let currentUser = null;
-    let editingId = null;
-    let newsData = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
-
-    // Variables globales para archivos
-    let selectedFile = null;
-    let selectedFileData = null;
-
-    // Manejar carga de archivos
-    function handleFileUpload(input) {
-      const file = input.files[0];
-      if (!file) return;
-
-      // Validar tamaño (10MB máximo)
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        showNotification('❌ El archivo es demasiado grande. Máximo 10MB permitido.', 'error');
-        input.value = '';
-        return;
-      }
-
-      // Validar tipo de archivo
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm'];
-      if (!validTypes.includes(file.type)) {
-        showNotification('❌ Tipo de archivo no válido. Solo se permiten imágenes y videos.', 'error');
-        input.value = '';
-        return;
-      }
-
-      selectedFile = file;
-      
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        selectedFileData = e.target.result;
-        showFilePreview(file, e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // Mostrar preview del archivo
-    function showFilePreview(file, dataUrl) {
-      const uploadArea = document.getElementById('file-upload-area');
-      const preview = document.getElementById('file-preview');
-      const previewContent = document.getElementById('preview-content');
-
-      uploadArea.style.display = 'none';
-      preview.classList.remove('hidden');
-
-      if (file.type.startsWith('image/')) {
-        previewContent.innerHTML = `
-          <img src="${dataUrl}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
-          <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
-          <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-        `;
-      } else if (file.type.startsWith('video/')) {
-        previewContent.innerHTML = `
-          <video controls class="max-w-full h-48 rounded-lg mx-auto">
-            <source src="${dataUrl}" type="${file.type}">
-          </video>
-          <p class="mt-2 text-sm text-gray-600 font-medium">${file.name}</p>
-          <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-        `;
-      }
-    }
-
-    // Eliminar archivo seleccionado
-    function removeFile() {
-      selectedFile = null;
-      selectedFileData = null;
-      document.getElementById('news-image').value = '';
-      document.getElementById('file-upload-area').style.display = 'block';
-      document.getElementById('file-preview').classList.add('hidden');
-    }
-
-    // Elementos DOM
+    // --- 2. ELEMENTOS Y ESTADO ---
     const loginScreen = document.getElementById('login-screen');
     const adminPanel = document.getElementById('admin-panel');
-    const loginForm = document.getElementById('login-form');
     const newsForm = document.getElementById('news-form');
     const newsList = document.getElementById('news-list');
-    const noNews = document.getElementById('no-news');
+    const logoutBtn = document.getElementById('logout-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit');
+    const submitBtn = document.getElementById('submit-news');
+    const formTitle = document.getElementById('form-title');
+    const fileInput = document.getElementById('news-image-file');
+    const fileUploadArea = document.getElementById('file-upload-area');
+    const filePreview = document.getElementById('file-preview');
+    const previewContent = document.getElementById('preview-content');
+    const removeFileBtn = document.getElementById('remove-file-btn');
+    
+    let selectedFile = null; // Variable para guardar el archivo seleccionado
 
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', () => {
-      loadUsers();
-      checkSession();
-      setupEventListeners();
-      updateStats();
-      setDefaultDate();
+    // --- 3. AUTENTICACIÓN SIMPLE ---
+    const USERS = { 'admin': 'marcelo', 'editora': 'silvia' };
+    loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = document.getElementById('username').value, p = document.getElementById('password').value; if (USERS[u] && USERS[u] === p) { sessionStorage.setItem('sochimtUser', u); showAdminPanel(); } else { document.getElementById('login-error').classList.remove('hidden'); } });
+    logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('sochimtUser'); showLoginScreen(); });
+    function checkSession() { if (sessionStorage.getItem('sochimtUser')) showAdminPanel(); else showLoginScreen(); }
+    function showAdminPanel() { loginScreen.classList.add('hidden'); adminPanel.classList.remove('hidden'); loadNews(); }
+    function showLoginScreen() { adminPanel.classList.add('hidden'); loginScreen.classList.remove('hidden'); }
+
+    // --- 4. LÓGICA DE NOTICIAS CON FIRESTORE Y STORAGE ---
+
+    function formatDate(dateStr) { if (!dateStr) return ''; const d = new Date(dateStr); d.setMinutes(d.getMinutes() + d.getTimezoneOffset()); return d.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }); }
+    
+    function loadNews() {
+        newsList.innerHTML = '<p>Cargando noticias...</p>';
+        noticiasCollection.orderBy("fechaRaw", "desc").onSnapshot(snapshot => {
+            if (snapshot.empty) { newsList.innerHTML = '<p class="text-center text-gray-500 py-8">No hay noticias. ¡Agrega la primera!</p>'; return; }
+            newsList.innerHTML = snapshot.docs.map(doc => {
+                const news = doc.data();
+                return `
+                    <div class="bg-white/60 p-4 rounded-xl border flex justify-between items-center transition-all hover:shadow-md">
+                        <div class="flex items-center space-x-4"><img src="${news.imagen}" alt="${news.titulo}" class="w-20 h-16 object-cover rounded-lg bg-gray-200" onerror="this.src='https://placehold.co/80x64/cccccc/ffffff?text=IMG'"><div><h3 class="font-bold text-lg text-gray-800">${news.titulo}</h3><p class="text-sm text-gray-600">${news.categoria} - ${news.fecha}</p></div></div>
+                        <div class="flex space-x-2"><button onclick="editNews('${doc.id}')" class="p-3 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500" title="Editar">✏️</button><button onclick="deleteNews('${doc.id}')" class="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600" title="Eliminar">🗑️</button></div>
+                    </div>`;
+            }).join('');
+        }, error => { console.error("Error al cargar:", error); newsList.innerHTML = '<p class="text-red-500">Error al cargar noticias.</p>'; });
+    }
+
+    newsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="btn-spinner"></span>';
+        const id = document.getElementById('news-id').value;
+        let imageUrl = document.querySelector('#preview-content img, #preview-content video')?.src || '';
+
+        try {
+            if (selectedFile) {
+                const filePath = `noticias/${Date.now()}_${selectedFile.name}`;
+                const fileRef = storage.ref(filePath);
+                const uploadTask = await fileRef.put(selectedFile);
+                imageUrl = await uploadTask.ref.getDownloadURL();
+            } else if (!id) {
+                // If creating new and no file, use a placeholder.
+                imageUrl = `https://placehold.co/400x200/3b82f6/white?text=${document.getElementById('news-category').value}`;
+            }
+
+            const newsData = {
+                titulo: document.getElementById('news-title').value,
+                categoria: document.getElementById('news-category').value,
+                fecha: formatDate(document.getElementById('news-date').value),
+                fechaRaw: document.getElementById('news-date').value,
+                resumen: document.getElementById('news-summary').value,
+                url: document.getElementById('news-url').value || '#',
+                imagen: imageUrl,
+                autor: sessionStorage.getItem('sochimtUser')
+            };
+            
+            const operation = id ? noticiasCollection.doc(id).update(newsData) : noticiasCollection.add(newsData);
+            await operation;
+            showNotification(id ? '✅ Noticia actualizada' : '🎉 Noticia publicada', 'success');
+            cancelEdit();
+        } catch (err) {
+            showNotification('❌ Error al guardar', 'error');
+            console.error("Error: ", err);
+        } finally {
+            submitBtn.disabled = false;
+        }
     });
 
-    // Establecer fecha por defecto
-    function setDefaultDate() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('news-date').value = today;
+    window.editNews = (id) => {
+        noticiasCollection.doc(id).get().then(doc => {
+            if (!doc.exists) return;
+            const news = doc.data();
+            document.getElementById('news-id').value = id;
+            document.getElementById('news-title').value = news.titulo;
+            document.getElementById('news-category').value = news.categoria;
+            document.getElementById('news-date').value = news.fechaRaw;
+            document.getElementById('news-summary').value = news.resumen;
+            document.getElementById('news-url').value = news.url === '#' ? '' : news.url;
+            
+            removeFile(); // Clear any existing selection
+            if(news.imagen) {
+              showFilePreview({name: 'Archivo guardado', type: 'image/'}, news.imagen); // Show existing image
+            }
+
+            formTitle.textContent = 'Editando Noticia';
+            submitBtn.textContent = 'Actualizar Noticia';
+            cancelEditBtn.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
-
-    // Verificar sesión existente
-    function checkSession() {
-      const session = sessionStorage.getItem(CONFIG.sessionKey);
-      if (session) {
-        currentUser = session;
-        showAdminPanel();
-      }
-    }
-
-    // Configurar event listeners
-    function setupEventListeners() {
-      loginForm.addEventListener('submit', handleLogin);
-      document.getElementById('logout-btn').addEventListener('click', logout);
-      newsForm.addEventListener('submit', handleNewsSubmit);
-      document.getElementById('cancel-edit').addEventListener('click', cancelEdit);
-      document.getElementById('search-news').addEventListener('input', filterNews);
-      document.getElementById('export-data').addEventListener('click', exportData);
-      document.getElementById('change-password-form').addEventListener('submit', handlePasswordChange);
-
-      // Tab navigation
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-      });
-    }
-
-    // Cambiar tabs
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active', 'border-sochimt-600', 'text-sochimt-600');
-        btn.classList.add('border-transparent', 'text-gray-500');
-      });
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-
-      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active', 'border-sochimt-600', 'text-sochimt-600');
-      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent', 'text-gray-500');
-      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-
-      if (tabName === 'configuracion') {
-        loadUsersList();
-      }
-    }
-
-    // Manejo de login
-    function handleLogin(e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      if (CONFIG.users[username] && CONFIG.users[username] === password) {
-        currentUser = username;
-        sessionStorage.setItem(CONFIG.sessionKey, username);
-        showAdminPanel();
-        showNotification('¡Bienvenido al panel de administración! 🎉', 'success');
-      } else {
-        document.getElementById('login-error').classList.remove('hidden');
-        setTimeout(() => {
-          document.getElementById('login-error').classList.add('hidden');
-        }, 5000);
-      }
-    }
-
-    // Mostrar panel de administración
-    function showAdminPanel() {
-      loginScreen.classList.add('hidden');
-      adminPanel.classList.remove('hidden');
-      document.getElementById('current-user').textContent = currentUser;
-      loadNews();
-      updateStats();
-    }
-
-    // Logout
-    function logout() {
-      sessionStorage.removeItem(CONFIG.sessionKey);
-      currentUser = null;
-      adminPanel.classList.add('hidden');
-      loginScreen.classList.remove('hidden');
-      loginForm.reset();
-      showNotification('Sesión cerrada correctamente 👋', 'info');
-    }
-
-    // Cambio de contraseña
-    function handlePasswordChange(e) {
-      e.preventDefault();
-      const currentPassword = document.getElementById('current-password').value;
-      const newPassword = document.getElementById('new-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-
-      // Validaciones
-      if (CONFIG.users[currentUser] !== currentPassword) {
-        showNotification('❌ La contraseña actual es incorrecta', 'error');
-        return;
-      }
-
-      if (newPassword.length < 6) {
-        showNotification('❌ La nueva contraseña debe tener al menos 6 caracteres', 'error');
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        showNotification('❌ Las contraseñas no coinciden', 'error');
-        return;
-      }
-
-      if (newPassword === currentPassword) {
-        showNotification('❌ La nueva contraseña debe ser diferente a la actual', 'error');
-        return;
-      }
-
-      // Actualizar contraseña
-      CONFIG.users[currentUser] = newPassword;
-      saveUsers();
-      
-      // Limpiar formulario
-      document.getElementById('change-password-form').reset();
-      
-      showNotification('✅ Contraseña actualizada exitosamente', 'success');
-    }
-
-    // Cargar lista de usuarios
-    function loadUsersList() {
-      const usersContainer = document.getElementById('users-list');
-      usersContainer.innerHTML = Object.keys(CONFIG.users).map(username => `
-        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-full flex items-center justify-center">
-              <span class="text-white font-bold text-sm">${username.charAt(0).toUpperCase()}</span>
-            </div>
-            <div>
-              <p class="font-bold text-gray-800">${username}</p>
-              <p class="text-sm text-gray-600">${username === currentUser ? 'Sesión actual' : 'Usuario activo'}</p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-              ${username === currentUser ? '🟢 Actual' : '✅ Activo'}
-            </span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // Manejo de formulario de noticias
-    function handleNewsSubmit(e) {
-      e.preventDefault();
-      
-      const formData = {
-        id: editingId || Date.now().toString(),
-        titulo: document.getElementById('news-title').value,
-        categoria: document.getElementById('news-category').value,
-        fecha: formatDate(document.getElementById('news-date').value),
-        fechaRaw: document.getElementById('news-date').value,
-        resumen: document.getElementById('news-summary').value,
-        url: document.getElementById('news-url').value || '#',
-        imagen: selectedFileData || getImageForCategory(document.getElementById('news-category').value),
-        imagenNombre: selectedFile ? selectedFile.name : null,
-        imagenTipo: selectedFile ? selectedFile.type : null,
-        autor: currentUser,
-        fechaCreacion: editingId ? newsData.find(n => n.id === editingId).fechaCreacion : new Date().toISOString(),
-        estado: 'publicada'
-      };
-
-      if (editingId) {
-        const index = newsData.findIndex(n => n.id === editingId);
-        // Mantener imagen anterior si no se subió una nueva
-        if (!selectedFileData) {
-          const oldNews = newsData[index];
-          formData.imagen = oldNews.imagen;
-          formData.imagenNombre = oldNews.imagenNombre;
-          formData.imagenTipo = oldNews.imagenTipo;
-        }
-        newsData[index] = formData;
-        showNotification('✅ Noticia actualizada correctamente', 'success');
-      } else {
-        newsData.unshift(formData);
-        showNotification('🎉 ¡Noticia publicada exitosamente!', 'success');
-      }
-
-      saveData();
-      loadNews();
-      newsForm.reset();
-      setDefaultDate();
-      cancelEdit();
-      updateStats();
-      generateWebData();
-    }
-
-    // Obtener imagen según categoría
-    function getImageForCategory(category) {
-      const images = {
-        'Evento': 'https://via.placeholder.com/400x200/3b82f6/white?text=Evento',
-        'Publicación': 'https://via.placeholder.com/400x200/dc2626/white?text=Publicación',
-        'Webinar': 'https://via.placeholder.com/400x200/059669/white?text=Webinar',
-        'Congreso': 'https://via.placeholder.com/400x200/7c3aed/white?text=Congreso',
-        'Noticia': 'https://via.placeholder.com/400x200/f59e0b/white?text=Noticia'
-      };
-      return images[category] || images['Noticia'];
-    }
-
-    // Formatear fecha
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric'
-      };
-      return date.toLocaleDateString('es-CL', options);
-    }
-
-    // Cargar noticias
-    function loadNews() {
-      if (newsData.length === 0) {
-        newsList.innerHTML = '';
-        noNews.classList.remove('hidden');
-        return;
-      }
-
-      noNews.classList.add('hidden');
-      newsList.innerHTML = newsData.map(news => `
-        <div class="bg-white/60 backdrop-blur-sm border-2 border-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 card-hover">
-          <div class="flex justify-between items-start">
-            <div class="flex-1">
-              <div class="flex items-center space-x-3 mb-4">
-                <span class="px-4 py-2 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-full text-sm font-bold">
-                  ${news.categoria}
-                </span>
-                <span class="text-sm text-gray-600 font-medium">📅 ${news.fecha}</span>
-                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">✅ Publicada</span>
-                ${news.imagenNombre ? '<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">📎 Con archivo</span>' : ''}
-              </div>
-              ${news.imagen && news.imagenNombre && news.imagen.startsWith('data:') ? 
-                `<div class="mb-4">
-                  ${news.imagenTipo && news.imagenTipo.startsWith('image/') ? 
-                    `<img src="${news.imagen}" alt="${news.titulo}" class="w-full h-32 object-cover rounded-lg">` :
-                    news.imagenTipo && news.imagenTipo.startsWith('video/') ?
-                    `<video controls class="w-full h-32 rounded-lg">
-                      <source src="${news.imagen}" type="${news.imagenTipo}">
-                    </video>` : ''
-                  }
-                </div>` : ''
-              }
-              <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-sochimt-600 transition-colors">${news.titulo}</h3>
-              <p class="text-gray-600 leading-relaxed mb-4">${news.resumen}</p>
-              ${news.url && news.url !== '#' ? 
-                `<div class="mb-4">
-                  <a href="${news.url}" target="_blank" rel="noopener noreferrer" 
-                     class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-lg hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 text-sm font-bold shadow-lg hover:shadow-xl transform hover:scale-105">
-                    📖 Leer más
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
-                  </a>
-                </div>` : ''
-              }
-              <div class="flex items-center text-xs text-gray-500 space-x-6">
-                <span class="flex items-center space-x-1">
-                  <span>👤</span>
-                  <span>Por: ${news.autor}</span>
-                </span>
-                <span class="flex items-center space-x-1">
-                  <span>🕒</span>
-                  <span>Creado: ${new Date(news.fechaCreacion).toLocaleDateString('es-CL')}</span>
-                </span>
-              </div>
-            </div>
-            <div class="flex items-center space-x-3 ml-6">
-              <button onclick="editNews('${news.id}')" 
-                      class="p-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 transform hover:scale-110" 
-                      title="Editar noticia">
-                ✏️
-              </button>
-              <button onclick="deleteNews('${news.id}')" 
-                      class="p-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 transform hover:scale-110" 
-                      title="Eliminar noticia">
-                🗑️
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // Editar noticia
-    function editNews(id) {
-      const news = newsData.find(n => n.id === id);
-      if (!news) return;
-
-      // Cambiar a la pestaña de noticias
-      switchTab('noticias');
-
-      document.getElementById('news-title').value = news.titulo;
-      document.getElementById('news-category').value = news.categoria;
-      document.getElementById('news-date').value = news.fechaRaw;
-      document.getElementById('news-summary').value = news.resumen;
-      document.getElementById('news-url').value = news.url === '#' ? '' : news.url;
-
-      // Manejar imagen existente
-      if (news.imagen && news.imagenNombre && news.imagen.startsWith('data:')) {
-        selectedFileData = news.imagen;
-        const uploadArea = document.getElementById('file-upload-area');
-        const preview = document.getElementById('file-preview');
-        const previewContent = document.getElementById('preview-content');
-
-        uploadArea.style.display = 'none';
-        preview.classList.remove('hidden');
-
-        if (news.imagenTipo && news.imagenTipo.startsWith('image/')) {
-          previewContent.innerHTML = `
-            <img src="${news.imagen}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
-            <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
-            <p class="text-xs text-gray-500">Archivo existente</p>
-          `;
-        } else if (news.imagenTipo && news.imagenTipo.startsWith('video/')) {
-          previewContent.innerHTML = `
-            <video controls class="max-w-full h-48 rounded-lg mx-auto">
-              <source src="${news.imagen}" type="${news.imagenTipo}">
-            </video>
-            <p class="mt-2 text-sm text-gray-600 font-medium">${news.imagenNombre}</p>
-            <p class="text-xs text-gray-500">Archivo existente</p>
-          `;
-        }
-      }
-
-      editingId = id;
-      document.getElementById('submit-news').innerHTML = '🔄 Actualizar Noticia';
-      document.getElementById('cancel-edit').classList.remove('hidden');
-
-      newsForm.scrollIntoView({ behavior: 'smooth' });
-      showNotification('📝 Modo edición activado', 'info');
-    }
-
-    // Cancelar edición
+    
     function cancelEdit() {
-      editingId = null;
-      document.getElementById('submit-news').innerHTML = '✨ Publicar Noticia';
-      document.getElementById('cancel-edit').classList.add('hidden');
-      removeFile(); // Limpiar archivo seleccionado
+        newsForm.reset();
+        removeFile();
+        document.getElementById('news-id').value = '';
+        formTitle.textContent = 'Agregar Nueva Noticia';
+        submitBtn.textContent = 'Publicar Noticia';
+        cancelEditBtn.classList.add('hidden');
+    }
+    cancelEditBtn.addEventListener('click', cancelEdit);
+
+    window.deleteNews = async (id) => {
+        if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
+            try {
+                const doc = await noticiasCollection.doc(id).get();
+                const news = doc.data();
+                if (news.imagen && news.imagen.includes('firebasestorage')) {
+                    const imageRef = storage.refFromURL(news.imagen);
+                    await imageRef.delete();
+                }
+                await noticiasCollection.doc(id).delete();
+                showNotification('🗑️ Noticia eliminada', 'success');
+            } catch (err) {
+                showNotification('❌ Error al eliminar', 'error');
+                console.error("Error al eliminar:", err);
+            }
+        }
+    }
+    
+    // --- 5. LÓGICA DE CARGA DE ARCHIVOS ---
+    fileUploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => handleFileUpload(fileInput));
+    removeFileBtn.addEventListener('click', removeFile);
+
+    function handleFileUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+        if (file.size > 10 * 1024 * 1024) {
+            showNotification('❌ Archivo demasiado grande (Máx 10MB)', 'error');
+            return;
+        }
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = e => showFilePreview(file, e.target.result);
+        reader.readAsDataURL(file);
     }
 
-    // Eliminar noticia
-    function deleteNews(id) {
-      if (confirm('🗑️ ¿Estás seguro de que quieres eliminar esta noticia?')) {
-        newsData = newsData.filter(n => n.id !== id);
-        saveData();
-        loadNews();
-        updateStats();
-        generateWebData();
-        showNotification('🗑️ Noticia eliminada correctamente', 'success');
-      }
+    function showFilePreview(file, dataUrl) {
+        fileUploadArea.classList.add('hidden');
+        filePreview.classList.remove('hidden');
+        let previewEl;
+        if (file.type.startsWith('image/')) {
+            previewEl = `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">`;
+        } else if (file.type.startsWith('video/')) {
+            previewEl = `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`;
+        }
+        previewContent.innerHTML = `${previewEl}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`;
     }
 
-    // Filtrar noticias
-    function filterNews() {
-      const query = document.getElementById('search-news').value.toLowerCase();
-      const filteredNews = newsData.filter(news => 
-        news.titulo.toLowerCase().includes(query) || 
-        news.resumen.toLowerCase().includes(query) ||
-        news.categoria.toLowerCase().includes(query)
-      );
-      
-      if (filteredNews.length === 0 && query) {
-        newsList.innerHTML = `
-          <div class="text-center py-16">
-            <div class="text-gray-400 text-6xl mb-4">🔍</div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">No se encontraron noticias</h3>
-            <p class="text-gray-500">No hay noticias que coincidan con tu búsqueda.</p>
-          </div>
-        `;
-      } else {
-        const originalData = [...newsData];
-        newsData = filteredNews;
-        loadNews();
-        newsData = originalData;
-      }
+    function removeFile() {
+        fileInput.value = '';
+        selectedFile = null;
+        fileUploadArea.classList.remove('hidden');
+        filePreview.classList.add('hidden');
+        previewContent.innerHTML = '';
     }
-
-    // Exportar datos
-    function exportData() {
-      const dataStr = JSON.stringify(newsData, null, 2);
-      const dataBlob = new Blob([dataStr], {type: 'application/json'});
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `sochimt_noticias_${new Date().toISOString().split('T')[0]}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
-      showNotification('📤 Datos exportados correctamente', 'success');
-    }
-
-    // Actualizar estadísticas
-    function updateStats() {
-      const now = new Date();
-      const thisMonth = newsData.filter(news => {
-        const newsDate = new Date(news.fechaCreacion);
-        return newsDate.getMonth() === now.getMonth() && 
-               newsDate.getFullYear() === now.getFullYear();
-      }).length;
-
-      const categories = [...new Set(newsData.map(news => news.categoria))].length;
-      const published = newsData.filter(news => news.estado === 'publicada').length;
-      const usersCount = Object.keys(CONFIG.users).length;
-
-      // Dashboard stats
-      document.getElementById('total-news').textContent = newsData.length;
-      document.getElementById('recent-news').textContent = thisMonth;
-      document.getElementById('categories-count').textContent = categories;
-      document.getElementById('published-news').textContent = published;
-
-      // Configuration stats
-      document.getElementById('total-news-stat').textContent = newsData.length;
-      document.getElementById('recent-news-stat').textContent = thisMonth;
-      document.getElementById('categories-count-stat').textContent = categories;
-      document.getElementById('users-count-stat').textContent = usersCount;
-    }
-
-    // Guardar datos
-    function saveData() {
-      localStorage.setItem(CONFIG.storageKey, JSON.stringify(newsData));
-    }
-
-    // Generar datos para la web pública (últimas 3 noticias)
-    function generateWebData() {
-      const publicData = newsData
-        .filter(news => news.estado === 'publicada')
-        .slice(0, 3)
-        .map(news => ({
-          titulo: news.titulo,
-          fecha: news.fecha,
-          resumen: news.resumen,
-          url: news.url,
-          categoria: news.categoria,
-          imagen: news.imagen || getImageForCategory(news.categoria),
-          imagenTipo: news.imagenTipo || null
-        }));
-
-      // Guardar las últimas 3 noticias para mostrar en la web
-      localStorage.setItem('sochimt_public_news', JSON.stringify(publicData));
-      
-      console.log('🌐 Últimas 3 noticias para la web pública:');
-      console.log(JSON.stringify(publicData, null, 2));
-    }
-
-    // Mostrar notificaciones
+    
+    // --- 6. NOTIFICACIONES Y INICIO ---
     function showNotification(message, type = 'info') {
-      const notification = document.getElementById('notification');
-      const colors = {
-        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
-        error: 'bg-gradient-to-r from-red-500 to-red-600 text-white',
-        info: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
-      };
-
-      notification.className = `fixed top-4 right-4 p-6 rounded-2xl shadow-2xl z-50 transform transition-all duration-300 ${colors[type]}`;
-      notification.innerHTML = `
-        <div class="flex items-center space-x-3">
-          <div class="text-2xl">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
-          <div class="font-bold">${message}</div>
-        </div>
-      `;
-      notification.classList.remove('hidden');
-      notification.style.transform = 'translateX(0)';
-
-      setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
+        const notification = document.getElementById('notification');
+        const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+        notification.className = `notification fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white transform opacity-100 translate-x-0 ${colors[type]}`;
+        notification.textContent = message;
         setTimeout(() => {
-          notification.classList.add('hidden');
-        }, 300);
-      }, 4000);
+            notification.style.transform = 'translateX(120%)';
+            notification.style.opacity = '0';
+        }, 3000);
     }
 
-    // Generar datos iniciales al cargar
-    generateWebData();
+    document.addEventListener('DOMContentLoaded', checkSession);
+
   </script>
 </body>
 </html>
