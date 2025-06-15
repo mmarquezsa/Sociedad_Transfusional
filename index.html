@@ -476,28 +476,7 @@
 
 
 
-<!-- Script dinámico de carga de noticias -->
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const noticias = JSON.parse(localStorage.getItem("sochimt_news_data")) || [];
-    const contenedor = document.getElementById("noticias-container");
 
-    if (contenedor && noticias.length > 0) {
-      noticias.forEach(noticia => {
-        const card = document.createElement("div");
-        card.className = "bg-white shadow-md rounded-xl p-6 flex flex-col justify-between";
-        card.innerHTML = `
-          <h3 class="font-bold text-lg text-sochimt-700 mb-2">${noticia.titulo}</h3>
-          <p class="text-sm text-gray-600 mb-4">${noticia.resumen}</p>
-          ${noticia.url ? `<a href="${noticia.url}" class="text-sm text-sochimt-600 font-semibold hover:underline">Leer más →</a>` : ''}
-        `;
-        contenedor.appendChild(card);
-      });
-    } else {
-      contenedor.innerHTML = "<p class='text-center text-gray-500 col-span-full'>No hay noticias disponibles.</p>";
-    }
-  });
-</script>
 
 
 
@@ -805,36 +784,30 @@
   }
 
 // Fetch noticias dinámicas desde el panel de administración
-async function fetchNoticias() {
-  try {
-    // Intentar obtener noticias del panel de administración
-    const publicNews = localStorage.getItem('sochimt_public_news');
-    
-    if (publicNews) {
-      const noticias = JSON.parse(publicNews);
-      if (noticias.length > 0) {
-        return noticias;
+<script>
+  async function fetchNoticias() {
+    try {
+      const publicNews = localStorage.getItem('sochimt_public_news');
+      if (publicNews) {
+        const noticias = JSON.parse(publicNews);
+        if (noticias.length > 0) return noticias;
       }
+      return [
+        {
+          titulo: 'Error al cargar noticias',
+          fecha: 'Ahora',
+          resumen: 'No se encontraron noticias en el sistema.',
+          categoria: 'Error',
+          imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Sin+noticias',
+          url: '#'
+        }
+      ];
+    } catch (error) {
+      console.error('Error al recuperar noticias:', error);
+      return [];
     }
-    
-    
-  } catch (error) {
-    console.error('Error cargando noticias:', error);
-    // Retornar noticias por defecto en caso de error
-    return [
-      {
-        titulo: 'Error al cargar noticias',
-        fecha: 'Ahora',
-        resumen: 'Hubo un problema al cargar las noticias. Por favor, contacta al administrador.',
-        categoria: 'Error',
-        imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Error',
-        url: '#'
-      }
-    ];
   }
-}
 
-  // Crear HTML para noticia
   function createNoticiaHTML(noticia) {
     const categoryColors = {
       'Evento': 'bg-blue-100 text-blue-800',
@@ -876,6 +849,19 @@ async function fetchNoticias() {
       </article>
     `;
   }
+
+  async function loadNoticias() {
+    const container = document.getElementById('noticias-container');
+    if (!container) return;
+    container.innerHTML = '';
+    const noticias = await fetchNoticias();
+    noticias.forEach(noticia => {
+      container.innerHTML += createNoticiaHTML(noticia);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', loadNoticias);
+</script>
 
   console.log('🚀 SOCHIMT renovado cargado exitosamente!');
 </script>
