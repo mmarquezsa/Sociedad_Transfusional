@@ -157,6 +157,55 @@
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #1e40af; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+
+    /* Mejoras responsive para móviles */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem !important;
+        line-height: 1.1;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.125rem !important;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+      }
+      
+      .news-grid {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .card-hover:hover {
+        transform: translateY(-4px) scale(1.01);
+      }
+    }
+
+    /* Fix para imágenes en móviles */
+    .news-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* Loading spinner mejorado */
+    .loading-spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #2563eb;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 
@@ -172,7 +221,11 @@
 <div class="flex items-center space-x-4">
   <div class="relative">
     <div class="w-12 h-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg p-1">
-      <img src="_ Main Logo 1.3.png" alt="SOCHIMT" class="w-full h-full object-cover rounded-lg">
+      <img src="_ Main Logo 1.3.png" alt="SOCHIMT" class="w-full h-full object-cover rounded-lg" 
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="hidden w-full h-full bg-white rounded-lg items-center justify-center">
+        <span class="text-sochimt-600 font-bold text-sm">SM</span>
+      </div>
     </div>
     <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
   </div>
@@ -251,7 +304,7 @@
       </div>
 
       <!-- Título principal -->
-    <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 animate-fade-in-up">
+    <h1 class="hero-title text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 animate-fade-in-up">
     Sociedad Chilena 
     <span class="block text-white">
       de 
@@ -260,12 +313,12 @@
     </h1>  
 
       <!-- Subtítulo -->
-      <p class="text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 0.2s;">
+      <p class="hero-subtitle text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 0.2s;">
         Construyendo el futuro de la medicina transfusional con ciencia y educación de vanguardia.
       </p>
 
 <!-- Estadísticas impactantes -->
-<div id="stats-section" class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+<div id="stats-section" class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
   <div class="text-center">
     <div class="text-3xl md:text-4xl font-black text-white mb-2">
       <span class="counter" data-target="100">0</span>+
@@ -338,7 +391,7 @@
     </div>
 
     <!-- Stats Grid -->
-<div id="stats-section-about" class="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20 reveal">
+<div id="stats-section-about" class="stats-grid grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20 reveal">
   <div class="text-center">
     <div class="text-4xl lg:text-5xl font-black text-sochimt-600 mb-2">
       <span class="counter" data-target="16">0</span>
@@ -459,14 +512,23 @@
       </div>
 
       <!-- News Grid -->
-      <div id="noticias-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div id="noticias-container" class="news-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Las noticias se cargarán dinámicamente -->
       </div>
 
       <!-- Loading State -->
       <div id="noticias-loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sochimt-600"></div>
+        <div class="loading-spinner"></div>
         <p class="mt-4 text-gray-600">Cargando noticias...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="noticias-error" class="text-center py-12 hidden">
+        <div class="text-red-500 text-6xl mb-4">⚠️</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
+        <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
+          Reintentar
+        </button>
       </div>
 
       <!-- Ver más -->
@@ -604,32 +666,52 @@
 
 <!-- Scripts -->
 <script>
-  // Configuración global
+  // Configuración global con mejor compatibilidad
   const CONFIG = {
-    apiEndpoint: 'https://api.netlify.com/api/v1/forms/noticias/submissions?access_token=YOUR_TOKEN',
     animations: {
       duration: 800,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+    },
+    localStorage: {
+      key: 'sochimt_public_news',
+      version: '1.0'
     }
   };
 
-  // Inicialización
+  // Detección de dispositivo móvil
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // Variables globales
+  let noticiasLoaded = false;
+  let countersAnimated = false;
+
+  // Inicialización mejorada
   document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Iniciando SOCHIMT v2.0...');
+    
+    // Inicializar componentes principales
     initNavbar();
     initMobileMenu();
     initScrollAnimations();
-    loadNoticias();
     initSmoothScrolling();
     initCounterAnimations();
+    
+    // Cargar noticias con retry
+    loadNoticiasWithRetry();
+    
+    console.log('✅ SOCHIMT cargado exitosamente');
   });
 
-  // Navbar scroll effect
+  // Navbar con mejor rendimiento
   function initNavbar() {
     const navbar = document.getElementById('navbar');
     let lastScrollY = window.scrollY;
+    let ticking = false;
 
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 100) {
+    function updateNavbar() {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > 100) {
         navbar.style.backdropFilter = 'blur(20px)';
         navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
       } else {
@@ -637,55 +719,84 @@
         navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
       }
 
-      // Auto-hide on scroll down
-      if (window.scrollY > lastScrollY && window.scrollY > 200) {
+      // Auto-hide en móviles para mejor experiencia
+      if (isMobile && currentScrollY > lastScrollY && currentScrollY > 200) {
         navbar.style.transform = 'translateY(-100%)';
       } else {
         navbar.style.transform = 'translateY(0)';
       }
       
-      lastScrollY = window.scrollY;
+      lastScrollY = currentScrollY;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateNavbar);
+        ticking = true;
+      }
     });
   }
 
-  // Mobile menu
+  // Mobile menu mejorado
   function initMobileMenu() {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
 
-    mobileMenuBtn.addEventListener('click', () => {
+    if (!mobileMenuBtn || !mobileMenu) return;
+
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       mobileMenu.classList.toggle('hidden');
     });
 
-    // Close on link click
+    // Cerrar al hacer clic en un enlace
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.add('hidden');
       });
     });
+
+    // Cerrar al hacer clic fuera del menú
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+      }
+    });
   }
 
-  // Smooth scrolling
+  // Smooth scrolling mejorado
   function initSmoothScrolling() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const targetId = this.getAttribute('href');
+        const target = document.querySelector(targetId);
+        
         if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+          const offsetTop = target.offsetTop - 80; // Account for fixed navbar
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
           });
         }
       });
     });
   }
 
-  // Scroll animations
+  // Animaciones de scroll con mejor rendimiento
   function initScrollAnimations() {
+    if (!window.IntersectionObserver) {
+      // Fallback para navegadores antiguos
+      document.querySelectorAll('.reveal').forEach(el => {
+        el.classList.add('active');
+      });
+      return;
+    }
+
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -100px 0px',
+      rootMargin: '0px 0px -50px 0px',
       threshold: 0.1
     };
 
@@ -693,6 +804,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
@@ -702,8 +814,10 @@
     });
   }
 
-  // Animación de contadores (CORREGIDA)
+  // Animación de contadores mejorada
   function initCounterAnimations() {
+    if (countersAnimated) return;
+
     const observerOptions = {
       root: null,
       rootMargin: '0px',
@@ -712,33 +826,29 @@
 
     const counterObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !countersAnimated) {
           const counters = entry.target.querySelectorAll('.counter');
           counters.forEach(counter => {
             animateCounter(counter);
           });
-          counterObserver.unobserve(entry.target);
+          countersAnimated = true;
+          counterObserver.disconnect();
         }
       });
     }, observerOptions);
 
-    // Observar ambas secciones de estadísticas
+    // Observar ambas secciones
     const statsSection = document.getElementById('stats-section');
     const statsSectionAbout = document.getElementById('stats-section-about');
 
-    if (statsSection) {
-      counterObserver.observe(statsSection);
-    }
-
-    if (statsSectionAbout) {
-      counterObserver.observe(statsSectionAbout);
-    }
+    if (statsSection) counterObserver.observe(statsSection);
+    if (statsSectionAbout) counterObserver.observe(statsSectionAbout);
   }
 
   function animateCounter(element) {
     const target = parseInt(element.getAttribute('data-target'));
-    const duration = 2000; // 2 segundos
-    const step = target / (duration / 16); // 60fps
+    const duration = isMobile ? 1500 : 2000; // Más rápido en móviles
+    const step = target / (duration / 16);
     let current = 0;
 
     const timer = setInterval(() => {
@@ -752,53 +862,133 @@
     }, 16);
   }
 
-  // Cargar noticias dinámicas
-  async function loadNoticias() {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-
-    try {
-      // Simular carga de API (reemplazar con tu endpoint real)
-      const noticias = await fetchNoticias();
-      
-      loading.style.display = 'none';
-      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
-      
-      // Aplicar animaciones
-      container.querySelectorAll('.reveal').forEach((el, index) => {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, index * 100);
-      });
-
-    } catch (error) {
-      console.error('Error cargando noticias:', error);
-      loading.innerHTML = `
-        <div class="text-center py-12">
-          <div class="text-red-500 text-6xl mb-4">⚠️</div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
-          <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
-            Reintentar
-          </button>
-        </div>
-      `;
-    }
-  }
-
-// Fetch noticias dinámicas desde el panel de administración
-async function fetchNoticias() {
-  try {
-    // Intentar obtener noticias del panel de administración
-    const publicNews = localStorage.getItem('sochimt_public_news');
+  // Carga de noticias con sistema de retry
+  async function loadNoticiasWithRetry(maxRetries = 3) {
+    let retries = 0;
     
-    if (publicNews) {
-      const noticias = JSON.parse(publicNews);
-      if (noticias.length > 0) {
-        return noticias;
+    while (retries < maxRetries && !noticiasLoaded) {
+      try {
+        await loadNoticias();
+        noticiasLoaded = true;
+        break;
+      } catch (error) {
+        retries++;
+        console.warn(`Error cargando noticias (intento ${retries}/${maxRetries}):`, error);
+        
+        if (retries < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+        }
       }
     }
     
-    // Si no hay noticias guardadas, mostrar noticias por defecto
+    if (!noticiasLoaded) {
+      showNoticiasError();
+    }
+  }
+
+  // Cargar noticias mejorado
+  async function loadNoticias() {
+    const container = document.getElementById('noticias-container');
+    const loading = document.getElementById('noticias-loading');
+    const errorDiv = document.getElementById('noticias-error');
+
+    if (!container || !loading) {
+      throw new Error('Elementos de noticias no encontrados');
+    }
+
+    try {
+      // Mostrar loading
+      loading.style.display = 'block';
+      errorDiv.style.display = 'none';
+      
+      const noticias = await fetchNoticias();
+      
+      if (!Array.isArray(noticias) || noticias.length === 0) {
+        throw new Error('No hay noticias disponibles');
+      }
+      
+      // Ocultar loading
+      loading.style.display = 'none';
+      
+      // Renderizar noticias
+      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
+      
+      // Aplicar animaciones con delay para móviles
+      const reveals = container.querySelectorAll('.reveal');
+      reveals.forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add('active');
+        }, isMobile ? index * 50 : index * 100);
+      });
+
+      console.log(`✅ ${noticias.length} noticias cargadas exitosamente`);
+
+    } catch (error) {
+      console.error('Error en loadNoticias:', error);
+      throw error;
+    }
+  }
+
+  // Mostrar error de noticias
+  function showNoticiasError() {
+    const loading = document.getElementById('noticias-loading');
+    const errorDiv = document.getElementById('noticias-error');
+    
+    if (loading) loading.style.display = 'none';
+    if (errorDiv) errorDiv.style.display = 'block';
+  }
+
+  // Fetch noticias con mejor manejo de errores
+  async function fetchNoticias() {
+    try {
+      // Verificar localStorage con validación
+      const localData = getValidLocalStorageData();
+      
+      if (localData && localData.length > 0) {
+        console.log('📰 Noticias cargadas desde localStorage:', localData.length);
+        return localData;
+      }
+      
+      console.log('📰 Usando noticias por defecto');
+      return getDefaultNoticias();
+      
+    } catch (error) {
+      console.error('Error en fetchNoticias:', error);
+      return getDefaultNoticias();
+    }
+  }
+
+  // Validar datos del localStorage
+  function getValidLocalStorageData() {
+    try {
+      if (typeof(Storage) === "undefined") {
+        console.warn('LocalStorage no soportado');
+        return null;
+      }
+
+      const data = localStorage.getItem(CONFIG.localStorage.key);
+      if (!data) return null;
+
+      const parsed = JSON.parse(data);
+      
+      // Validar estructura de datos
+      if (!Array.isArray(parsed)) return null;
+      
+      return parsed.filter(noticia => 
+        noticia && 
+        typeof noticia.titulo === 'string' && 
+        typeof noticia.fecha === 'string' &&
+        typeof noticia.resumen === 'string'
+      );
+      
+    } catch (error) {
+      console.warn('Error validando localStorage:', error);
+      return null;
+    }
+  }
+
+  // Noticias por defecto
+  function getDefaultNoticias() {
     return [
       {
         titulo: 'Sociedad Chilena de Medicina Transfusional',
@@ -810,54 +1000,47 @@ async function fetchNoticias() {
       },
       {
         titulo: 'Panel de Administración Disponible',
-        fecha: 'Ahora',
+        fecha: 'Disponible ahora',
         resumen: 'Accede al panel de administración para gestionar las noticias de la sociedad de manera fácil y profesional.',
         categoria: 'Noticia',
-        imagen: 'https://via.placeholder.com/400x200/3b82f6/white?text=Panel+Admin',
-        url: 'admin.html'
+        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5QYW5lbCBBZG1pbjwvdGV4dD4KPC9zdmc+',
+        url: 'gestion_noticias.html'
       },
       {
         titulo: 'Próximas Actividades',
         fecha: 'Próximamente',
         resumen: 'Mantente atento a nuestras próximas actividades, webinars y eventos científicos.',
         categoria: 'Evento',
-        imagen: 'https://via.placeholder.com/400x200/059669/white?text=Próximamente',
-        url: '#'
-      }
-    ];
-    
-  } catch (error) {
-    console.error('Error cargando noticias:', error);
-    // Retornar noticias por defecto en caso de error
-    return [
-      {
-        titulo: 'Error al cargar noticias',
-        fecha: 'Ahora',
-        resumen: 'Hubo un problema al cargar las noticias. Por favor, contacta al administrador.',
-        categoria: 'Error',
-        imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Error',
+        imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDU5NjY5Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIj5QcsOzeGltYW1lbnRlPC90ZXh0Pgo8L3N2Zz4=',
         url: '#'
       }
     ];
   }
-}
 
-  // Crear HTML para noticia
+  // Crear HTML para noticia con mejores imágenes responsivas
   function createNoticiaHTML(noticia) {
     const categoryColors = {
       'Evento': 'bg-blue-100 text-blue-800',
       'Publicación': 'bg-green-100 text-green-800',
+      'Noticia': 'bg-purple-100 text-purple-800',
       'Webinar': 'bg-purple-100 text-purple-800',
       'Congreso': 'bg-red-100 text-red-800'
     };
 
+    // Validar imagen
+    const imageUrl = noticia.imagen || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjNkI3Mjg0IiBmb250LXNpemU9IjE4IiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiPkltYWdlbjwvdGV4dD4KPC9zdmc+';
+
     return `
       <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden">
         <div class="relative">
-          <img src="${noticia.imagen}" alt="${noticia.titulo}" class="w-full h-48 object-cover">
+          <img src="${imageUrl}" 
+               alt="${noticia.titulo}" 
+               class="news-image"
+               loading="lazy"
+               onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjNkI3Mjg0IiBmb250LXNpemU9IjE4IiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiPkltYWdlbjwvdGV4dD4KPC9zdmc+'">
           <div class="absolute top-4 left-4">
             <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-              ${noticia.categoria}
+              ${noticia.categoria || 'General'}
             </span>
           </div>
         </div>
@@ -868,13 +1051,15 @@ async function fetchNoticias() {
             </svg>
             ${noticia.fecha}
           </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
+          <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors line-clamp-2">
             ${noticia.titulo}
           </h3>
-          <p class="text-gray-600 leading-relaxed mb-4">
+          <p class="text-gray-600 leading-relaxed mb-4 line-clamp-3">
             ${noticia.resumen}
           </p>
-          <a href="${noticia.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group">
+          <a href="${noticia.url || '#'}" 
+             ${noticia.url && noticia.url !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} 
+             class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group">
             <span>Leer más</span>
             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -885,7 +1070,52 @@ async function fetchNoticias() {
     `;
   }
 
-  console.log('🚀 SOCHIMT renovado cargado exitosamente!');
+  // Función para debug en consola
+  window.debugSOCHIMT = function() {
+    console.log('🔍 Debug SOCHIMT:');
+    console.log('- Es móvil:', isMobile);
+    console.log('- Noticias cargadas:', noticiasLoaded);
+    console.log('- Contadores animados:', countersAnimated);
+    console.log('- LocalStorage disponible:', typeof(Storage) !== "undefined");
+    
+    const localData = getValidLocalStorageData();
+    console.log('- Noticias en localStorage:', localData ? localData.length : 0);
+  };
+
+  console.log('🚀 SOCHIMT v2.0 cargado exitosamente! Escribe debugSOCHIMT() para ver el estado.');
 </script>
+
+<style>
+  /* Mejoras adicionales para líneas múltiples */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Mejoras para performance en móviles */
+  @media (max-width: 768px) {
+    .gradient-mesh {
+      animation: none;
+      background: linear-gradient(-45deg, #1e40af, #3b82f6);
+    }
+    
+    .card-hover {
+      transform: none;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-2px);
+    }
+  }
+</style>
 </body>
 </html>
