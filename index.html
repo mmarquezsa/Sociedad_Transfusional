@@ -444,34 +444,32 @@
 
 
 <!-- index.html - Sección Noticias SOCHIMT -->
-<section id="noticias" class="py-20 lg:py-32 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-    <div class="text-center mb-16 reveal">
-      <span class="text-sochimt-600 font-semibold uppercase tracking-wider text-sm">Últimas Noticias</span>
-      <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-6">
-        Mantente informado sobre
-        <span class="text-gradient">nuestras actividades</span>
-      </h2>
-      <p class="text-xl text-gray-600 max-w-4xl mx-auto">
-        Noticias, eventos, investigaciones y actualizaciones de la comunidad médica transfusional
-      </p>
+ <section id="noticias" class="py-20 lg:py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 reveal">
+        <span class="text-sochimt-600 font-semibold uppercase tracking-wider text-sm">Últimas Noticias</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-6">
+          Mantente informado sobre
+          <span class="text-gradient">nuestras actividades</span>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+          Noticias, eventos, investigaciones y actualizaciones de la comunidad médica transfusional
+        </p>
+      </div>
+      <div id="noticias-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      <div class="text-center mt-12">
+        <a href="gestion_noticias.html" target="_blank"
+           class="inline-flex items-center bg-gray-100 text-gray-700 px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all duration-300 group">
+          <span>Gestionar Noticias</span>
+          <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c..."/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </a>
+      </div>
     </div>
+  </section>
 
-    <div id="noticias-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-
-    <div class="text-center mt-12">
-      <a href="gestion_noticias.html" target="_blank"
-         class="inline-flex items-center bg-gray-100 text-gray-700 px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all duration-300 group">
-        <span>Gestionar Noticias</span>
-        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c..."/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-        </svg>
-      </a>
-    </div>
-  </div>
-</section>
 
 
 
@@ -751,119 +749,84 @@
   }
 
   // Cargar noticias dinámicas
-  async function loadNoticias() {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
+ <script>
+    async function fetchNoticias() {
+      try {
+        const publicNews = localStorage.getItem('sochimt_public_news');
+        if (publicNews) {
+          const noticias = JSON.parse(publicNews);
+          if (noticias.length > 0) return noticias;
+        }
+        return [
+          {
+            titulo: 'Error al cargar noticias',
+            fecha: 'Ahora',
+            resumen: 'No se encontraron noticias en el sistema.',
+            categoria: 'Error',
+            imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Sin+noticias',
+            url: '#'
+          }
+        ];
+      } catch (error) {
+        console.error('Error al recuperar noticias:', error);
+        return [];
+      }
+    }
 
-    try {
-      // Simular carga de API (reemplazar con tu endpoint real)
-      const noticias = await fetchNoticias();
-      
-      loading.style.display = 'none';
-      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
-      
-      // Aplicar animaciones
-      container.querySelectorAll('.reveal').forEach((el, index) => {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, index * 100);
-      });
+    function createNoticiaHTML(noticia) {
+      const categoryColors = {
+        'Evento': 'bg-blue-100 text-blue-800',
+        'Publicación': 'bg-green-100 text-green-800',
+        'Webinar': 'bg-purple-100 text-purple-800',
+        'Congreso': 'bg-red-100 text-red-800'
+      };
 
-    } catch (error) {
-      console.error('Error cargando noticias:', error);
-      loading.innerHTML = `
-        <div class="text-center py-12">
-          <div class="text-red-500 text-6xl mb-4">⚠️</div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
-          <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
-            Reintentar
-          </button>
-        </div>
+      return `
+        <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden">
+          <div class="relative">
+            <img src="${noticia.imagen}" alt="${noticia.titulo}" class="w-full h-48 object-cover">
+            <div class="absolute top-4 left-4">
+              <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
+                ${noticia.categoria}
+              </span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-sm text-gray-500 mb-3">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              ${noticia.fecha}
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
+              ${noticia.titulo}
+            </h3>
+            <p class="text-gray-600 leading-relaxed mb-4">
+              ${noticia.resumen}
+            </p>
+            <a href="${noticia.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group">
+              <span>Leer más</span>
+              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+        </article>
       `;
     }
-  }
 
-// Fetch noticias dinámicas desde el panel de administración
-<script>
-  async function fetchNoticias() {
-    try {
-      const publicNews = localStorage.getItem('sochimt_public_news');
-      if (publicNews) {
-        const noticias = JSON.parse(publicNews);
-        if (noticias.length > 0) return noticias;
-      }
-      return [
-        {
-          titulo: 'Error al cargar noticias',
-          fecha: 'Ahora',
-          resumen: 'No se encontraron noticias en el sistema.',
-          categoria: 'Error',
-          imagen: 'https://via.placeholder.com/400x200/dc2626/white?text=Sin+noticias',
-          url: '#'
-        }
-      ];
-    } catch (error) {
-      console.error('Error al recuperar noticias:', error);
-      return [];
+    async function loadNoticias() {
+      const container = document.getElementById('noticias-container');
+      if (!container) return;
+      container.innerHTML = '';
+      const noticias = await fetchNoticias();
+      noticias.forEach(noticia => {
+        container.innerHTML += createNoticiaHTML(noticia);
+      });
     }
-  }
 
-  function createNoticiaHTML(noticia) {
-    const categoryColors = {
-      'Evento': 'bg-blue-100 text-blue-800',
-      'Publicación': 'bg-green-100 text-green-800',
-      'Webinar': 'bg-purple-100 text-purple-800',
-      'Congreso': 'bg-red-100 text-red-800'
-    };
-
-    return `
-      <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden">
-        <div class="relative">
-          <img src="${noticia.imagen}" alt="${noticia.titulo}" class="w-full h-48 object-cover">
-          <div class="absolute top-4 left-4">
-            <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-              ${noticia.categoria}
-            </span>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            ${noticia.fecha}
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
-            ${noticia.titulo}
-          </h3>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            ${noticia.resumen}
-          </p>
-          <a href="${noticia.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group">
-            <span>Leer más</span>
-            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
-      </article>
-    `;
-  }
-
-  async function loadNoticias() {
-    const container = document.getElementById('noticias-container');
-    if (!container) return;
-    container.innerHTML = '';
-    const noticias = await fetchNoticias();
-    noticias.forEach(noticia => {
-      container.innerHTML += createNoticiaHTML(noticia);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', loadNoticias);
-</script>
-
-  console.log('🚀 SOCHIMT renovado cargado exitosamente!');
-</script>
+    document.addEventListener('DOMContentLoaded', loadNoticias);
+  </script>
 </body>
 </html>
+
