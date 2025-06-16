@@ -99,6 +99,17 @@
     function checkSession() { if (sessionStorage.getItem('sochimtUser')) initAdminPanel(); }
     
     function initAdminPanel() { currentUser = sessionStorage.getItem('sochimtUser'); dom.currentUserSpan.textContent = currentUser; dom.loginScreen.classList.add('hidden'); dom.adminPanel.classList.remove('hidden'); setupEventListeners(); loadNews(); setDefaultDate(); loadUsersList(); }
+    
+    // ** CORRECCIÓN: Se añade la función 'cancelEdit' que faltaba **
+    function cancelEdit() {
+      dom.newsForm.reset();
+      removeFile();
+      dom.formTitle.textContent = 'Agregar Nueva Noticia';
+      dom.submitBtn.innerHTML = '✨ Publicar Noticia';
+      dom.cancelEditBtn.classList.add('hidden');
+      setDefaultDate();
+    }
+    
     function setupEventListeners() { dom.newsForm.addEventListener('submit', handleNewsSubmit); dom.cancelEditBtn.addEventListener('click', cancelEdit); dom.fileUploadArea.addEventListener('click', () => dom.fileInput.click()); dom.fileInput.addEventListener('change', () => handleFileUpload(dom.fileInput)); dom.removeFileBtn.addEventListener('click', removeFile); dom.tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab))); dom.changePasswordForm.addEventListener('submit', handlePasswordChange); dom.exportBtn.addEventListener('click', exportData); }
     
     function formatDate(dateStr) { if (!dateStr) return ''; const d = new Date(dateStr); d.setMinutes(d.getMinutes() + d.getTimezoneOffset()); return d.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }); }
@@ -258,16 +269,6 @@
             }
         }
     }
-    
-    // ** CORRECCIÓN: Se añade la función 'cancelEdit' que faltaba **
-    function cancelEdit() {
-      dom.newsForm.reset();
-      removeFile();
-      dom.formTitle.textContent = 'Agregar Nueva Noticia';
-      dom.submitBtn.innerHTML = '✨ Publicar Noticia';
-      dom.cancelEditBtn.classList.add('hidden');
-      setDefaultDate();
-    }
 
     function handleFileUpload(input) { const file = input.files[0]; if (!file) return; if (file.size > 10 * 1024 * 1024) { showNotification('❌ Archivo > 10MB', 'error'); return; } selectedFile = file; const reader = new FileReader(); reader.onload = e => showFilePreview(file, e.target.result); reader.readAsDataURL(file); }
     function showFilePreview(file, dataUrl) { dom.fileUploadArea.classList.add('hidden'); dom.filePreview.classList.remove('hidden'); let el = file.type.startsWith('image/') ? `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">` : `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`; dom.previewContent.innerHTML = `${el}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`; }
@@ -284,4 +285,5 @@
     document.addEventListener('DOMContentLoaded', checkSession);
   </script>
 </body>
-</html>
+</ht
+
