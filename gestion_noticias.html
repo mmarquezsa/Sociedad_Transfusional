@@ -59,7 +59,14 @@
 
   <div id="admin-panel" class="hidden min-h-screen">
     <header class="bg-white/90 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-6 py-4"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><div class="h-12 w-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"/></svg></div><div><h1 class="text-2xl font-black text-gray-800">Panel de Administración</h1><p class="text-sm text-gray-600 font-medium">Gestión de Noticias SOCHIMT</p></div></div><div class="flex items-center space-x-6"><div class="text-right"><span class="text-sm text-gray-600">Bienvenido,</span> <span id="current-user" class="font-bold text-sochimt-600"></span></div><button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">🚪 Salir</button></div></div></div>
+      <div class="max-w-7xl mx-auto px-6 py-4"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><div class="h-12 w-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"/></svg></div><div><h1 class="text-2xl font-black text-gray-800">Panel de Administración</h1><p class="text-sm text-gray-600 font-medium">Gestión de Noticias SOCHIMT</p></div></div><div class="flex items-center space-x-6">
+        <!-- INICIO: INDICADOR DE CONEXIÓN -->
+        <div id="connection-status" class="flex items-center space-x-2 px-3 py-1 bg-gray-200 rounded-full text-sm font-medium text-gray-600">
+            <div id="status-dot" class="w-3 h-3 rounded-full bg-gray-400"></div>
+            <span id="status-text">Desconectado</span>
+        </div>
+        <!-- FIN: INDICADOR DE CONEXIÓN -->
+        <div class="text-right"><span class="text-sm text-gray-600">Bienvenido,</span> <span id="current-user" class="font-bold text-sochimt-600"></span></div><button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">🚪 Salir</button></div></div></div>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 py-8">
@@ -77,7 +84,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
   <script>
-    // --- 1. CONFIGURACIÓN DE FIREBASE ---
     const firebaseConfig = {
       apiKey: "AIzaSyAadDhtjj8xsd128lr7zOVd3TshItYgpIQ",
       authDomain: "sochimt-web-v2.firebaseapp.com",
@@ -92,25 +98,24 @@
     const storage = firebase.storage();
     const noticiasCollection = db.collection("noticias");
 
-    // --- 2. ELEMENTOS DEL DOM Y ESTADO ---
-    const dom = { loginScreen: document.getElementById('login-screen'), adminPanel: document.getElementById('admin-panel'), loginForm: document.getElementById('login-form'), newsForm: document.getElementById('news-form'), newsList: document.getElementById('news-list'), logoutBtn: document.getElementById('logout-btn'), cancelEditBtn: document.getElementById('cancel-edit'), submitBtn: document.getElementById('submit-news'), formTitle: document.getElementById('form-title'), fileInput: document.getElementById('news-image-file'), fileUploadArea: document.getElementById('file-upload-area'), filePreview: document.getElementById('file-preview'), previewContent: document.getElementById('preview-content'), removeFileBtn: document.getElementById('remove-file-btn'), currentUserSpan: document.getElementById('current-user'), loginError: document.getElementById('login-error'), tabs: document.querySelectorAll('.tab-btn'), tabContents: document.querySelectorAll('.tab-content'), usersList: document.getElementById('users-list'), changePasswordForm: document.getElementById('change-password-form'), exportBtn: document.getElementById('export-data-btn'), stats: { total: document.getElementById('total-news'), recent: document.getElementById('recent-news'), categories: document.getElementById('categories-count'), users: document.getElementById('users-count') } };
+    const dom = { loginScreen: document.getElementById('login-screen'), adminPanel: document.getElementById('admin-panel'), loginForm: document.getElementById('login-form'), newsForm: document.getElementById('news-form'), newsList: document.getElementById('news-list'), logoutBtn: document.getElementById('logout-btn'), cancelEditBtn: document.getElementById('cancel-edit'), submitBtn: document.getElementById('submit-news'), formTitle: document.getElementById('form-title'), fileInput: document.getElementById('news-image-file'), fileUploadArea: document.getElementById('file-upload-area'), filePreview: document.getElementById('file-preview'), previewContent: document.getElementById('preview-content'), removeFileBtn: document.getElementById('remove-file-btn'), currentUserSpan: document.getElementById('current-user'), loginError: document.getElementById('login-error'), tabs: document.querySelectorAll('.tab-btn'), tabContents: document.querySelectorAll('.tab-content'), usersList: document.getElementById('users-list'), changePasswordForm: document.getElementById('change-password-form'), exportBtn: document.getElementById('export-data-btn'), statusDot: document.getElementById('status-dot'), statusText: document.getElementById('status-text'), stats: { total: document.getElementById('total-news'), recent: document.getElementById('recent-news'), categories: document.getElementById('categories-count'), users: document.getElementById('users-count') } };
     let selectedFile = null; let currentUser = null; let localNewsData = [];
     
-    // --- 3. AUTENTICACIÓN ---
     const USERS = { 'admin': 'marcelo', 'editora': 'silvia' };
     dom.loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = dom.loginForm.username.value, p = dom.loginForm.password.value; if (USERS[u] && USERS[u] === p) { sessionStorage.setItem('sochimtUser', u); initAdminPanel(); } else { dom.loginError.classList.remove('hidden'); } });
     dom.logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('sochimtUser'); dom.adminPanel.classList.add('hidden'); dom.loginScreen.classList.remove('hidden'); });
     function checkSession() { if (sessionStorage.getItem('sochimtUser')) initAdminPanel(); }
     
-    // --- 4. INICIALIZACIÓN DEL PANEL ---
     function initAdminPanel() { currentUser = sessionStorage.getItem('sochimtUser'); dom.currentUserSpan.textContent = currentUser; dom.loginScreen.classList.add('hidden'); dom.adminPanel.classList.remove('hidden'); setupEventListeners(); loadNews(); setDefaultDate(); loadUsersList(); }
     function setupEventListeners() { dom.newsForm.addEventListener('submit', handleNewsSubmit); dom.cancelEditBtn.addEventListener('click', cancelEdit); dom.fileUploadArea.addEventListener('click', () => dom.fileInput.click()); dom.fileInput.addEventListener('change', () => handleFileUpload(dom.fileInput)); dom.removeFileBtn.addEventListener('click', removeFile); dom.tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab))); dom.changePasswordForm.addEventListener('submit', handlePasswordChange); dom.exportBtn.addEventListener('click', exportData); }
     
-    // --- 6. LÓGICA DE NOTICIAS (CRUD) ---
     function formatDate(dateStr) { if (!dateStr) return ''; const d = new Date(dateStr); d.setMinutes(d.getMinutes() + d.getTimezoneOffset()); return d.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }); }
+    
     function loadNews() {
+        updateConnectionStatus('connecting');
         dom.newsList.innerHTML = '<p class="text-center text-gray-500 py-8">Cargando noticias...</p>';
         noticiasCollection.orderBy("fechaRaw", "desc").onSnapshot(snapshot => {
+            updateConnectionStatus('connected');
             if (snapshot.empty) { dom.newsList.innerHTML = '<p class="text-center text-gray-500 py-8">No hay noticias. ¡Agrega la primera!</p>'; updateStats([]); return; }
             localNewsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             dom.newsList.innerHTML = localNewsData.map(news => `
@@ -119,7 +124,7 @@
                     <div class="flex space-x-2 flex-shrink-0 ml-4"><button onclick="editNews('${news.id}')" class="p-3 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500" title="Editar">✏️</button><button onclick="deleteNews('${news.id}')" class="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600" title="Eliminar">🗑️</button></div>
                 </div>`).join('');
             updateStats(localNewsData);
-        }, err => { dom.newsList.innerHTML = `<p class="text-red-500">Error al cargar: ${err.message}</p>`; });
+        }, err => { updateConnectionStatus('disconnected'); dom.newsList.innerHTML = `<p class="text-red-500">Error al cargar: ${err.message}</p>`; });
     }
     async function handleNewsSubmit(e) {
         e.preventDefault();
@@ -133,7 +138,7 @@
                 const filePath = `noticias/${Date.now()}_${selectedFile.name}`;
                 const uploadTask = await storage.ref(filePath).put(selectedFile);
                 imageUrl = await uploadTask.ref.getDownloadURL();
-            } else if (!imageUrl && !id) {
+            } else if (!id && !imageUrl) {
                 imageUrl = `https://placehold.co/400x200/3b82f6/white?text=${dom.newsForm['news-category'].value}`;
             }
             const newsData = {
@@ -141,8 +146,7 @@
                 resumen: dom.newsForm['news-summary'].value, url: dom.newsForm['news-url'].value || '#', imagen: imageUrl, autor: currentUser,
                 ...(id ? { fechaModificacion: firebase.firestore.FieldValue.serverTimestamp() } : { fechaCreacion: firebase.firestore.FieldValue.serverTimestamp() })
             };
-            const operation = id ? noticiasCollection.doc(id).update(newsData) : noticiasCollection.add(newsData);
-            await operation;
+            await (id ? noticiasCollection.doc(id).update(newsData) : noticiasCollection.add(newsData));
             showNotification(id ? '✅ Noticia actualizada' : '🎉 Noticia publicada', 'success');
             cancelEdit();
         } catch (err) { showNotification(`❌ Error: ${err.message}`, 'error'); console.error(err);
@@ -165,14 +169,13 @@
         if (confirm('¿Estás seguro? Esta acción no se puede deshacer.')) {
             try {
                 const doc = await noticiasCollection.doc(id).get();
-                if(doc.exists && doc.data().imagen.includes('firebasestorage')) { await storage.refFromURL(doc.data().imagen).delete().catch(err => console.warn("File not found, continuing delete", err)); }
+                if(doc.exists && doc.data().imagen && doc.data().imagen.includes('firebasestorage')) { await storage.refFromURL(doc.data().imagen).delete().catch(err => console.warn("File not found", err)); }
                 await noticiasCollection.doc(id).delete();
                 showNotification('🗑️ Noticia eliminada', 'success');
             } catch (err) { showNotification('❌ Error al eliminar', 'error'); }
         }
     }
     
-    // --- 7. LÓGICA UI Y DE ARCHIVOS ---
     function handleFileUpload(input) { const file = input.files[0]; if (!file) return; if (file.size > 10 * 1024 * 1024) { showNotification('❌ Archivo > 10MB', 'error'); return; } selectedFile = file; const reader = new FileReader(); reader.onload = e => showFilePreview(file, e.target.result); reader.readAsDataURL(file); }
     function showFilePreview(file, dataUrl) { dom.fileUploadArea.classList.add('hidden'); dom.filePreview.classList.remove('hidden'); let el = file.type.startsWith('image/') ? `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">` : `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`; dom.previewContent.innerHTML = `${el}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`; }
     function removeFile() { dom.fileInput.value = ''; selectedFile = null; dom.fileUploadArea.classList.remove('hidden'); dom.filePreview.classList.add('hidden'); dom.newsForm['existing-image-url'].value = ''; }
@@ -184,9 +187,22 @@
     function handlePasswordChange(e) { e.preventDefault(); showNotification("Función no implementada aún.", "info"); }
     function exportData() { if(localNewsData.length === 0) { showNotification("No hay datos para exportar", "info"); return; } const dataStr = JSON.stringify(localNewsData, null, 2); const blob = new Blob([dataStr], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'noticias_sochimt.json'; a.click(); URL.revokeObjectURL(url); }
 
-    // --- 8. INICIO ---
-    document.addEventListener('DOMContentLoaded', checkSession);
+    function updateConnectionStatus(status) {
+        const statuses = {
+            connecting: { text: 'Conectando...', dot: 'bg-yellow-400', container: 'bg-yellow-200 text-yellow-800' },
+            connected: { text: 'Conectado', dot: 'bg-green-500', container: 'bg-green-200 text-green-800' },
+            disconnected: { text: 'Desconectado', dot: 'bg-red-500', container: 'bg-red-200 text-red-800' }
+        };
+        const current = statuses[status] || statuses.disconnected;
+        const statusContainer = document.getElementById('connection-status');
+        if (statusContainer) {
+            document.getElementById('status-dot').className = `w-3 h-3 rounded-full ${current.dot}`;
+            document.getElementById('status-text').textContent = current.text;
+            statusContainer.className = `flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-bold transition-colors ${current.container}`;
+        }
+    }
 
+    document.addEventListener('DOMContentLoaded', checkSession);
   </script>
 </body>
 </ht
