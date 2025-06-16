@@ -1,54 +1,51 @@
-// Importa el SDK de administrador de Firebase para usarlo en el servidor
-const admin = require('firebase-admin');
+// Importa la librería de Supabase
+import { createClient } from '@supabase/supabase-js'
 
-// Carga las credenciales de forma segura desde las variables de entorno de Netlify
-// Asegúrate de haber configurado FIREBASE_SERVICE_ACCOUNT_KEY en tu panel de Netlify
-try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+// La URL de tu proyecto de Supabase
+const supabaseUrl = 'https://dkohwhosputnxismgkon.supabase.co';
 
-    // Inicializa la app de Firebase solo si no ha sido inicializada antes
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-      });
-    }
-} catch (e) {
-    console.error('Error al inicializar Firebase Admin SDK. Asegúrate de que la variable de entorno FIREBASE_SERVICE_ACCOUNT_KEY esté configurada correctamente en Netlify.');
-}
+// La SERVICE_ROLE_KEY de Supabase. ¡ES SECRETA!
+// Debes guardarla en las variables de entorno de Netlify como SUPABASE_SERVICE_KEY
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
-
-const db = admin.firestore();
+// Crea el cliente de Supabase
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async function (event, context) {
   try {
-    // Obtiene las 3 noticias más recientes de la colección "noticias", ordenadas por fecha
-    const snapshot = await db.collection('noticias').orderBy('fechaRaw', 'desc').limit(3).get();
-    
-    if (snapshot.empty) {
-      return { 
-        statusCode: 200, 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([]) 
-      };
+    // Obtiene las 3 noticias más recientes de la tabla "noticias", ordenadas por fecha
+    const { data, error } = await supabase
+      .from('noticias')
+      .select('*') // Selecciona todas las columnas
+      .order('fecha', { ascending: false }) // Ordena por la columna 'fecha'
+      .limit(3); // Limita a 3 resultados
+
+    // Si ocurre un error en la consulta
+    if (error) {
+      throw error;
     }
 
-    // Mapea los documentos a un formato de objeto simple
-    const noticias = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-
+    // Si no hay noticias
+    if (!data || data.length === 0) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([])
+      };
+    }
+    
+    // Devuelve las noticias encontradas
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(noticias),
+      body: JSON.stringify(data),
     };
 
   } catch (error) {
-    console.error("Error al obtener noticias desde Firestore:", error);
-    return { 
-      statusCode: 500, 
-      body: "Error interno del servidor al contactar la base de datos." 
+    console.error("Error al obtener noticias desde Supabase:", error);
+    return {
+      statusCode: 500,
+      body: "Error interno del servidor al contactar la base de datos."
     };
   }
 };
