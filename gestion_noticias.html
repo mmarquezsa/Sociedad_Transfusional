@@ -80,17 +80,20 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // CAMBIO: Configuración de Supabase
+    // Configuración de Supabase
     const SUPABASE_URL = 'https://dkohwhosputnxismgkon.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb2h3aG9zcHV0bnhpc21na29uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMzkxMTQsImV4cCI6MjA2NTYxNTExNH0.2ZOwkilUv49SADBzjrq-4AHUUKnMLZs-beftr3FLdAE';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const BUCKET_NAME = 'media'; // El nombre del bucket que creaste en Supabase Storage
+    
+    // ** CORRECCIÓN: Inicialización del cliente de Supabase **
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const BUCKET_NAME = 'media';
 
     // El resto de tu código de UI permanece igual
     const dom = { loginScreen: document.getElementById('login-screen'), adminPanel: document.getElementById('admin-panel'), loginForm: document.getElementById('login-form'), newsForm: document.getElementById('news-form'), newsList: document.getElementById('news-list'), logoutBtn: document.getElementById('logout-btn'), cancelEditBtn: document.getElementById('cancel-edit'), submitBtn: document.getElementById('submit-news'), formTitle: document.getElementById('form-title'), fileInput: document.getElementById('news-image-file'), fileUploadArea: document.getElementById('file-upload-area'), filePreview: document.getElementById('file-preview'), previewContent: document.getElementById('preview-content'), removeFileBtn: document.getElementById('remove-file-btn'), currentUserSpan: document.getElementById('current-user'), loginError: document.getElementById('login-error'), tabs: document.querySelectorAll('.tab-btn'), tabContents: document.querySelectorAll('.tab-content'), usersList: document.getElementById('users-list'), changePasswordForm: document.getElementById('change-password-form'), exportBtn: document.getElementById('export-data-btn'), statusDot: document.getElementById('status-dot'), statusText: document.getElementById('status-text'), stats: { total: document.getElementById('total-news'), recent: document.getElementById('recent-news'), categories: document.getElementById('categories-count'), users: document.getElementById('users-count') } };
     let selectedFile = null; let currentUser = null; let localNewsData = [];
     
-    // La lógica de login no cambia, ya que no usaba Firebase Auth
+    // Lógica de login
     const USERS = { 'admin': 'marcelo', 'editora': 'silvia' };
     dom.loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = dom.loginForm.username.value, p = dom.loginForm.password.value; if (USERS[u] && USERS[u] === p) { sessionStorage.setItem('sochimtUser', u); initAdminPanel(); } else { dom.loginError.classList.remove('hidden'); } });
     dom.logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('sochimtUser'); dom.adminPanel.classList.add('hidden'); dom.loginScreen.classList.remove('hidden'); });
@@ -101,12 +104,11 @@
     
     function formatDate(dateStr) { if (!dateStr) return ''; const d = new Date(dateStr); d.setMinutes(d.getMinutes() + d.getTimezoneOffset()); return d.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }); }
     
-    // CAMBIO: Función reescrita para Supabase
     async function loadNews() {
         updateConnectionStatus('connecting');
         dom.newsList.innerHTML = '<p class="text-center text-gray-500 py-8">Cargando noticias...</p>';
         
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('noticias')
             .select('*')
             .order('fecha', { ascending: false });
@@ -143,7 +145,6 @@
         updateStats(localNewsData);
     }
 
-    // CAMBIO: Función reescrita para Supabase
     async function handleNewsSubmit(e) {
         e.preventDefault();
         dom.submitBtn.disabled = true;
@@ -152,50 +153,42 @@
         let urlMedia = dom.newsForm['existing-image-url'].value || null;
 
         try {
-            // 1. Manejo del archivo
             if (selectedFile) {
-                // Si estamos editando y ya había una imagen, borrar la antigua de Supabase Storage
                 if (id && urlMedia) {
                     const oldFilePath = urlMedia.substring(urlMedia.indexOf(BUCKET_NAME + '/') + (BUCKET_NAME.length + 1));
-                    await supabase.storage.from(BUCKET_NAME).remove([oldFilePath]);
+                    await supabaseClient.storage.from(BUCKET_NAME).remove([oldFilePath]);
                 }
                 
-                // Subir el nuevo archivo
                 const filePath = `public/${Date.now()}_${selectedFile.name}`;
-                const { error: uploadError } = await supabase.storage
+                const { error: uploadError } = await supabaseClient.storage
                     .from(BUCKET_NAME)
                     .upload(filePath, selectedFile);
 
                 if (uploadError) throw uploadError;
 
-                // Obtener la URL pública del archivo subido
-                const { data: publicUrlData } = supabase.storage
+                const { data: publicUrlData } = supabaseClient.storage
                     .from(BUCKET_NAME)
                     .getPublicUrl(filePath);
                 
                 urlMedia = publicUrlData.publicUrl;
             }
 
-            // 2. Preparar el objeto con los datos para la tabla 'noticias'
             const newsData = {
                 titulo: dom.newsForm['news-title'].value,
                 categoria: dom.newsForm['news-category'].value,
                 fecha: dom.newsForm['news-date'].value,
                 resumen: dom.newsForm['news-summary'].value,
-                contenido: '', // Tu formulario no tiene campo de contenido, puedes agregarlo si es necesario
+                contenido: dom.newsForm['news-summary'].value, // Usando resumen como contenido por ahora
                 url_externa: dom.newsForm['news-url'].value || null,
                 url_media: urlMedia
             };
             
-            // 3. Insertar o Actualizar en la base de datos
             let error;
             if (id) {
-                // Actualizar
-                const { error: updateError } = await supabase.from('noticias').update(newsData).eq('id', id);
+                const { error: updateError } = await supabaseClient.from('noticias').update(newsData).eq('id', id);
                 error = updateError;
             } else {
-                // Insertar
-                const { error: insertError } = await supabase.from('noticias').insert([newsData]);
+                const { error: insertError } = await supabaseClient.from('noticias').insert([newsData]);
                 error = insertError;
             }
 
@@ -203,7 +196,7 @@
 
             showNotification(id ? '✅ Noticia actualizada' : '🎉 Noticia publicada', 'success');
             cancelEdit();
-            await loadNews(); // Recargar la lista de noticias
+            await loadNews();
 
         } catch (err) { 
             showNotification(`❌ Error: ${err.message}`, 'error'); 
@@ -214,10 +207,9 @@
         }
     }
 
-    // CAMBIO: Función reescrita para Supabase
     window.editNews = async (id) => {
         try {
-            const { data: news, error } = await supabase.from('noticias').select('*').eq('id', id).single();
+            const { data: news, error } = await supabaseClient.from('noticias').select('*').eq('id', id).single();
             if (error) throw error;
             if (!news) return;
 
@@ -244,26 +236,22 @@
         }
     }
 
-    // CAMBIO: Función reescrita para Supabase
     window.deleteNews = async (id) => {
         if (confirm('¿Estás seguro? Esta acción no se puede deshacer.')) {
             try {
-                // Obtener los datos de la noticia para saber qué archivo borrar
-                const { data: news, error: fetchError } = await supabase.from('noticias').select('url_media').eq('id', id).single();
-                if (fetchError) throw fetchError;
+                const { data: news, error: fetchError } = await supabaseClient.from('noticias').select('url_media').eq('id', id).single();
+                if (fetchError && fetchError.code !== 'PGRST116') throw fetchError; // Ignore "exact one row" error if not found
 
-                // Si hay una imagen en Supabase Storage, borrarla
                 if (news && news.url_media) {
                     const filePath = news.url_media.substring(news.url_media.indexOf(BUCKET_NAME + '/') + (BUCKET_NAME.length + 1));
-                    await supabase.storage.from(BUCKET_NAME).remove([filePath]);
+                    await supabaseClient.storage.from(BUCKET_NAME).remove([filePath]);
                 }
 
-                // Borrar el registro de la base de datos
-                const { error: deleteError } = await supabase.from('noticias').delete().eq('id', id);
+                const { error: deleteError } = await supabaseClient.from('noticias').delete().eq('id', id);
                 if (deleteError) throw deleteError;
                 
                 showNotification('🗑️ Noticia eliminada', 'success');
-                await loadNews(); // Recargar la lista de noticias
+                await loadNews();
 
             } catch (err) {
                 showNotification(`❌ Error al eliminar: ${err.message}`, 'error');
@@ -272,7 +260,6 @@
         }
     }
     
-    // El resto de funciones de UI no necesitan cambios
     function handleFileUpload(input) { const file = input.files[0]; if (!file) return; if (file.size > 10 * 1024 * 1024) { showNotification('❌ Archivo > 10MB', 'error'); return; } selectedFile = file; const reader = new FileReader(); reader.onload = e => showFilePreview(file, e.target.result); reader.readAsDataURL(file); }
     function showFilePreview(file, dataUrl) { dom.fileUploadArea.classList.add('hidden'); dom.filePreview.classList.remove('hidden'); let el = file.type.startsWith('image/') ? `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">` : `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`; dom.previewContent.innerHTML = `${el}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`; }
     function removeFile() { dom.fileInput.value = ''; selectedFile = null; dom.fileUploadArea.classList.remove('hidden'); dom.filePreview.classList.add('hidden'); dom.newsForm['existing-image-url'].value = ''; }
@@ -286,6 +273,10 @@
     function updateConnectionStatus(status) { const statuses = { connecting: { text: 'Conectando...', dot: 'bg-yellow-400', container: 'bg-yellow-200 text-yellow-800' }, connected: { text: 'Conectado', dot: 'bg-green-500', container: 'bg-green-200 text-green-800' }, disconnected: { text: 'Desconectado', dot: 'bg-red-500', container: 'bg-red-200 text-red-800' } }; const current = statuses[status] || statuses.disconnected; const statusContainer = document.getElementById('connection-status'); if (statusContainer) { document.getElementById('status-dot').className = `w-3 h-3 rounded-full ${current.dot}`; document.getElementById('status-text').textContent = current.text; statusContainer.className = `flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-bold transition-colors ${current.container}`; } }
 
     document.addEventListener('DOMContentLoaded', checkSession);
+  </script>
+</body>
+</html>
+
   </script>
 </body>
 </html>
