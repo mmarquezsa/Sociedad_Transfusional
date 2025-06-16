@@ -88,11 +88,9 @@
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
     const BUCKET_NAME = 'media';
 
-    // El resto de tu código de UI permanece igual
     const dom = { loginScreen: document.getElementById('login-screen'), adminPanel: document.getElementById('admin-panel'), loginForm: document.getElementById('login-form'), newsForm: document.getElementById('news-form'), newsList: document.getElementById('news-list'), logoutBtn: document.getElementById('logout-btn'), cancelEditBtn: document.getElementById('cancel-edit'), submitBtn: document.getElementById('submit-news'), formTitle: document.getElementById('form-title'), fileInput: document.getElementById('news-image-file'), fileUploadArea: document.getElementById('file-upload-area'), filePreview: document.getElementById('file-preview'), previewContent: document.getElementById('preview-content'), removeFileBtn: document.getElementById('remove-file-btn'), currentUserSpan: document.getElementById('current-user'), loginError: document.getElementById('login-error'), tabs: document.querySelectorAll('.tab-btn'), tabContents: document.querySelectorAll('.tab-content'), usersList: document.getElementById('users-list'), changePasswordForm: document.getElementById('change-password-form'), exportBtn: document.getElementById('export-data-btn'), statusDot: document.getElementById('status-dot'), statusText: document.getElementById('status-text'), stats: { total: document.getElementById('total-news'), recent: document.getElementById('recent-news'), categories: document.getElementById('categories-count'), users: document.getElementById('users-count') } };
     let selectedFile = null; let currentUser = null; let localNewsData = [];
     
-    // Lógica de login
     const USERS = { 'admin': 'marcelo', 'editora': 'silvia' };
     dom.loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = dom.loginForm.username.value, p = dom.loginForm.password.value; if (USERS[u] && USERS[u] === p) { sessionStorage.setItem('sochimtUser', u); initAdminPanel(); } else { dom.loginError.classList.remove('hidden'); } });
     dom.logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('sochimtUser'); dom.adminPanel.classList.add('hidden'); dom.loginScreen.classList.remove('hidden'); });
@@ -100,7 +98,6 @@
     
     function initAdminPanel() { currentUser = sessionStorage.getItem('sochimtUser'); dom.currentUserSpan.textContent = currentUser; dom.loginScreen.classList.add('hidden'); dom.adminPanel.classList.remove('hidden'); setupEventListeners(); loadNews(); setDefaultDate(); loadUsersList(); }
     
-    // ** CORRECCIÓN: Se añade la función 'cancelEdit' que faltaba **
     function cancelEdit() {
       dom.newsForm.reset();
       removeFile();
@@ -169,7 +166,7 @@
                     await supabaseClient.storage.from(BUCKET_NAME).remove([oldFilePath]);
                 }
                 
-                const filePath = `public/${Date.now()}_${selectedFile.name}`;
+                const filePath = `${Date.now()}_${selectedFile.name}`;
                 const { error: uploadError } = await supabaseClient.storage
                     .from(BUCKET_NAME)
                     .upload(filePath, selectedFile);
@@ -188,7 +185,7 @@
                 categoria: dom.newsForm['news-category'].value,
                 fecha: dom.newsForm['news-date'].value,
                 resumen: dom.newsForm['news-summary'].value,
-                contenido: dom.newsForm['news-summary'].value, // Usando resumen como contenido por ahora
+                contenido: dom.newsForm['news-summary'].value, 
                 url_externa: dom.newsForm['news-url'].value || null,
                 url_media: urlMedia
             };
@@ -285,5 +282,4 @@
     document.addEventListener('DOMContentLoaded', checkSession);
   </script>
 </body>
-</ht
-
+</html>
