@@ -84,7 +84,6 @@
     const SUPABASE_URL = 'https://dkohwhosputnxismgkon.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb2h3aG9zcHV0bnhpc21na29uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMzkxMTQsImV4cCI6MjA2NTYxNTExNH0.2ZOwkilUv49SADBzjrq-4AHUUKnMLZs-beftr3FLdAE';
     
-    // ** CORRECCIÓN: Inicialización del cliente de Supabase **
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
     const BUCKET_NAME = 'media';
@@ -260,6 +259,16 @@
         }
     }
     
+    // ** CORRECCIÓN: Se añade la función 'cancelEdit' que faltaba **
+    function cancelEdit() {
+      dom.newsForm.reset();
+      removeFile();
+      dom.formTitle.textContent = 'Agregar Nueva Noticia';
+      dom.submitBtn.innerHTML = '✨ Publicar Noticia';
+      dom.cancelEditBtn.classList.add('hidden');
+      setDefaultDate();
+    }
+
     function handleFileUpload(input) { const file = input.files[0]; if (!file) return; if (file.size > 10 * 1024 * 1024) { showNotification('❌ Archivo > 10MB', 'error'); return; } selectedFile = file; const reader = new FileReader(); reader.onload = e => showFilePreview(file, e.target.result); reader.readAsDataURL(file); }
     function showFilePreview(file, dataUrl) { dom.fileUploadArea.classList.add('hidden'); dom.filePreview.classList.remove('hidden'); let el = file.type.startsWith('image/') ? `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">` : `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`; dom.previewContent.innerHTML = `${el}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`; }
     function removeFile() { dom.fileInput.value = ''; selectedFile = null; dom.fileUploadArea.classList.remove('hidden'); dom.filePreview.classList.add('hidden'); dom.newsForm['existing-image-url'].value = ''; }
@@ -273,10 +282,6 @@
     function updateConnectionStatus(status) { const statuses = { connecting: { text: 'Conectando...', dot: 'bg-yellow-400', container: 'bg-yellow-200 text-yellow-800' }, connected: { text: 'Conectado', dot: 'bg-green-500', container: 'bg-green-200 text-green-800' }, disconnected: { text: 'Desconectado', dot: 'bg-red-500', container: 'bg-red-200 text-red-800' } }; const current = statuses[status] || statuses.disconnected; const statusContainer = document.getElementById('connection-status'); if (statusContainer) { document.getElementById('status-dot').className = `w-3 h-3 rounded-full ${current.dot}`; document.getElementById('status-text').textContent = current.text; statusContainer.className = `flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-bold transition-colors ${current.container}`; } }
 
     document.addEventListener('DOMContentLoaded', checkSession);
-  </script>
-</body>
-</html>
-
   </script>
 </body>
 </html>
