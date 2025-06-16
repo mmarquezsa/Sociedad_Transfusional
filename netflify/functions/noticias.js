@@ -1,29 +1,29 @@
 // Importa el SDK de administrador de Firebase para usarlo en el servidor
 const admin = require('firebase-admin');
 
-// Carga las credenciales de forma segura desde las variables de entorno de Netlify.
-// Este es el paso final que configurarás en el panel de Netlify.
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+// Carga las credenciales de forma segura desde las variables de entorno de Netlify
+// Asegúrate de haber configurado FIREBASE_SERVICE_ACCOUNT_KEY en tu panel de Netlify
+try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
-// Inicializa la app de Firebase solo si no ha sido inicializada antes,
-// para evitar errores en el entorno de Netlify.
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+    // Inicializa la app de Firebase solo si no ha sido inicializada antes
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+    }
+} catch (e) {
+    console.error('Error al inicializar Firebase Admin SDK. Asegúrate de que la variable de entorno FIREBASE_SERVICE_ACCOUNT_KEY esté configurada correctamente en Netlify.');
 }
+
 
 const db = admin.firestore();
 
-// La función principal que se ejecuta cuando se llama a la API.
 exports.handler = async function (event, context) {
   try {
-    // 1. Conéctate a la colección "noticias".
-    // 2. Ordénalas por fecha descendente para obtener las más nuevas primero.
-    // 3. Limita los resultados a 3 para la página principal.
+    // Obtiene las 3 noticias más recientes de la colección "noticias", ordenadas por fecha
     const snapshot = await db.collection('noticias').orderBy('fechaRaw', 'desc').limit(3).get();
     
-    // Si no hay noticias, devuelve un arreglo vacío.
     if (snapshot.empty) {
       return { 
         statusCode: 200, 
@@ -32,13 +32,12 @@ exports.handler = async function (event, context) {
       };
     }
 
-    // Convierte los documentos de Firebase a un formato de objeto simple.
+    // Mapea los documentos a un formato de objeto simple
     const noticias = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
     }));
 
-    // Devuelve las noticias en formato JSON.
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
