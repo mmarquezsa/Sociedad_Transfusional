@@ -748,7 +748,7 @@
     }, stepTime);
   }
 
-  // --- LÓGICA DE CARGA DE NOTICIAS (CORREGIDA) ---
+  // --- LÓGICA DE CARGA DE NOTICIAS (CORREGIDA PARA SUPABASE) ---
 
   // Orquesta la carga de noticias en la página
   async function loadNoticias() {
@@ -786,7 +786,8 @@
   // Busca las noticias desde la API de Netlify
   async function fetchNoticias() {
     try {
-      const response = await fetch('/.netlify/functions/noticias');
+      // CAMBIO: Apunta a la nueva función 'get-noticias'
+      const response = await fetch('/.netlify/functions/get-noticias');
       if (!response.ok) {
         throw new Error(`Error en la solicitud: ${response.status}`);
       }
@@ -796,6 +797,19 @@
       throw error;
     }
   }
+
+  function formatSupabaseDate(dateStr) {
+      if (!dateStr) return '';
+      // Asume que la fecha viene como 'YYYY-MM-DD'
+      const [year, month, day] = dateStr.split('-');
+      const dateObj = new Date(year, month - 1, day);
+      return dateObj.toLocaleDateString('es-CL', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+      });
+  }
+
 
   // Crea el bloque HTML para una sola tarjeta de noticia
   function createNoticiaHTML(noticia) {
@@ -808,10 +822,11 @@
       'Error': 'bg-red-100 text-red-800'
     };
 
+    // CAMBIO: Usa los nombres de campo de Supabase (url_media, url_externa)
     return `
       <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden flex flex-col">
         <div class="relative">
-          <img src="${noticia.imagen}" alt="${noticia.titulo}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x200/ef4444/white?text=Imagen+no+disponible';">
+          <img src="${noticia.url_media}" alt="${noticia.titulo}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x200/ef4444/white?text=Imagen+no+disponible';">
           <div class="absolute top-4 left-4">
             <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
               ${noticia.categoria}
@@ -823,7 +838,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
-            ${noticia.fecha}
+            ${formatSupabaseDate(noticia.fecha)}
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
             ${noticia.titulo}
@@ -831,7 +846,7 @@
           <p class="text-gray-600 leading-relaxed mb-4 flex-grow">
             ${noticia.resumen}
           </p>
-          <a href="${noticia.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto">
+          <a href="${noticia.url_externa || '#'}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto">
             <span>Leer más</span>
             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
