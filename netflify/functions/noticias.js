@@ -1,40 +1,55 @@
-// --- TU NUEVA BASE DE DATOS DE NOTICIAS ---
-const noticiasDB = [
-  {
-    titulo: 'Ceremonia Lanzamiento Sochimt',
-    fecha: '14 de junio de 2025',
-    resumen: 'La recepción del evento marcó el inicio de esta significativa jornada. Fue una instancia cordial y enriquecedora, donde los asistentes demostraron entusiasmo, compromiso y una excelente disposición.',
-    categoria: 'Evento',
-    // IMPORTANTE: Sube tus imágenes a un servicio como https://imgur.com/ y pega el enlace directo aquí.
-    imagen: 'https://i.imgur.com/tuqjI4H.png', 
-    url: '#' // Coloca aquí el enlace a la noticia completa si tienes una página dedicada.
-  },
-  {
-    titulo: 'Apertura de la Sociedad Chilena de Medicina Transfusional',
-    fecha: '06 de junio de 2025',
-    resumen: 'El pasado viernes 6 de junio se realizó la ceremonia de apertura oficial, marcando el inicio de sus actividades académicas, de investigación y difusión en el país.',
-    categoria: 'Evento',
-    imagen: 'https://i.imgur.com/L3gO1un.png',
-    url: 'https://www.linkedin.com/posts/guillermo-alfonso-jerez-jerez-860842281_el-pasado-viernes-06-de-junio-en-el-campus-activity-7337676979099328512-kJKU'
-  },
-  {
-    titulo: 'Próximo Webinar: Avances en Inmunohematología',
-    fecha: '30 de julio de 2025',
-    resumen: 'Prepárate para nuestro próximo webinar donde exploraremos los últimos avances y técnicas en el campo de la inmunohematología. ¡Inscripciones abiertas pronto!',
-    categoria: 'Webinar',
-    imagen: 'https://images.unsplash.com/photo-1576091160550-2173dba999ab?q=80&w=2070&auto=format&fit=crop', // Imagen de ejemplo
-    url: '#'
-  }
-];
+// Importa el SDK de administrador de Firebase para usarlo en el servidor
+const admin = require('firebase-admin');
 
-// Esta es la parte que Netlify ejecuta para entregar tus noticias.
+// Carga las credenciales de forma segura desde las variables de entorno de Netlify.
+// Este es el paso final que configurarás en el panel de Netlify.
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
+// Inicializa la app de Firebase solo si no ha sido inicializada antes,
+// para evitar errores en el entorno de Netlify.
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
+
+const db = admin.firestore();
+
+// La función principal que se ejecuta cuando se llama a la API.
 exports.handler = async function (event, context) {
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    // Convierte tu lista de noticias a formato de texto JSON para enviarla.
-    body: JSON.stringify(noticiasDB),
-  };
+  try {
+    // 1. Conéctate a la colección "noticias".
+    // 2. Ordénalas por fecha descendente para obtener las más nuevas primero.
+    // 3. Limita los resultados a 3 para la página principal.
+    const snapshot = await db.collection('noticias').orderBy('fechaRaw', 'desc').limit(3).get();
+    
+    // Si no hay noticias, devuelve un arreglo vacío.
+    if (snapshot.empty) {
+      return { 
+        statusCode: 200, 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([]) 
+      };
+    }
+
+    // Convierte los documentos de Firebase a un formato de objeto simple.
+    const noticias = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+
+    // Devuelve las noticias en formato JSON.
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(noticias),
+    };
+
+  } catch (error) {
+    console.error("Error al obtener noticias desde Firestore:", error);
+    return { 
+      statusCode: 500, 
+      body: "Error interno del servidor al contactar la base de datos." 
+    };
+  }
 };
