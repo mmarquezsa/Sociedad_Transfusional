@@ -2,10 +2,34 @@
   "name": "sochimt-website",
   "version": "1.0.0",
   "description": "Website de SOCHIMT",
+  "scripts": {
+    "build": "npm run tailwind:build && npm run html:copy",
+    "tailwind:build": "tailwindcss -i src/style.css -o public/style.css --minify",
+    "html:copy": "cp index.html gestion_noticias.html public/"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0"
   },
+  "devDependencies": {
+    "tailwindcss": "^3.0.0",
+    "autoprefixer": "^10.0.0",
+    "postcss": "^8.0.0"
+  },
   "engines": {
     "node": "18.x"
+  }
+}
+```json
+{
+  "scripts": {
+    "build": "npm run tailwind:build && npm run html:copy",
+    "tailwind:build": "tailwindcss -i src/style.css -o public/style.css",
+    "html:copy": "cp index.html gestion_noticias.html public/"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.0.0"
   }
 }
