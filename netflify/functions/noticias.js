@@ -1,9 +1,10 @@
 const { createClient } = require('@supabase/supabase-js');
 
-// Logging para debugging
-console.log('Función noticias iniciada');
-
 exports.handler = async (event, context) => {
+  console.log('🚀 Función noticias ejecutándose...');
+  console.log('HTTP Method:', event.httpMethod);
+  console.log('Headers:', event.headers);
+
   // Headers para CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -14,6 +15,7 @@ exports.handler = async (event, context) => {
 
   // Manejo de preflight requests
   if (event.httpMethod === 'OPTIONS') {
+    console.log('📋 Respondiendo a preflight request');
     return {
       statusCode: 200,
       headers,
@@ -23,6 +25,7 @@ exports.handler = async (event, context) => {
 
   // Solo permitir GET requests
   if (event.httpMethod !== 'GET') {
+    console.log('❌ Método no permitido:', event.httpMethod);
     return {
       statusCode: 405,
       headers,
@@ -35,41 +38,54 @@ exports.handler = async (event, context) => {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
     
+    console.log('🔍 Verificando variables de entorno...');
+    console.log('SUPABASE_URL presente:', !!supabaseUrl);
+    console.log('SUPABASE_KEY presente:', !!supabaseKey);
+    console.log('SUPABASE_URL value:', supabaseUrl);
+    
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Variables de entorno faltantes');
-      console.error('SUPABASE_URL:', !!supabaseUrl);
-      console.error('SUPABASE_KEY:', !!supabaseKey);
+      console.error('❌ Variables de entorno faltantes');
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({ 
           error: 'Configuración del servidor incompleta',
-          details: `Faltan variables: ${!supabaseUrl ? 'SUPABASE_URL ' : ''}${!supabaseKey ? 'SUPABASE_KEY' : ''}`
+          details: `Faltan variables: ${!supabaseUrl ? 'SUPABASE_URL ' : ''}${!supabaseKey ? 'SUPABASE_KEY' : ''}`,
+          env_check: {
+            supabaseUrl: !!supabaseUrl,
+            supabaseKey: !!supabaseKey
+          }
         }),
       };
     }
 
     // Crear cliente de Supabase
+    console.log('🔌 Creando cliente de Supabase...');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Consultar noticias
+    console.log('📊 Consultando noticias...');
     const { data, error } = await supabase
       .from('noticias')
       .select('*')
       .order('fecha', { ascending: false })
-      .limit(6);
+      .limit(10); // Aumenté el límite para tener más noticias
 
     if (error) {
-      console.error('Error de Supabase:', error);
+      console.error('❌ Error de Supabase:', error);
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({
           error: 'Error de base de datos',
-          details: error.message
+          details: error.message,
+          supabase_error: error
         }),
       };
     }
+
+    console.log('✅ Noticias obtenidas:', data?.length || 0);
+    console.log('📄 Datos:', data);
 
     // Retornar datos exitosamente
     return {
@@ -79,7 +95,7 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Error general en función noticias:', error);
+    console.error('💥 Error general en función noticias:', error);
     
     return {
       statusCode: 500,
