@@ -70,7 +70,7 @@
     <main class="max-w-7xl mx-auto px-6 py-8">
       <div class="mb-8"><div class="border-b border-gray-200"><nav class="-mb-px flex space-x-8"><button class="tab-btn active border-b-2 py-2 px-1 font-medium text-sm" data-tab="dashboard">📊 Dashboard</button><button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="noticias">📰 Gestionar Noticias</button><button class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 font-medium text-sm" data-tab="configuracion">⚙️ Configuración</button></nav></div></div>
       <div id="tab-dashboard" class="tab-content animate-fade-in"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"><div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white card-hover"><div class="flex items-center justify-between"><div><p class="text-blue-100 font-medium">Total Noticias</p><p class="text-3xl font-black" id="total-news">0</p></div><div class="text-4xl opacity-80">📰</div></div></div><div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white card-hover"><div class="flex items-center justify-between"><div><p class="text-green-100 font-medium">Este Mes</p><p class="text-3xl font-black" id="recent-news">0</p></div><div class="text-4xl opacity-80">📅</div></div></div><div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white card-hover"><div class="flex items-center justify-between"><div><p class="text-purple-100 font-medium">Categorías</p><p class="text-3xl font-black" id="categories-count">0</p></div><div class="text-4xl opacity-80">🏷️</div></div></div><div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white card-hover"><div class="flex items-center justify-between"><div><p class="text-orange-100 font-medium">Usuarios</p><p class="text-3xl font-black" id="users-count">0</p></div><div class="text-4xl opacity-80">👥</div></div></div></div><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6">🚀 Acciones Rápidas</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><button onclick="switchTab('noticias')" class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 hover:border-blue-300 text-left card-hover"><div class="text-3xl mb-3">📝</div><h3 class="font-bold text-gray-800 mb-2">Nueva Noticia</h3><p class="text-sm text-gray-600">Agregar una nueva noticia al sitio</p></button><button onclick="switchTab('configuracion')" class="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 hover:border-green-300 text-left card-hover"><div class="text-3xl mb-3">🔐</div><h3 class="font-bold text-gray-800 mb-2">Cambiar Contraseña</h3><p class="text-sm text-gray-600">Actualizar credenciales de acceso</p></button><button id="export-data-btn" class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 hover:border-purple-300 text-left card-hover"><div class="text-3xl mb-3">📤</div><h3 class="font-bold text-gray-800 mb-2">Exportar Datos</h3><p class="text-sm text-gray-600">Descargar backup de noticias</p></button></div></div></div>
-      <div id="tab-noticias" class="tab-content hidden animate-fade-in"><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6" id="form-title">Agregar Nueva Noticia</h2><form id="news-form" class="space-y-6"><input type="hidden" id="news-id"><input type="hidden" id="existing-image-url"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div><label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label><input type="text" id="news-title" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl" placeholder="Ingresa el título..."></div><div><label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label><select id="news-category" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl"><option value="">Seleccionar categoría</option><option value="Evento">🎉 Evento</option><option value="Publicación">📚 Publicación</option><option value="Webinar">💻 Webinar</option><option value="Congreso">🏛️ Congreso</option><option value="Noticia">📰 Noticia General</option></select></div></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div><label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label><input type="date" id="news-date" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl"></div><div><label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label><input type="url" id="news-url" placeholder="https://..." class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl"></div></div><div><label class="block text-sm font-bold text-gray-700 mb-3">🖼️ Imagen o Video</label><div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sochimt-500"><input type="file" id="news-image-file" accept="image/*,video/*" class="hidden"><div id="file-upload-area" class="cursor-pointer"><div class="text-4xl mb-4">📎</div><p class="font-medium mb-2">Haz clic para seleccionar archivo</p><p class="text-sm text-gray-500">Máx. 10MB</p></div><div id="file-preview" class="hidden mt-4"><div id="preview-content"></div><button type="button" id="remove-file-btn" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">🗑️ Quitar archivo</button></div></div></div><div><label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label><textarea id="news-summary" rows="4" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl resize-none" placeholder="Describe la noticia..."></textarea></div><div class="flex justify-end space-x-4"><button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 text-gray-700 rounded-xl font-medium">❌ Cancelar</button><button type="submit" id="submit-news" class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl font-bold">✨ Publicar Noticia</button></div></form></div><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6">Noticias Publicadas</h2><div id="news-list" class="space-y-4"></div></div></div>
+      <div id="tab-noticias" class="tab-content hidden animate-fade-in"><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 mb-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6" id="form-title">Agregar Nueva Noticia</h2><form id="news-form" class="space-y-6"><input type="hidden" id="news-id"><input type="hidden" id="existing-image-url"><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div><label for="news-title" class="block text-sm font-bold text-gray-700 mb-3">📝 Título *</label><input type="text" id="news-title" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl" placeholder="Ingresa el título..."></div><div><label for="news-category" class="block text-sm font-bold text-gray-700 mb-3">🏷️ Categoría *</label><select id="news-category" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl"><option value="">Seleccionar categoría</option><option value="Evento">🎉 Evento</option><option value="Publicación">📚 Publicación</option><option value="Webinar">💻 Webinar</option><option value="Congreso">🏛️ Congreso</option><option value="Noticia">📰 Noticia General</option></select></div></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div><label for="news-date" class="block text-sm font-bold text-gray-700 mb-3">📅 Fecha *</label><input type="date" id="news-date" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl"></div><div><label for="news-url" class="block text-sm font-bold text-gray-700 mb-3">🔗 URL (opcional)</label><input type="url" id="news-url" placeholder="https://..." class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl"></div></div><div><label class="block text-sm font-bold text-gray-700 mb-3">🖼️ Imagen o Video</label><div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-sochimt-500"><input type="file" id="news-image-file" accept="image/*,video/*" class="hidden"><div id="file-upload-area" class="cursor-pointer"><div class="text-4xl mb-4">📎</div><p class="font-medium mb-2">Haz clic para seleccionar archivo</p><p class="text-sm text-gray-500">Máx. 50MB</p></div><div id="file-preview" class="hidden mt-4"><div id="preview-content"></div><button type="button" id="remove-file-btn" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">🗑️ Quitar archivo</button></div></div></div><div><label for="news-summary" class="block text-sm font-bold text-gray-700 mb-3">📄 Resumen *</label><textarea id="news-summary" rows="4" required class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl resize-none" placeholder="Describe la noticia..."></textarea></div><div class="flex justify-end space-x-4"><button type="button" id="cancel-edit" class="hidden px-8 py-3 border-2 text-gray-700 rounded-xl font-medium">❌ Cancelar</button><button type="submit" id="submit-news" class="px-8 py-3 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white rounded-xl font-bold">✨ Publicar Noticia</button></div></form></div><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6">Noticias Publicadas</h2><div id="news-list" class="space-y-6"></div></div></div>
       <div id="tab-configuracion" class="tab-content hidden animate-fade-in"><div class="grid grid-cols-1 lg:grid-cols-2 gap-8"><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6">Cambiar Contraseña</h2><form id="change-password-form" class="space-y-6"><div><label for="current-password" class="block text-sm font-bold text-gray-700 mb-3">🔑 Contraseña Actual *</label><input type="password" id="current-password" required class="w-full px-6 py-4 border-2 rounded-xl" placeholder="Ingresa tu contraseña actual"></div><div><label for="new-password" class="block text-sm font-bold text-gray-700 mb-3">🆕 Nueva Contraseña *</label><input type="password" id="new-password" required class="w-full px-6 py-4 border-2 rounded-xl" placeholder="Mínimo 6 caracteres"></div><div><label for="confirm-password" class="block text-sm font-bold text-gray-700 mb-3">✅ Confirmar Contraseña *</label><input type="password" id="confirm-password" required class="w-full px-6 py-4 border-2 rounded-xl" placeholder="Repite la nueva contraseña"></div><button type="submit" class="w-full px-8 py-4 bg-gradient-to-r from-medical-600 to-medical-700 text-white rounded-xl font-bold">🔄 Actualizar</button></form></div><div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl p-8 border"><h2 class="text-2xl font-black text-gray-800 mb-6">Gestión de Usuarios</h2><div id="users-list" class="space-y-4"></div></div></div></div>
     </main>
   </div>
@@ -92,6 +92,31 @@
     let selectedFile = null; let currentUser = null; let localNewsData = [];
     
     const USERS = { 'admin': 'marcelo', 'editora': 'silvia' };
+    
+    // Función para obtener ícono por categoría
+    function getCategoryIcon(categoria) {
+      const icons = {
+        'Evento': '🎉',
+        'Publicación': '📚',
+        'Webinar': '💻',
+        'Congreso': '🏛️',
+        'Noticia': '📰'
+      };
+      return icons[categoria] || '📰';
+    }
+
+    // Función para obtener color por categoría
+    function getCategoryColor(categoria) {
+      const colors = {
+        'Evento': 'bg-purple-100 text-purple-800',
+        'Publicación': 'bg-blue-100 text-blue-800',
+        'Webinar': 'bg-green-100 text-green-800',
+        'Congreso': 'bg-orange-100 text-orange-800',
+        'Noticia': 'bg-gray-100 text-gray-800'
+      };
+      return colors[categoria] || 'bg-gray-100 text-gray-800';
+    }
+    
     dom.loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = dom.loginForm.username.value, p = dom.loginForm.password.value; if (USERS[u] && USERS[u] === p) { sessionStorage.setItem('sochimtUser', u); initAdminPanel(); } else { dom.loginError.classList.remove('hidden'); } });
     dom.logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('sochimtUser'); dom.adminPanel.classList.add('hidden'); dom.loginScreen.classList.remove('hidden'); });
     function checkSession() { if (sessionStorage.getItem('sochimtUser')) initAdminPanel(); }
@@ -136,17 +161,73 @@
         
         localNewsData = data;
         dom.newsList.innerHTML = localNewsData.map(news => `
-            <div class="bg-white/60 p-4 rounded-2xl border flex justify-between items-center hover:shadow-lg transition-shadow">
-                <div class="flex items-center space-x-4 flex-1 min-w-0">
-                    <img src="${news.url_media || 'https://placehold.co/96x64/eee/999?text=IMG'}" alt="${news.titulo}" class="w-24 h-16 object-cover rounded-lg bg-gray-200" onerror="this.src='https://placehold.co/96x64/eee/999?text=IMG'">
-                    <div class="min-w-0">
-                        <h3 class="font-bold text-lg text-gray-800 truncate">${news.titulo}</h3>
-                        <p class="text-sm text-gray-600">${news.categoria} - ${formatDate(news.fecha)}</p>
+            <div class="bg-white/60 backdrop-blur-sm rounded-2xl border-2 border-gray-100 hover:border-blue-300 hover:shadow-xl transition-all duration-300 overflow-hidden card-hover">
+                <div class="flex flex-col md:flex-row">
+                    <!-- Imagen -->
+                    <div class="md:w-1/3 lg:w-1/4 relative">
+                        <img src="${news.url_media || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop'}" 
+                             alt="${news.titulo}" 
+                             class="w-full h-48 md:h-full object-cover" 
+                             onerror="this.src='https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop'">
+                        <div class="absolute top-3 left-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getCategoryColor(news.categoria)}">
+                                ${getCategoryIcon(news.categoria)} ${news.categoria}
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="flex space-x-2 flex-shrink-0 ml-4">
-                    <button onclick="editNews(${news.id})" class="p-3 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500" title="Editar">✏️</button>
-                    <button onclick="deleteNews(${news.id})" class="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600" title="Eliminar">🗑️</button>
+                    
+                    <!-- Contenido -->
+                    <div class="flex-1 p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1 pr-4">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2 line-clamp-2">${news.titulo}</h3>
+                                <p class="text-gray-600 text-sm mb-3 line-clamp-2">${news.resumen || 'Sin descripción'}</p>
+                                
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        ${formatDate(news.fecha)}
+                                    </div>
+                                    
+                                    ${news.url_externa ? `
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                            </svg>
+                                            <a href="${news.url_externa}" target="_blank" class="text-blue-600 hover:text-blue-800">Ver enlace</a>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        ID: ${news.id}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botones de acción -->
+                            <div class="flex flex-col space-y-2 flex-shrink-0">
+                                <button onclick="editNews(${news.id})" 
+                                        class="p-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl hover:from-yellow-500 hover:to-yellow-600 transition-all shadow-lg transform hover:scale-105" 
+                                        title="Editar noticia">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
+                                <button onclick="deleteNews(${news.id})" 
+                                        class="p-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all shadow-lg transform hover:scale-105" 
+                                        title="Eliminar noticia">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>`).join('');
         updateStats(localNewsData);
@@ -166,7 +247,8 @@
                     await supabaseClient.storage.from(BUCKET_NAME).remove([oldFilePath]);
                 }
                 
-                const filePath = `${Date.now()}_${selectedFile.name}`;
+                // CORRECCIÓN: Subir a la carpeta public/
+                const filePath = `public/${Date.now()}_${selectedFile.name}`;
                 const { error: uploadError } = await supabaseClient.storage
                     .from(BUCKET_NAME)
                     .upload(filePath, selectedFile);
@@ -236,6 +318,7 @@
             dom.formTitle.textContent = 'Editando Noticia';
             dom.submitBtn.innerHTML = '🔄 Actualizar Noticia';
             dom.cancelEditBtn.classList.remove('hidden');
+            switchTab('noticias');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
             showNotification('❌ Error al cargar para editar', 'error');
@@ -247,7 +330,7 @@
         if (confirm('¿Estás seguro? Esta acción no se puede deshacer.')) {
             try {
                 const { data: news, error: fetchError } = await supabaseClient.from('noticias').select('url_media').eq('id', id).single();
-                if (fetchError && fetchError.code !== 'PGRST116') throw fetchError; // Ignore "exact one row" error if not found
+                if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
                 if (news && news.url_media) {
                     const filePath = news.url_media.substring(news.url_media.indexOf(BUCKET_NAME + '/') + (BUCKET_NAME.length + 1));
@@ -267,17 +350,148 @@
         }
     }
 
-    function handleFileUpload(input) { const file = input.files[0]; if (!file) return; if (file.size > 10 * 1024 * 1024) { showNotification('❌ Archivo > 10MB', 'error'); return; } selectedFile = file; const reader = new FileReader(); reader.onload = e => showFilePreview(file, e.target.result); reader.readAsDataURL(file); }
-    function showFilePreview(file, dataUrl) { dom.fileUploadArea.classList.add('hidden'); dom.filePreview.classList.remove('hidden'); let el = file.type.startsWith('image/') ? `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">` : `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`; dom.previewContent.innerHTML = `${el}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`; }
-    function removeFile() { dom.fileInput.value = ''; selectedFile = null; dom.fileUploadArea.classList.remove('hidden'); dom.filePreview.classList.add('hidden'); dom.newsForm['existing-image-url'].value = ''; }
-    function switchTab(tabName) { dom.tabs.forEach(tab => tab.classList.remove('active')); dom.tabContents.forEach(content => content.classList.add('hidden')); const activeTab = document.querySelector(`[data-tab="${tabName}"]`); activeTab.classList.add('active'); document.getElementById(`tab-${tabName}`).classList.remove('hidden'); }
-    function updateStats(data) { const now = new Date(); dom.stats.total.textContent = data.length; dom.stats.recent.textContent = data.filter(n => new Date(n.created_at).getMonth() === now.getMonth()).length; dom.stats.categories.textContent = [...new Set(data.map(n => n.categoria))].length; dom.stats.users.textContent = Object.keys(USERS).length; }
-    function setDefaultDate() { document.getElementById('news-date').valueAsDate = new Date(); }
-    function showNotification(message, type = 'info') { const n = document.getElementById('notification'); const c = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' }; n.className = `notification fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white transform opacity-100 translate-x-0 ${c[type]}`; n.textContent = message; setTimeout(() => { n.style.transform = 'translateX(120%)'; n.style.opacity = '0'; }, 4000); }
-    function loadUsersList() { dom.usersList.innerHTML = Object.keys(USERS).map(u => `<div class="p-4 bg-gray-50 rounded-xl flex justify-between"><span>${u}</span></div>`).join(''); }
-    function handlePasswordChange(e) { e.preventDefault(); showNotification("Función no implementada aún.", "info"); }
-    function exportData() { if(localNewsData.length === 0) { showNotification("No hay datos para exportar", "info"); return; } const dataStr = JSON.stringify(localNewsData, null, 2); const blob = new Blob([dataStr], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'noticias_sochimt.json'; a.click(); URL.revokeObjectURL(url); }
-    function updateConnectionStatus(status) { const statuses = { connecting: { text: 'Conectando...', dot: 'bg-yellow-400', container: 'bg-yellow-200 text-yellow-800' }, connected: { text: 'Conectado', dot: 'bg-green-500', container: 'bg-green-200 text-green-800' }, disconnected: { text: 'Desconectado', dot: 'bg-red-500', container: 'bg-red-200 text-red-800' } }; const current = statuses[status] || statuses.disconnected; const statusContainer = document.getElementById('connection-status'); if (statusContainer) { document.getElementById('status-dot').className = `w-3 h-3 rounded-full ${current.dot}`; document.getElementById('status-text').textContent = current.text; statusContainer.className = `flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-bold transition-colors ${current.container}`; } }
+    function handleFileUpload(input) { 
+        const file = input.files[0]; 
+        if (!file) return; 
+        if (file.size > 50 * 1024 * 1024) { 
+            showNotification('❌ Archivo > 50MB', 'error'); 
+            return; 
+        } 
+        selectedFile = file; 
+        const reader = new FileReader(); 
+        reader.onload = e => showFilePreview(file, e.target.result); 
+        reader.readAsDataURL(file); 
+    }
+    
+    function showFilePreview(file, dataUrl) { 
+        dom.fileUploadArea.classList.add('hidden'); 
+        dom.filePreview.classList.remove('hidden'); 
+        let el = file.type.startsWith('image/') ? `<img src="${dataUrl}" class="max-h-48 rounded-lg mx-auto">` : `<video src="${dataUrl}" controls class="max-h-48 rounded-lg mx-auto"></video>`; 
+        dom.previewContent.innerHTML = `${el}<p class="mt-2 text-sm text-gray-500">${file.name}</p>`; 
+    }
+    
+    function removeFile() { 
+        dom.fileInput.value = ''; 
+        selectedFile = null; 
+        dom.fileUploadArea.classList.remove('hidden'); 
+        dom.filePreview.classList.add('hidden'); 
+        dom.newsForm['existing-image-url'].value = ''; 
+    }
+    
+    function switchTab(tabName) { 
+        dom.tabs.forEach(tab => tab.classList.remove('active')); 
+        dom.tabContents.forEach(content => content.classList.add('hidden')); 
+        const activeTab = document.querySelector(`[data-tab="${tabName}"]`); 
+        activeTab.classList.add('active'); 
+        document.getElementById(`tab-${tabName}`).classList.remove('hidden'); 
+    }
+    
+    function updateStats(data) { 
+        const now = new Date(); 
+        dom.stats.total.textContent = data.length; 
+        dom.stats.recent.textContent = data.filter(n => new Date(n.created_at).getMonth() === now.getMonth()).length; 
+        dom.stats.categories.textContent = [...new Set(data.map(n => n.categoria))].length; 
+        dom.stats.users.textContent = Object.keys(USERS).length; 
+    }
+    
+    function setDefaultDate() { 
+        document.getElementById('news-date').valueAsDate = new Date(); 
+    }
+    
+    function showNotification(message, type = 'info') { 
+        const n = document.getElementById('notification'); 
+        const c = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' }; 
+        n.className = `notification fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white transform opacity-100 translate-x-0 ${c[type]}`; 
+        n.textContent = message; 
+        setTimeout(() => { n.style.transform = 'translateX(120%)'; n.style.opacity = '0'; }, 4000); 
+    }
+    
+    function loadUsersList() { 
+        const userCards = {
+            'admin': {
+                name: 'Administrador',
+                realName: 'Marcelo',
+                role: 'Administrador General',
+                icon: '👑',
+                color: 'from-blue-500 to-blue-600',
+                permissions: ['Gestión completa', 'Todos los permisos', 'Configuración avanzada']
+            },
+            'editora': {
+                name: 'Editora',
+                realName: 'Silvia',
+                role: 'Editora de Contenido',
+                icon: '✏️',
+                color: 'from-purple-500 to-purple-600',
+                permissions: ['Crear noticias', 'Editar contenido', 'Gestión de medios']
+            }
+        };
+
+        dom.usersList.innerHTML = Object.keys(USERS).map(username => {
+            const user = userCards[username];
+            return `
+                <div class="bg-gradient-to-r ${user.color} p-6 rounded-2xl text-white shadow-lg card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="text-3xl">${user.icon}</div>
+                            <div>
+                                <h3 class="font-bold text-lg">${user.name}</h3>
+                                <p class="text-white/80 text-sm">${user.realName}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs bg-white/20 px-2 py-1 rounded-full">${user.role}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-semibold text-sm mb-2">Permisos:</h4>
+                        ${user.permissions.map(permission => `
+                            <div class="flex items-center text-xs">
+                                <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                ${permission}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function handlePasswordChange(e) { 
+        e.preventDefault(); 
+        showNotification("Función no implementada aún.", "info"); 
+    }
+    
+    function exportData() { 
+        if(localNewsData.length === 0) { 
+            showNotification("No hay datos para exportar", "info"); 
+            return; 
+        } 
+        const dataStr = JSON.stringify(localNewsData, null, 2); 
+        const blob = new Blob([dataStr], {type: 'application/json'}); 
+        const url = URL.createObjectURL(blob); 
+        const a = document.createElement('a'); 
+        a.href = url; 
+        a.download = 'noticias_sochimt.json'; 
+        a.click(); 
+        URL.revokeObjectURL(url); 
+    }
+    
+    function updateConnectionStatus(status) { 
+        const statuses = { 
+            connecting: { text: 'Conectando...', dot: 'bg-yellow-400', container: 'bg-yellow-200 text-yellow-800' }, 
+            connected: { text: 'Conectado', dot: 'bg-green-500', container: 'bg-green-200 text-green-800' }, 
+            disconnected: { text: 'Desconectado', dot: 'bg-red-500', container: 'bg-red-200 text-red-800' } 
+        }; 
+        const current = statuses[status] || statuses.disconnected; 
+        const statusContainer = document.getElementById('connection-status'); 
+        if (statusContainer) { 
+            document.getElementById('status-dot').className = `w-3 h-3 rounded-full ${current.dot}`; 
+            document.getElementById('status-text').textContent = current.text; 
+            statusContainer.className = `flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-bold transition-colors ${current.container}`; 
+        } 
+    }
 
     document.addEventListener('DOMContentLoaded', checkSession);
   </script>
