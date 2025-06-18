@@ -1,13 +1,9 @@
 {
   "name": "sochimt-website",
   "version": "1.0.0",
-  "description": "Website de SOCHIMT con sistema de noticias",
-  "main": "index.html",
+  "description": "Website de SOCHIMT",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0"
-  },
-  "scripts": {
-    "build": "echo 'Build complete'"
   },
   "engines": {
     "node": "18.x"
