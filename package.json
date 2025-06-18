@@ -1,8 +1,21 @@
 {
-  "name": "sochimt-netlify-functions",
+  "name": "sochimt-website",
   "version": "1.0.0",
-  "description": "Dependencias para las funciones de Netlify de SOCHIMT",
+  "description": "Sitio web de la Sociedad Chilena de Medicina Transfusional",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "npm install"
+  },
   "dependencies": {
-    "firebase-admin": "^11.5.0"
-  }
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "medicina",
+    "transfusional",
+    "chile"
+  ],
+  "author": "SOCHIMT",
+  "license": "MIT"
 }
