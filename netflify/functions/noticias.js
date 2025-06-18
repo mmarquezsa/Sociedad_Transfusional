@@ -1,41 +1,94 @@
-// Importa la librería de Supabase. Netlify la encontrará automáticamente.
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js');
 
-// La URL de tu proyecto de Supabase
-const supabaseUrl = 'https://dkohwhosputnxismgkon.supabase.co';
+// Logging para debugging
+console.log('Función noticias iniciada');
 
-// La clave secreta de Supabase (la que guardaste en Netlify)
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+exports.handler = async (event, context) => {
+  // Headers para CORS
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Content-Type': 'application/json',
+  };
 
-// Crea el cliente de Supabase para usar en el servidor
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-exports.handler = async function (event, context) {
-  try {
-    // Pide a Supabase todas las noticias de la tabla 'noticias'
-    // y las ordena por fecha de más nueva a más antigua.
-    const { data, error } = await supabase
-      .from('noticias')
-      .select('*') // Selecciona todas las columnas
-      .order('fecha', { ascending: false }); // Ordena por la columna 'fecha'
-
-    // Si Supabase devuelve un error, lo registramos y fallamos.
-    if (error) {
-      throw error;
-    }
-
-    // Si todo va bien, devolvemos los datos en formato JSON.
+  // Manejo de preflight requests
+  if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data || []), // Devuelve los datos o un array vacío
+      headers,
+      body: '',
+    };
+  }
+
+  // Solo permitir GET requests
+  if (event.httpMethod !== 'GET') {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: 'Método no permitido' }),
+    };
+  }
+
+  try {
+    // Verificar variables de entorno
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Variables de entorno faltantes');
+      console.error('SUPABASE_URL:', !!supabaseUrl);
+      console.error('SUPABASE_KEY:', !!supabaseKey);
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Configuración del servidor incompleta',
+          details: `Faltan variables: ${!supabaseUrl ? 'SUPABASE_URL ' : ''}${!supabaseKey ? 'SUPABASE_KEY' : ''}`
+        }),
+      };
+    }
+
+    // Crear cliente de Supabase
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Consultar noticias
+    const { data, error } = await supabase
+      .from('noticias')
+      .select('*')
+      .order('fecha', { ascending: false })
+      .limit(6);
+
+    if (error) {
+      console.error('Error de Supabase:', error);
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({
+          error: 'Error de base de datos',
+          details: error.message
+        }),
+      };
+    }
+
+    // Retornar datos exitosamente
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(data || []),
     };
 
   } catch (error) {
-    console.error("Error al obtener noticias desde Supabase:", error);
+    console.error('Error general en función noticias:', error);
+    
     return {
       statusCode: 500,
-      body: "Error interno del servidor al contactar la base de datos."
+      headers,
+      body: JSON.stringify({
+        error: 'Error interno del servidor',
+        details: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      }),
     };
   }
 };
