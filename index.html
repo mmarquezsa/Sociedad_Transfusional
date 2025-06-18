@@ -469,14 +469,15 @@
       </div>
 
       <!-- Ver más (Ahora Gestionar Noticias) -->
+      <!-- Ver más (Ahora Gestionar Noticias) -->
       <div class="text-center mt-12 reveal">
         <a href="gestion_noticias.html" target="_blank" class="inline-flex items-center bg-gray-100 text-gray-700 px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all duration-300 group">
-  <span>Gestionar Noticias</span>
-  <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-  </svg>
-</a>
+          <span>Gestionar Noticias</span>
+          <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </a>
       </div>
     </div>
   </section>
@@ -601,7 +602,7 @@
 
 <!-- Scripts -->
 <script>
-  // Configuración global (opcional)
+  // Configuración global
   const CONFIG = {
     animations: {
       duration: 800,
@@ -611,12 +612,13 @@
 
   // Inicialización cuando el DOM esté cargado
   document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 SOCHIMT cargado - Inicializando...');
     initNavbar();
     initMobileMenu();
     initScrollAnimations();
-    loadNoticias();
     initSmoothScrolling();
     initCounterAnimations();
+    loadNoticias(); // Carga las noticias al final
   });
 
   // Efecto de la barra de navegación al hacer scroll
@@ -648,6 +650,8 @@
   function initMobileMenu() {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
+
+    if (!mobileMenuBtn || !mobileMenu) return;
 
     mobileMenuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
@@ -732,7 +736,7 @@
   function animateCounter(element) {
     const target = parseInt(element.getAttribute('data-target'));
     const duration = 2000;
-    const stepTime = 16; // Aproximadamente 60fps
+    const stepTime = 16;
     const totalSteps = duration / stepTime;
     const step = target / totalSteps;
     let current = 0;
@@ -748,219 +752,53 @@
     }, stepTime);
   }
 
-  // --- LÓGICA DE CARGA DE NOTICIAS (CORREGIDA PARA SUPABASE) ---
-
-  // Orquesta la carga de noticias en la página
-  async function loadNoticias() {
-    const container = document.getElementById('noticias-container');
-    const loading = document.getElementById('noticias-loading');
-
-    loading.style.display = 'block';
-    container.innerHTML = '';
-
+  // Función para formatear fecha de Supabase
+  function formatSupabaseDate(dateStr) {
+    if (!dateStr) return '';
     try {
-      const noticias = await fetchNoticias();
-      loading.style.display = 'none';
-      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
-      
-      container.querySelectorAll('.reveal').forEach((el, index) => {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, index * 100);
+      const [year, month, day] = dateStr.split('-');
+      const dateObj = new Date(year, month - 1, day);
+      return dateObj.toLocaleDateString('es-CL', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
-
     } catch (error) {
-      console.error('Error al intentar cargar las noticias:', error);
-      loading.innerHTML = `
-        <div class="text-center py-12">
-          <div class="text-red-500 text-6xl mb-4">⚠️</div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
-          <p class="text-gray-600 mb-4">No se pudo conectar con el servidor.</p>
-          <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
-            Reintentar
-          </button>
-        </div>`;
+      console.error('Error formateando fecha:', error);
+      return dateStr;
     }
   }
 
-// Busca las noticias desde la API de Netlify
-async function fetchNoticias() {
-  try {
-    console.log('🔍 Iniciando fetch de noticias...');
-    
-    // CORRECCIÓN: Agregar timeout y mejor manejo de errores
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout
-    
-    const response = await fetch('/.netlify/functions/noticias', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    console.log('📡 Respuesta recibida:', response.status, response.statusText);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Error en respuesta:', errorText);
-      throw new Error(`Error ${response.status}: ${response.statusText}\nDetalles: ${errorText}`);
-    }
-    
-    const data = await response.json();
-    console.log('✅ Datos recibidos:', data);
-    
-    // Verificar que la respuesta sea un array
-    if (!Array.isArray(data)) {
-      console.error('⚠️ La respuesta no es un array:', data);
-      throw new Error('Formato de respuesta inválido - se esperaba un array');
-    }
-    
-    return data;
-    
-  } catch (error) {
-    console.error('💥 Error en fetchNoticias:', error);
-    
-    // Diferentes tipos de errores
-    if (error.name === 'AbortError') {
-      throw new Error('Timeout: La conexión tardó demasiado');
-    } else if (error.message.includes('fetch')) {
-      throw new Error('Error de conexión: Verifique su conexión a internet');
-    } else {
-      throw error;
-    }
-  }
-}
+  // Función para crear HTML de noticias
+  function createNoticiaHTML(noticia) {
+    const categoryColors = {
+      'Evento': 'bg-blue-100 text-blue-800',
+      'Noticia': 'bg-yellow-100 text-yellow-800',
+      'Publicación': 'bg-green-100 text-green-800',
+      'Webinar': 'bg-purple-100 text-purple-800',
+      'Congreso': 'bg-red-100 text-red-800'
+    };
 
-// Función mejorada para crear HTML de noticias con fallback
-function createNoticiaHTML(noticia) {
-  const categoryColors = {
-    'Evento': 'bg-blue-100 text-blue-800',
-    'Noticia': 'bg-yellow-100 text-yellow-800',
-    'Publicación': 'bg-green-100 text-green-800',
-    'Webinar': 'bg-purple-100 text-purple-800',
-    'Congreso': 'bg-red-100 text-red-800',
-    'Error': 'bg-red-100 text-red-800'
-  };
+    // Validación de datos
+    const titulo = noticia.titulo || 'Sin título';
+    const categoria = noticia.categoria || 'Noticia';
+    const resumen = noticia.resumen || 'Sin descripción disponible';
+    const fecha = noticia.fecha || new Date().toISOString().split('T')[0];
+    const urlExterna = noticia.url_externa || '#';
+    const urlMedia = noticia.url_media || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';
 
-  // Validación de datos
-  const titulo = noticia.titulo || 'Sin título';
-  const categoria = noticia.categoria || 'Noticia';
-  const resumen = noticia.resumen || 'Sin descripción disponible';
-  const fecha = noticia.fecha || new Date().toISOString().split('T')[0];
-  const urlExterna = noticia.url_externa || '#';
-  const urlMedia = noticia.url_media || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';
-
-  return `
-    <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden flex flex-col">
-      <div class="relative">
-        <img 
-          src="${urlMedia}" 
-          alt="${titulo}" 
-          class="w-full h-48 object-cover" 
-          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop'; console.log('⚠️ Imagen fallback aplicada para:', '${titulo}');"
-          onload="console.log('✅ Imagen cargada correctamente:', this.src)">
-        <div class="absolute top-4 left-4">
-          <span class="px-3 py-1 ${categoryColors[categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-            ${categoria}
-          </span>
-        </div>
-      </div>
-      <div class="p-6 flex flex-col flex-grow">
-        <div class="flex items-center text-sm text-gray-500 mb-3">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-          ${formatSupabaseDate(fecha)}
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
-          ${titulo}
-        </h3>
-        <p class="text-gray-600 leading-relaxed mb-4 flex-grow">
-          ${resumen}
-        </p>
-        <a 
-          href="${urlExterna}" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto"
-          ${urlExterna === '#' ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : ''}>
-          <span>Leer más</span>
-          <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </a>
-      </div>
-    </article>
-  `;
-}
-
-// Función mejorada para cargar noticias con mejor manejo de errores
-async function loadNoticias() {
-  const container = document.getElementById('noticias-container');
-  const loading = document.getElementById('noticias-loading');
-
-  if (!container || !loading) {
-    console.error('❌ Elementos DOM no encontrados');
-    return;
-  }
-
-  loading.style.display = 'block';
-  container.innerHTML = '';
-
-  try {
-    console.log('🔄 Cargando noticias...');
-    const noticias = await fetchNoticias();
-    
-    loading.style.display = 'none';
-    
-    if (noticias.length === 0) {
-      container.innerHTML = `
-        <div class="col-span-full text-center py-12">
-          <div class="text-gray-400 text-6xl mb-4">📰</div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias disponibles</h3>
-          <p class="text-gray-600">Pronto publicaremos nuevas noticias.</p>
-        </div>`;
-      return;
-    }
-    
-    container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
-    
-    // Animación de entrada
-    container.querySelectorAll('.reveal').forEach((el, index) => {
-      setTimeout(() => {
-        el.classList.add('active');
-      }, index * 100);
-    });
-
-    console.log(`✅ ${noticias.length} noticias cargadas exitosamente`);
-
-  } catch (error) {
-    console.error('💥 Error al cargar noticias:', error);
-    loading.innerHTML = `
-      <div class="text-center py-12">
-        <div class="text-red-500 text-6xl mb-4">⚠️</div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
-        <p class="text-gray-600 mb-4">${error.message}</p>
-        <button 
-          onclick="loadNoticias()" 
-          class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
-          🔄 Reintentar
-        </button>
-      </div>`;
-  }
-}
-    // CAMBIO: Usa los nombres de campo de Supabase (url_media, url_externa)
     return `
       <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden flex flex-col">
         <div class="relative">
-          <img src="${noticia.url_media}" alt="${noticia.titulo}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x200/ef4444/white?text=Imagen+no+disponible';">
+          <img 
+            src="${urlMedia}" 
+            alt="${titulo}" 
+            class="w-full h-48 object-cover" 
+            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';"
+            onload="console.log('✅ Imagen cargada:', this.src)">
           <div class="absolute top-4 left-4">
-            <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-              ${noticia.categoria}
+            <span class="px-3 py-1 ${categoryColors[categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
+              ${categoria}
             </span>
           </div>
         </div>
@@ -969,15 +807,20 @@ async function loadNoticias() {
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
-            ${formatSupabaseDate(noticia.fecha)}
+            ${formatSupabaseDate(fecha)}
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
-            ${noticia.titulo}
+            ${titulo}
           </h3>
           <p class="text-gray-600 leading-relaxed mb-4 flex-grow">
-            ${noticia.resumen}
+            ${resumen}
           </p>
-          <a href="${noticia.url_externa || '#'}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto">
+          <a 
+            href="${urlExterna}" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto"
+            ${urlExterna === '#' ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : ''}>
             <span>Leer más</span>
             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -988,7 +831,102 @@ async function loadNoticias() {
     `;
   }
 
-  console.log('🚀 SOCHIMT renovado cargado exitosamente!');
-</script>
-</body>
-</html>
+  // Función para obtener noticias desde la API
+  async function fetchNoticias() {
+    try {
+      console.log('🔍 Iniciando fetch de noticias...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      const response = await fetch('/.netlify/functions/noticias', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      console.log('📡 Respuesta:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Error en respuesta:', errorText);
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Datos recibidos:', data);
+      
+      if (!Array.isArray(data)) {
+        console.error('⚠️ La respuesta no es un array:', data);
+        throw new Error('Formato de respuesta inválido');
+      }
+      
+      return data;
+      
+    } catch (error) {
+      console.error('💥 Error en fetchNoticias:', error);
+      
+      if (error.name === 'AbortError') {
+        throw new Error('Timeout: La conexión tardó demasiado');
+      } else if (error.message.includes('fetch')) {
+        throw new Error('Error de conexión');
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // Función principal para cargar noticias
+  async function loadNoticias() {
+    const container = document.getElementById('noticias-container');
+    const loading = document.getElementById('noticias-loading');
+
+    if (!container || !loading) {
+      console.error('❌ Elementos DOM no encontrados');
+      return;
+    }
+
+    loading.style.display = 'block';
+    container.innerHTML = '';
+
+    try {
+      console.log('🔄 Cargando noticias...');
+      const noticias = await fetchNoticias();
+      
+      loading.style.display = 'none';
+      
+      if (noticias.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <div class="text-gray-400 text-6xl mb-4">📰</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias disponibles</h3>
+            <p class="text-gray-600">Pronto publicaremos nuevas noticias.</p>
+          </div>`;
+        return;
+      }
+      
+      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
+      
+      // Animación de entrada
+      container.querySelectorAll('.reveal').forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add('active');
+        }, index * 100);
+      });
+
+      console.log(`✅ ${noticias.length} noticias cargadas exitosamente`);
+
+    } catch (error) {
+      console.error('💥 Error al cargar noticias:', error);
+      loading.innerHTML = `
+        <div class="text-center py-12">
+          <div class="text-red-500 text-6xl mb-4">⚠️</div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
+          <p class="text-gray-600 mb-4">${error.message}</p>
+          <button 
+            onclick="loadNoticias()" 
+            class="px-6 py-2 bg-sochimt-
