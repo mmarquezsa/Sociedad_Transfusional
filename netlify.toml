@@ -6,9 +6,24 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Headers para CORS en funciones
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
     Access-Control-Allow-Origin  = "*"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+# Headers para archivos estáticos
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+
+# Redirects para SPA (opcional)
+[[redirects]]
+  from = "/admin"
+  to = "/gestion_noticias.html"
+  status = 200
