@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Website de SOCHIMT",
   "scripts": {
-  "build": "echo 'Iniciando build' && npm run tailwind:build && echo 'Tailwind listo' && npm run html:copy && echo 'HTML copiado'",
+    "build": "echo '🔄 Iniciando build...' && npm run tailwind:build && echo '🛠️ Tailwind generado' && npm run html:copy && echo '📂 HTML copiado'",
     "tailwind:build": "tailwindcss -i src/style.css -o public/style.css --minify",
-    "html:copy": "cp index.html gestion_noticias.html public/"
+    "html:copy": "mkdir -p public && cp index.html gestion_noticias.html public/"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0"
@@ -19,4 +19,3 @@
     "node": "18.x"
   }
 }
-
