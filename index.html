@@ -786,52 +786,173 @@
 // Busca las noticias desde la API de Netlify
 async function fetchNoticias() {
   try {
-    // CORREGIDO: Cambiar 'get-noticias' por 'noticias' para coincidir con el archivo
-    const response = await fetch('/.netlify/functions/noticias');
+    console.log('🔍 Iniciando fetch de noticias...');
+    
+    // CORRECCIÓN: Agregar timeout y mejor manejo de errores
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout
+    
+    const response = await fetch('/.netlify/functions/noticias', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    console.log('📡 Respuesta recibida:', response.status, response.statusText);
     
     if (!response.ok) {
-      throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('❌ Error en respuesta:', errorText);
+      throw new Error(`Error ${response.status}: ${response.statusText}\nDetalles: ${errorText}`);
     }
     
     const data = await response.json();
+    console.log('✅ Datos recibidos:', data);
     
-    // Verificar que la respuesta tenga el formato esperado
+    // Verificar que la respuesta sea un array
     if (!Array.isArray(data)) {
-      console.error('La respuesta no es un array:', data);
-      throw new Error('Formato de respuesta inválido');
+      console.error('⚠️ La respuesta no es un array:', data);
+      throw new Error('Formato de respuesta inválido - se esperaba un array');
     }
     
     return data;
+    
   } catch (error) {
-    console.error('No se pudieron obtener las noticias desde la API:', error);
-    throw error;
+    console.error('💥 Error en fetchNoticias:', error);
+    
+    // Diferentes tipos de errores
+    if (error.name === 'AbortError') {
+      throw new Error('Timeout: La conexión tardó demasiado');
+    } else if (error.message.includes('fetch')) {
+      throw new Error('Error de conexión: Verifique su conexión a internet');
+    } else {
+      throw error;
+    }
   }
 }
 
-  function formatSupabaseDate(dateStr) {
-      if (!dateStr) return '';
-      // Asume que la fecha viene como 'YYYY-MM-DD'
-      const [year, month, day] = dateStr.split('-');
-      const dateObj = new Date(year, month - 1, day);
-      return dateObj.toLocaleDateString('es-CL', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-      });
+// Función mejorada para crear HTML de noticias con fallback
+function createNoticiaHTML(noticia) {
+  const categoryColors = {
+    'Evento': 'bg-blue-100 text-blue-800',
+    'Noticia': 'bg-yellow-100 text-yellow-800',
+    'Publicación': 'bg-green-100 text-green-800',
+    'Webinar': 'bg-purple-100 text-purple-800',
+    'Congreso': 'bg-red-100 text-red-800',
+    'Error': 'bg-red-100 text-red-800'
+  };
+
+  // Validación de datos
+  const titulo = noticia.titulo || 'Sin título';
+  const categoria = noticia.categoria || 'Noticia';
+  const resumen = noticia.resumen || 'Sin descripción disponible';
+  const fecha = noticia.fecha || new Date().toISOString().split('T')[0];
+  const urlExterna = noticia.url_externa || '#';
+  const urlMedia = noticia.url_media || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';
+
+  return `
+    <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden flex flex-col">
+      <div class="relative">
+        <img 
+          src="${urlMedia}" 
+          alt="${titulo}" 
+          class="w-full h-48 object-cover" 
+          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop'; console.log('⚠️ Imagen fallback aplicada para:', '${titulo}');"
+          onload="console.log('✅ Imagen cargada correctamente:', this.src)">
+        <div class="absolute top-4 left-4">
+          <span class="px-3 py-1 ${categoryColors[categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
+            ${categoria}
+          </span>
+        </div>
+      </div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex items-center text-sm text-gray-500 mb-3">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          ${formatSupabaseDate(fecha)}
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
+          ${titulo}
+        </h3>
+        <p class="text-gray-600 leading-relaxed mb-4 flex-grow">
+          ${resumen}
+        </p>
+        <a 
+          href="${urlExterna}" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto"
+          ${urlExterna === '#' ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+          <span>Leer más</span>
+          <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </article>
+  `;
+}
+
+// Función mejorada para cargar noticias con mejor manejo de errores
+async function loadNoticias() {
+  const container = document.getElementById('noticias-container');
+  const loading = document.getElementById('noticias-loading');
+
+  if (!container || !loading) {
+    console.error('❌ Elementos DOM no encontrados');
+    return;
   }
 
+  loading.style.display = 'block';
+  container.innerHTML = '';
 
-  // Crea el bloque HTML para una sola tarjeta de noticia
-  function createNoticiaHTML(noticia) {
-    const categoryColors = {
-      'Evento': 'bg-blue-100 text-blue-800',
-      'Noticia': 'bg-yellow-100 text-yellow-800',
-      'Publicación': 'bg-green-100 text-green-800',
-      'Webinar': 'bg-purple-100 text-purple-800',
-      'Congreso': 'bg-red-100 text-red-800',
-      'Error': 'bg-red-100 text-red-800'
-    };
+  try {
+    console.log('🔄 Cargando noticias...');
+    const noticias = await fetchNoticias();
+    
+    loading.style.display = 'none';
+    
+    if (noticias.length === 0) {
+      container.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <div class="text-gray-400 text-6xl mb-4">📰</div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias disponibles</h3>
+          <p class="text-gray-600">Pronto publicaremos nuevas noticias.</p>
+        </div>`;
+      return;
+    }
+    
+    container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
+    
+    // Animación de entrada
+    container.querySelectorAll('.reveal').forEach((el, index) => {
+      setTimeout(() => {
+        el.classList.add('active');
+      }, index * 100);
+    });
 
+    console.log(`✅ ${noticias.length} noticias cargadas exitosamente`);
+
+  } catch (error) {
+    console.error('💥 Error al cargar noticias:', error);
+    loading.innerHTML = `
+      <div class="text-center py-12">
+        <div class="text-red-500 text-6xl mb-4">⚠️</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
+        <p class="text-gray-600 mb-4">${error.message}</p>
+        <button 
+          onclick="loadNoticias()" 
+          class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
+          🔄 Reintentar
+        </button>
+      </div>`;
+  }
+}
     // CAMBIO: Usa los nombres de campo de Supabase (url_media, url_externa)
     return `
       <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden flex flex-col">
