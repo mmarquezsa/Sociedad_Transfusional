@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Website de SOCHIMT",
   "scripts": {
-    "build": "npm run tailwind:build && npm run html:copy",
+  "build": "echo 'Iniciando build' && npm run tailwind:build && echo 'Tailwind listo' && npm run html:copy && echo 'HTML copiado'",
     "tailwind:build": "tailwindcss -i src/style.css -o public/style.css --minify",
     "html:copy": "cp index.html gestion_noticias.html public/"
   },
@@ -19,3 +19,4 @@
     "node": "18.x"
   }
 }
+
