@@ -1,13 +1,13 @@
 [build]
+  publish   = "public"            # Carpeta de salida (ajusta si usas otro directorio)
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
 
-# Configuración para el manejo de archivos
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Origin  = "*"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
