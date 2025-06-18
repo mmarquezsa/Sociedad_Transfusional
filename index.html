@@ -783,20 +783,30 @@
     }
   }
 
-  // Busca las noticias desde la API de Netlify
-  async function fetchNoticias() {
-    try {
-      // CAMBIO: Apunta a la nueva función 'get-noticias'
-      const response = await fetch('/.netlify/functions/get-noticias');
-      if (!response.ok) {
-        throw new Error(`Error en la solicitud: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('No se pudieron obtener las noticias desde la API:', error);
-      throw error;
+// Busca las noticias desde la API de Netlify
+async function fetchNoticias() {
+  try {
+    // CORREGIDO: Cambiar 'get-noticias' por 'noticias' para coincidir con el archivo
+    const response = await fetch('/.netlify/functions/noticias');
+    
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
     }
+    
+    const data = await response.json();
+    
+    // Verificar que la respuesta tenga el formato esperado
+    if (!Array.isArray(data)) {
+      console.error('La respuesta no es un array:', data);
+      throw new Error('Formato de respuesta inválido');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('No se pudieron obtener las noticias desde la API:', error);
+    throw error;
   }
+}
 
   function formatSupabaseDate(dateStr) {
       if (!dateStr) return '';
