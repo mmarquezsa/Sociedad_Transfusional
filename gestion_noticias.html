@@ -86,6 +86,8 @@
     
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // CORRECCIÓN: El bucket correcto es "media" según la imagen
     const BUCKET_NAME = 'media';
 
     const dom = { loginScreen: document.getElementById('login-screen'), adminPanel: document.getElementById('admin-panel'), loginForm: document.getElementById('login-form'), newsForm: document.getElementById('news-form'), newsList: document.getElementById('news-list'), logoutBtn: document.getElementById('logout-btn'), cancelEditBtn: document.getElementById('cancel-edit'), submitBtn: document.getElementById('submit-news'), formTitle: document.getElementById('form-title'), fileInput: document.getElementById('news-image-file'), fileUploadArea: document.getElementById('file-upload-area'), filePreview: document.getElementById('file-preview'), previewContent: document.getElementById('preview-content'), removeFileBtn: document.getElementById('remove-file-btn'), currentUserSpan: document.getElementById('current-user'), loginError: document.getElementById('login-error'), tabs: document.querySelectorAll('.tab-btn'), tabContents: document.querySelectorAll('.tab-content'), usersList: document.getElementById('users-list'), changePasswordForm: document.getElementById('change-password-form'), exportBtn: document.getElementById('export-data-btn'), statusDot: document.getElementById('status-dot'), statusText: document.getElementById('status-text'), stats: { total: document.getElementById('total-news'), recent: document.getElementById('recent-news'), categories: document.getElementById('categories-count'), users: document.getElementById('users-count') } };
@@ -278,20 +280,36 @@
         const id = dom.newsForm['news-id'].value;
         let urlMedia = dom.newsForm['existing-image-url'].value || null;
 
+        console.log('=== INICIO ENVÍO DE NOTICIA ===');
+        console.log('ID (editando):', id);
+        console.log('URL Media existente:', urlMedia);
+        console.log('Archivo seleccionado:', selectedFile);
+
         try {
             if (selectedFile) {
+                console.log('📤 Subiendo archivo...');
+                
                 if (id && urlMedia) {
                     const oldFilePath = urlMedia.substring(urlMedia.indexOf(BUCKET_NAME + '/') + (BUCKET_NAME.length + 1));
+                    console.log('🗑️ Eliminando archivo anterior:', oldFilePath);
                     await supabaseClient.storage.from(BUCKET_NAME).remove([oldFilePath]);
                 }
                 
                 // CORRECCIÓN: Subir a la carpeta public/
                 const filePath = `public/${Date.now()}_${selectedFile.name}`;
-                const { error: uploadError } = await supabaseClient.storage
+                console.log('📁 Subiendo a path:', filePath);
+                console.log('🪣 Bucket:', BUCKET_NAME);
+                
+                const { error: uploadError, data: uploadData } = await supabaseClient.storage
                     .from(BUCKET_NAME)
                     .upload(filePath, selectedFile);
 
-                if (uploadError) throw uploadError;
+                if (uploadError) {
+                    console.error('❌ Error subiendo:', uploadError);
+                    throw uploadError;
+                }
+                
+                console.log('✅ Archivo subido exitosamente:', uploadData);
 
                 const { data: publicUrlData } = supabaseClient.storage
                     .from(BUCKET_NAME)
@@ -300,10 +318,7 @@
                 urlMedia = publicUrlData.publicUrl;
                 
                 // DEBUG: Verificar URL generada
-                console.log('=== DEBUG SUBIDA DE IMAGEN ===');
-                console.log('Archivo subido:', filePath);
-                console.log('URL generada:', urlMedia);
-                console.log('==============================');
+                console.log('🔗 URL generada:', urlMedia);
             }
 
             const newsData = {
@@ -316,27 +331,36 @@
                 url_media: urlMedia
             };
             
+            console.log('💾 Datos a guardar:', newsData);
+            
             let error;
             if (id) {
+                console.log('🔄 Actualizando noticia...');
                 const { error: updateError } = await supabaseClient.from('noticias').update(newsData).eq('id', id);
                 error = updateError;
             } else {
+                console.log('📝 Creando nueva noticia...');
                 const { error: insertError } = await supabaseClient.from('noticias').insert([newsData]);
                 error = insertError;
             }
 
-            if (error) throw error;
+            if (error) {
+                console.error('❌ Error en base de datos:', error);
+                throw error;
+            }
 
+            console.log('✅ Noticia guardada exitosamente');
             showNotification(id ? '✅ Noticia actualizada' : '🎉 Noticia publicada', 'success');
             cancelEdit();
             await loadNews();
 
         } catch (err) { 
+            console.error('💥 Error general:', err);
             showNotification(`❌ Error: ${err.message}`, 'error'); 
-            console.error(err);
         } finally { 
             dom.submitBtn.disabled = false; 
             dom.submitBtn.innerHTML = id ? '🔄 Actualizar Noticia' : '✨ Publicar Noticia'; 
+            console.log('=== FIN ENVÍO DE NOTICIA ===');
         }
     }
 
