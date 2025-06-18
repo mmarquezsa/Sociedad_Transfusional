@@ -1,5 +1,6 @@
 [build]
-  publish   = "public"            # Carpeta de salida (ajusta si usas otro directorio)
+  command  = "npm ci && npm run build"
+  publish  = "public"
   functions = "netlify/functions"
 
 [build.environment]
