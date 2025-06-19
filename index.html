@@ -569,6 +569,7 @@
   </section>
 
   <!-- Noticias Dinámicas -->
+ <!-- Noticias Carousel -->
   <section id="noticias" class="py-20 lg:py-32 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
@@ -584,18 +585,40 @@
         </p>
       </div>
 
-      <!-- News Grid -->
-      <div id="noticias-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Las noticias se cargarán dinámicamente aquí -->
+      <!-- News Carousel -->
+      <div class="relative">
+        <!-- Navigation Buttons -->
+        <button id="prev-btn" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-gray-50 transition-all duration-300 opacity-50 cursor-not-allowed" disabled>
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        
+        <button id="next-btn" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-gray-50 transition-all duration-300 opacity-50 cursor-not-allowed" disabled>
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <!-- Carousel Container -->
+        <div class="overflow-hidden">
+          <div id="noticias-container" class="flex transition-transform duration-500 ease-in-out gap-8">
+            <!-- Las noticias se cargarán dinámicamente aquí -->
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="noticias-loading" class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sochimt-600"></div>
+          <p class="mt-4 text-gray-600">Cargando noticias...</p>
+        </div>
+
+        <!-- Indicators -->
+        <div id="carousel-indicators" class="flex justify-center mt-8 space-x-2">
+          <!-- Los indicadores se generarán dinámicamente -->
+        </div>
       </div>
 
-      <!-- Loading State -->
-      <div id="noticias-loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sochimt-600"></div>
-        <p class="mt-4 text-gray-600">Cargando noticias...</p>
-      </div>
-
-      <!-- Ver más (Ahora Gestionar Noticias) -->
       <!-- Ver más (Ahora Gestionar Noticias) -->
       <div class="text-center mt-12 reveal">
         <a href="gestion_noticias.html" target="_blank" class="inline-flex items-center bg-gray-100 text-gray-700 px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all duration-300 group">
@@ -607,6 +630,7 @@
         </a>
       </div>
     </div>
+  </section>
   </section>
 
   <!-- CTA Section / Sección Socios -->
