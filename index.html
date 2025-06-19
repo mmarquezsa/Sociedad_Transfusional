@@ -157,6 +157,73 @@
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #1e40af; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+    
+    /* Line clamp utilities para mantener consistencia en las tarjetas */
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    /* Altura fija estricta para las tarjetas del carousel */
+    .carousel-card {
+      height: 500px !important;
+      min-height: 500px !important;
+      max-height: 500px !important;
+    }
+    
+    .carousel-image {
+      height: 200px !important;
+      min-height: 200px !important;
+      max-height: 200px !important;
+    }
+    
+    .carousel-content {
+      height: 300px !important;
+      min-height: 300px !important;
+      max-height: 300px !important;
+    }
+    
+    .carousel-title {
+      height: 60px !important;
+      min-height: 60px !important;
+      max-height: 60px !important;
+    }
+    
+    .carousel-description {
+      height: 72px !important;
+      min-height: 72px !important;
+      max-height: 72px !important;
+    }
+    
+    /* Responsive heights para móviles */
+    @media (max-width: 768px) {
+      .carousel-card {
+        height: 450px !important;
+        min-height: 450px !important;
+        max-height: 450px !important;
+      }
+      
+      .carousel-image {
+        height: 180px !important;
+        min-height: 180px !important;
+        max-height: 180px !important;
+      }
+      
+      .carousel-content {
+        height: 270px !important;
+        min-height: 270px !important;
+        max-height: 270px !important;
+      }
+    }
   </style>
 </head>
 
@@ -568,8 +635,6 @@
     </div>
   </section>
 
-  <!-- Noticias Dinámicas -->
- <!-- Noticias Carousel -->
   <!-- Noticias Carousel -->
   <section id="noticias" class="py-20 lg:py-32 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1039,77 +1104,227 @@
     }
   }
 
-// Función para crear HTML de noticias para carousel
-function createNoticiaHTML(noticia) {
-  const categoryColors = {
-    'Evento': 'bg-blue-100 text-blue-800',
-    'Noticia': 'bg-yellow-100 text-yellow-800',
-    'Publicación': 'bg-green-100 text-green-800',
-    'Webinar': 'bg-purple-100 text-purple-800',
-    'Congreso': 'bg-red-100 text-red-800'
-  };
+  // Variables globales para el carousel
+  let currentIndex = 0;
+  let noticiasData = [];
+  let itemsPerView = 3;
+  let maxIndex = 0;
 
-  // Validación de datos
-  const titulo = noticia.titulo || 'Sin título';
-  const categoria = noticia.categoria || 'Noticia';
-  const resumen = noticia.resumen || 'Sin descripción disponible';
-  const fecha = noticia.fecha || new Date().toISOString().split('T')[0];
-  const urlExterna = noticia.url_externa || '#';
-  const urlMedia = noticia.url_media || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';
+  // Función para calcular items por vista según el tamaño de pantalla
+  function calculateItemsPerView() {
+    if (window.innerWidth < 768) {
+      itemsPerView = 1;
+    } else if (window.innerWidth < 1024) {
+      itemsPerView = 2;
+    } else {
+      itemsPerView = 3;
+    }
+    maxIndex = Math.max(0, noticiasData.length - itemsPerView);
+  }
 
-  // Limitar longitud del resumen para mantener consistencia
-  const resumenCorto = resumen.length > 100 ? resumen.substring(0, 100) + '...' : resumen;
+  // Función para actualizar la posición del carousel
+  function updateCarouselPosition() {
+    const container = document.getElementById('noticias-container');
+    const translateX = -(currentIndex * (100 / itemsPerView));
+    container.style.transform = `translateX(${translateX}%)`;
+    
+    updateNavigationButtons();
+    updateIndicators();
+  }
 
-  return `
-    <article class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 px-4">
-      <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover overflow-hidden carousel-card flex flex-col">
-        <div class="relative carousel-image">
-          <img 
-            src="${urlMedia}" 
-            alt="${titulo}" 
-            class="w-full h-full object-cover" 
-            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';">
-          <div class="absolute top-4 left-4">
-            <span class="px-3 py-1 ${categoryColors[categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-              ${categoria}
-            </span>
+  // Función para actualizar botones de navegación
+  function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (prevBtn && nextBtn) {
+      // Botón anterior
+      if (currentIndex === 0) {
+        prevBtn.disabled = true;
+        prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        prevBtn.classList.remove('hover:bg-gray-50');
+      } else {
+        prevBtn.disabled = false;
+        prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        prevBtn.classList.add('hover:bg-gray-50');
+      }
+
+      // Botón siguiente
+      if (currentIndex >= maxIndex) {
+        nextBtn.disabled = true;
+        nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        nextBtn.classList.remove('hover:bg-gray-50');
+      } else {
+        nextBtn.disabled = false;
+        nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        nextBtn.classList.add('hover:bg-gray-50');
+      }
+    }
+  }
+
+  // Función para crear indicadores
+  function createIndicators() {
+    const indicatorsContainer = document.getElementById('carousel-indicators');
+    if (!indicatorsContainer || noticiasData.length === 0) return;
+
+    const totalPages = Math.ceil(noticiasData.length / itemsPerView);
+    indicatorsContainer.innerHTML = '';
+
+    for (let i = 0; i < totalPages; i++) {
+      const indicator = document.createElement('button');
+      indicator.className = `w-3 h-3 rounded-full transition-all duration-300 ${
+        i === Math.floor(currentIndex / itemsPerView) 
+          ? 'bg-sochimt-600' 
+          : 'bg-gray-300 hover:bg-gray-400'
+      }`;
+      indicator.addEventListener('click', () => {
+        currentIndex = i * itemsPerView;
+        updateCarouselPosition();
+      });
+      indicatorsContainer.appendChild(indicator);
+    }
+  }
+
+  // Función para actualizar indicadores
+  function updateIndicators() {
+    const indicators = document.querySelectorAll('#carousel-indicators button');
+    const currentPage = Math.floor(currentIndex / itemsPerView);
+    
+    indicators.forEach((indicator, index) => {
+      if (index === currentPage) {
+        indicator.className = 'w-3 h-3 rounded-full transition-all duration-300 bg-sochimt-600';
+      } else {
+        indicator.className = 'w-3 h-3 rounded-full transition-all duration-300 bg-gray-300 hover:bg-gray-400';
+      }
+    });
+  }
+
+  // Función para inicializar eventos del carousel
+  function initCarouselEvents() {
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCarouselPosition();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex) {
+          currentIndex++;
+          updateCarouselPosition();
+        }
+      });
+    }
+
+    // Manejo de redimensionamiento de pantalla
+    window.addEventListener('resize', () => {
+      calculateItemsPerView();
+      currentIndex = Math.min(currentIndex, maxIndex);
+      updateCarouselPosition();
+      createIndicators();
+    });
+
+    // Touch/swipe support para móviles
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const container = document.getElementById('noticias-container');
+
+    if (container) {
+      container.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        if (touchEndX < touchStartX - 50 && currentIndex < maxIndex) {
+          currentIndex++;
+          updateCarouselPosition();
+        }
+        if (touchEndX > touchStartX + 50 && currentIndex > 0) {
+          currentIndex--;
+          updateCarouselPosition();
+        }
+      }
+    }
+  }
+
+  // Función para crear HTML de noticias para carousel
+  function createNoticiaHTML(noticia) {
+    const categoryColors = {
+      'Evento': 'bg-blue-100 text-blue-800',
+      'Noticia': 'bg-yellow-100 text-yellow-800',
+      'Publicación': 'bg-green-100 text-green-800',
+      'Webinar': 'bg-purple-100 text-purple-800',
+      'Congreso': 'bg-red-100 text-red-800'
+    };
+
+    // Validación de datos
+    const titulo = noticia.titulo || 'Sin título';
+    const categoria = noticia.categoria || 'Noticia';
+    const resumen = noticia.resumen || 'Sin descripción disponible';
+    const fecha = noticia.fecha || new Date().toISOString().split('T')[0];
+    const urlExterna = noticia.url_externa || '#';
+    const urlMedia = noticia.url_media || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';
+
+    // Limitar longitud del resumen para mantener consistencia
+    const resumenCorto = resumen.length > 100 ? resumen.substring(0, 100) + '...' : resumen;
+
+    return `
+      <article class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 px-4">
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover overflow-hidden carousel-card flex flex-col">
+          <div class="relative carousel-image">
+            <img 
+              src="${urlMedia}" 
+              alt="${titulo}" 
+              class="w-full h-full object-cover" 
+              onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop';">
+            <div class="absolute top-4 left-4">
+              <span class="px-3 py-1 ${categoryColors[categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
+                ${categoria}
+              </span>
+            </div>
           </div>
-        </div>
-        <div class="p-6 flex flex-col carousel-content">
-          <div class="flex items-center text-sm text-gray-500 mb-3 flex-shrink-0">
-            <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            <span class="truncate">${formatSupabaseDate(fecha)}</span>
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors carousel-title flex items-center">
-            <span class="line-clamp-2">${titulo}</span>
-          </h3>
-          <p class="text-gray-600 leading-relaxed mb-4 carousel-description flex items-start">
-            <span class="line-clamp-3">${resumenCorto}</span>
-          </p>
-          <div class="mt-auto flex-shrink-0">
-            <a 
-              href="${urlExterna}" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group"
-              ${urlExterna === '#' ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : ''}>
-              <span>Leer más</span>
-              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          <div class="p-6 flex flex-col carousel-content">
+            <div class="flex items-center text-sm text-gray-500 mb-3 flex-shrink-0">
+              <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
               </svg>
-            </a>
+              <span class="truncate">${formatSupabaseDate(fecha)}</span>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors carousel-title flex items-center">
+              <span class="line-clamp-2">${titulo}</span>
+            </h3>
+            <p class="text-gray-600 leading-relaxed mb-4 carousel-description flex items-start">
+              <span class="line-clamp-3">${resumenCorto}</span>
+            </p>
+            <div class="mt-auto flex-shrink-0">
+              <a 
+                href="${urlExterna}" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group"
+                ${urlExterna === '#' ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                <span>Leer más</span>
+                <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </article>
-  `;
-}
-
- 
-
-  
+      </article>
+    `;
+  }
 
   // Función para obtener noticias desde la API
   async function fetchNoticias() {
@@ -1178,10 +1393,11 @@ function createNoticiaHTML(noticia) {
       const noticias = await fetchNoticias();
       
       loading.style.display = 'none';
+      noticiasData = noticias;
       
       if (noticias.length === 0) {
         container.innerHTML = `
-          <div class="col-span-full text-center py-12">
+          <div class="flex-shrink-0 w-full text-center py-12">
             <div class="text-gray-400 text-6xl mb-4">📰</div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias disponibles</h3>
             <p class="text-gray-600">Pronto publicaremos nuevas noticias.</p>
@@ -1189,14 +1405,16 @@ function createNoticiaHTML(noticia) {
         return;
       }
       
+      // Configurar carousel
+      calculateItemsPerView();
+      currentIndex = 0;
+      
       container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
       
-      // Animación de entrada
-      container.querySelectorAll('.reveal').forEach((el, index) => {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, index * 100);
-      });
+      // Inicializar carousel
+      initCarouselEvents();
+      updateCarouselPosition();
+      createIndicators();
 
       console.log(`✅ ${noticias.length} noticias cargadas exitosamente`);
 
@@ -1207,79 +1425,12 @@ function createNoticiaHTML(noticia) {
           <div class="text-red-500 text-6xl mb-4">⚠️</div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
           <p class="text-gray-600 mb-4">${error.message}</p>
-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
+          <button onclick="loadNoticias()" class="px-6 py-3 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
             🔄 Reintentar
           </button>
         </div>`;
     }
   }
-
-  /* Line clamp utilities para mantener consistencia en las tarjetas */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Altura fija estricta para las tarjetas del carousel */
-.carousel-card {
-  height: 500px !important;
-  min-height: 500px !important;
-  max-height: 500px !important;
-}
-
-.carousel-image {
-  height: 200px !important;
-  min-height: 200px !important;
-  max-height: 200px !important;
-}
-
-.carousel-content {
-  height: 300px !important;
-  min-height: 300px !important;
-  max-height: 300px !important;
-}
-
-.carousel-title {
-  height: 60px !important;
-  min-height: 60px !important;
-  max-height: 60px !important;
-}
-
-.carousel-description {
-  height: 72px !important;
-  min-height: 72px !important;
-  max-height: 72px !important;
-}
-
-/* Responsive heights para móviles */
-@media (max-width: 768px) {
-  .carousel-card {
-    height: 450px !important;
-    min-height: 450px !important;
-    max-height: 450px !important;
-  }
-  
-  .carousel-image {
-    height: 180px !important;
-    min-height: 180px !important;
-    max-height: 180px !important;
-  }
-  
-  .carousel-content {
-    height: 270px !important;
-    min-height: 270px !important;
-    max-height: 270px !important;
-  }
-}
 
   console.log('🚀 SOCHIMT renovado cargado exitosamente!');
 </script>
