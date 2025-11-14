@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Área de Socios SOCHIMT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'sochimt': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            'medical': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-mesh { background: linear-gradient(-45deg, #2563eb, #3b82f6, #dc2626, #ef4444); background-size: 400% 400%; animation: gradientShift 15s ease infinite; }
+    @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    .float-animation { animation: float 3s ease-in-out infinite; }
+    .text-gradient { background: linear-gradient(135deg, #2563eb 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sochimt-50 via-white to-medical-50 min-h-screen">
+  
+  <!-- Header/Navbar -->
+  <header class="bg-white/90 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo -->
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-1.5">
+            <img src="images/logos/_ Main Logo 1.3.png" alt="SOCHIMT Logo" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h1 class="text-xl font-black text-gray-900">SOCHIMT</h1>
+            <p class="text-xs text-gray-600">Área de Socios</p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="index.html" class="text-gray-700 hover:text-sochimt-600 font-medium transition-colors">
+            Inicio
+          </a>
+          <a href="#" class="text-gray-700 hover:text-sochimt-600 font-medium transition-colors">
+            Eventos
+          </a>
+          <a href="#" class="text-gray-700 hover:text-sochimt-600 font-medium transition-colors">
+            Artículos
+          </a>
+          <a href="#" class="text-gray-700 hover:text-sochimt-600 font-medium transition-colors">
+            Recursos
+          </a>
+        </nav>
+
+        <!-- User Menu -->
+        <div class="flex items-center space-x-4">
+          <div class="text-right hidden sm:block">
+            <p class="text-sm text-gray-600">Bienvenido/a,</p>
+            <p id="user-name" class="text-sm font-bold text-sochimt-600">Cargando...</p>
+          </div>
+          <button onclick="logoutSocio()" class="bg-gradient-to-r from-medical-600 to-medical-700 hover:from-medical-700 hover:to-medical-800 text-white px-4 py-2 rounded-lg font-medium transition-all text-sm shadow-md hover:shadow-lg">
+            🚪 Salir
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Welcome Banner -->
+    <div class="bg-gradient-to-r from-sochimt-600 to-medical-600 rounded-3xl p-8 md:p-12 text-white shadow-2xl mb-8">
+      <div class="flex flex-col md:flex-row items-center justify-between">
+        <div class="mb-6 md:mb-0">
+          <h2 class="text-3xl md:text-4xl font-black mb-3">
+            ¡Bienvenido/a de vuelta! 👋
+          </h2>
+          <p class="text-white/90 text-lg mb-4" id="welcome-message">Cargando...</p>
+          <div class="flex items-center space-x-4">
+            <span id="membership-status" class="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold">
+              Estado: Cargando...
+            </span>
+            <span id="membership-expiry" class="text-sm text-white/80">
+              <!-- Se llenará dinámicamente -->
+            </span>
+          </div>
+        </div>
+        <div class="float-animation">
+          <div class="w-32 h-32 bg-white rounded-3xl flex items-center justify-center p-6 shadow-xl">
+            <img src="images/logos/_ Main Logo 1.3.png" alt="SOCHIMT Logo" class="w-full h-full object-contain">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Stat 1 -->
+      <div class="bg-gradient-to-br from-sochimt-500 to-sochimt-600 rounded-2xl p-6 text-white card-hover">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sochimt-100 font-medium text-sm">Consultas a Gotita</p>
+            <p id="stat-gotita" class="text-4xl font-black mt-2">0</p>
+          </div>
+          <div class="text-5xl opacity-80">💬</div>
+        </div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div class="bg-gradient-to-br from-medical-500 to-medical-600 rounded-2xl p-6 text-white card-hover">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-medical-100 font-medium text-sm">Eventos Inscritos</p>
+            <p id="stat-eventos" class="text-4xl font-black mt-2">0</p>
+          </div>
+          <div class="text-5xl opacity-80">📅</div>
+        </div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-2xl p-6 text-white card-hover">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sochimt-100 font-medium text-sm">Artículos Leídos</p>
+            <p id="stat-articulos" class="text-4xl font-black mt-2">0</p>
+          </div>
+          <div class="text-5xl opacity-80">📚</div>
+        </div>
+      </div>
+
+      <!-- Stat 4 -->
+      <div class="bg-gradient-to-br from-medical-600 to-medical-700 rounded-2xl p-6 text-white card-hover">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-medical-100 font-medium text-sm">Certificaciones</p>
+            <p id="stat-certificaciones" class="text-4xl font-black mt-2">0</p>
+          </div>
+          <div class="text-5xl opacity-80">🎓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Administración (solo visible para admin/supervisor) -->
+    <div id="admin-panel" class="hidden bg-gradient-to-br from-yellow-50 to-orange-50 rounded-3xl shadow-2xl p-8 md:p-12 mb-8 border-2 border-yellow-300">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center space-x-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <span class="text-4xl">👑</span>
+          </div>
+          <div>
+            <h2 class="text-3xl md:text-4xl font-black text-gray-900">
+              Panel de Administración
+            </h2>
+            <p class="text-gray-600 font-medium" id="admin-role-badge">Administrador</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        
+        <!-- Gestión de Artículos -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer group" onclick="openContentManager('articulos')">
+          <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-sochimt-500 to-sochimt-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+              <span class="text-2xl">📝</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-black text-gray-900 mb-2">Gestionar Artículos</h3>
+              <p class="text-gray-600 text-sm">Agregar, editar o eliminar artículos del blog premium</p>
+            </div>
+            <svg class="w-6 h-6 text-gray-400 group-hover:text-sochimt-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Gestión de Eventos -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer group" onclick="openContentManager('eventos')">
+          <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-medical-500 to-medical-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+              <span class="text-2xl">📅</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-black text-gray-900 mb-2">Gestionar Eventos</h3>
+              <p class="text-gray-600 text-sm">Crear y administrar webinars, cursos y congresos</p>
+            </div>
+            <svg class="w-6 h-6 text-gray-400 group-hover:text-medical-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Gestión de Recursos -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer group" onclick="openContentManager('recursos')">
+          <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-sochimt-600 to-sochimt-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+              <span class="text-2xl">📥</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-black text-gray-900 mb-2">Gestionar Recursos</h3>
+              <p class="text-gray-600 text-sm">Subir guías, protocolos y documentos</p>
+            </div>
+            <svg class="w-6 h-6 text-gray-400 group-hover:text-sochimt-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Gestión de Socios -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer group" onclick="openContentManager('socios')">
+          <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-medical-600 to-medical-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+              <span class="text-2xl">👥</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-black text-gray-900 mb-2">Gestionar Socios</h3>
+              <p class="text-gray-600 text-sm">Aprobar, editar o desactivar membresías</p>
+            </div>
+            <svg class="w-6 h-6 text-gray-400 group-hover:text-medical-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Quick Access Cards Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      
+      <!-- Gotita Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-100">
+        <div class="w-16 h-16 bg-gradient-to-br from-sochimt-500 to-sochimt-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">💧</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">IA Gotita</h3>
+        <p class="text-gray-600 mb-6">
+          Consulta a nuestro asistente de IA especializado en selección de donantes y medicina transfusional.
+        </p>
+        <button onclick="openGotita()" class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-3 rounded-xl font-bold hover:from-sochimt-700 hover:to-sochimt-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          Iniciar Consulta
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          Consultas ilimitadas • Respuestas instantáneas
+        </p>
+      </div>
+
+      <!-- Blog/Artículos Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-100">
+        <div class="w-16 h-16 bg-gradient-to-br from-sochimt-500 to-sochimt-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">📚</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Artículos Premium</h3>
+        <p class="text-gray-600 mb-6">
+          Accede a casos clínicos, revisiones y artículos científicos exclusivos para socios.
+        </p>
+        <button onclick="alert('Próximamente: Sistema de artículos')" class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-3 rounded-xl font-bold hover:from-sochimt-700 hover:to-sochimt-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          Ver Artículos
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          +50 artículos disponibles
+        </p>
+      </div>
+
+      <!-- Eventos Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-medical-100">
+        <div class="w-16 h-16 bg-gradient-to-br from-medical-500 to-medical-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">📅</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Eventos</h3>
+        <p class="text-gray-600 mb-6">
+          Inscríbete a webinars, cursos y congresos. Obtén descuentos exclusivos como socio.
+        </p>
+        <button onclick="alert('Próximamente: Sistema de eventos')" class="w-full bg-gradient-to-r from-medical-600 to-medical-700 text-white py-3 rounded-xl font-bold hover:from-medical-700 hover:to-medical-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          Ver Calendario
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          3 eventos próximos
+        </p>
+      </div>
+
+      <!-- Recursos Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-100">
+        <div class="w-16 h-16 bg-gradient-to-br from-sochimt-600 to-sochimt-800 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">📥</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Recursos</h3>
+        <p class="text-gray-600 mb-6">
+          Descarga guías, protocolos, formularios y presentaciones de congresos.
+        </p>
+        <button onclick="alert('Próximamente: Biblioteca de recursos')" class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-800 text-white py-3 rounded-xl font-bold hover:from-sochimt-700 hover:to-sochimt-900 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          Ver Biblioteca
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          +100 recursos disponibles
+        </p>
+      </div>
+
+      <!-- Certificaciones Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-medical-100">
+        <div class="w-16 h-16 bg-gradient-to-br from-medical-600 to-medical-800 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">🎓</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Certificaciones</h3>
+        <p class="text-gray-600 mb-6">
+          Consulta tus certificaciones obtenidas y genera PDFs con código de verificación.
+        </p>
+        <button onclick="alert('Próximamente: Sistema de certificaciones')" class="w-full bg-gradient-to-r from-medical-600 to-medical-800 text-white py-3 rounded-xl font-bold hover:from-medical-700 hover:to-medical-900 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          Mis Certificados
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          Descarga • Verifica online
+        </p>
+      </div>
+
+      <!-- Mi Perfil Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-gray-200">
+        <div class="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">⚙️</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Mi Perfil</h3>
+        <p class="text-gray-600 mb-6">
+          Actualiza tus datos personales, preferencias y configuración de cuenta.
+        </p>
+        <button onclick="alert('Próximamente: Editar perfil')" class="w-full bg-gradient-to-r from-gray-700 to-gray-900 text-white py-3 rounded-xl font-bold hover:from-gray-800 hover:to-black transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          Editar Perfil
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          Datos • Foto • Preferencias
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Activity Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+      <h2 class="text-2xl font-black text-gray-900 mb-6">Actividad Reciente</h2>
+      
+      <div id="recent-activity" class="space-y-4">
+        <!-- Las actividades se cargarán dinámicamente -->
+        <div class="text-center py-8 text-gray-500">
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <p>No hay actividad reciente</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600 text-sm">
+      <p>&copy; 2025 SOCHIMT. Todos los derechos reservados.</p>
+      <p class="mt-2">
+        <a href="#" class="hover:text-sochimt-600">Términos</a> • 
+        <a href="#" class="hover:text-sochimt-600">Privacidad</a> • 
+        <a href="mailto:soporte@sochimt.cl" class="hover:text-sochimt-600">Soporte</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
+  
+  <script>
+    // Verificar autenticación al cargar la página
+    requireAuth();
+    
+    // Verificar si es administrador o supervisor
+    function esAdministrador(email, rol) {
+      const adminEmails = ['marcelo@sochimt.cl', 'mmarquezsa@gmail.com'];
+      return adminEmails.includes(email) || rol === 'admin' || rol === 'supervisor';
+    }
+    
+    // Cargar datos del socio
+    async function loadDashboardData() {
+      try {
+        const socio = await getSocioActual();
+        
+        // Actualizar nombre
+        document.getElementById('user-name').textContent = socio.nombre_completo || 'Socio';
+        
+        // Actualizar mensaje de bienvenida
+        const hora = new Date().getHours();
+        let saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+        document.getElementById('welcome-message').textContent = 
+          `${saludo}, ${socio.nombre_completo?.split(' ')[0] || 'Socio'}. Tu membresía está activa y lista para usar.`;
+        
+        // Actualizar estado de membresía
+        const statusElement = document.getElementById('membership-status');
+        if (socio.estado === 'activo') {
+          statusElement.textContent = '✅ Activo';
+          statusElement.classList.add('bg-green-500/30');
+        } else if (socio.estado === 'pendiente') {
+          statusElement.textContent = '⏳ Pendiente';
+          statusElement.classList.add('bg-yellow-500/30');
+        } else {
+          statusElement.textContent = '❌ Inactivo';
+          statusElement.classList.add('bg-red-500/30');
+        }
+        
+        // Mostrar fecha de vencimiento si existe
+        if (socio.fecha_vencimiento) {
+          const fechaVenc = new Date(socio.fecha_vencimiento);
+          const hoy = new Date();
+          const diasRestantes = Math.ceil((fechaVenc - hoy) / (1000 * 60 * 60 * 24));
+          
+          if (diasRestantes > 0) {
+            document.getElementById('membership-expiry').textContent = 
+              `Válida por ${diasRestantes} días más`;
+          } else {
+            document.getElementById('membership-expiry').textContent = 
+              `⚠️ Membresía vencida`;
+          }
+        }
+        
+        // Mostrar panel de administración si corresponde
+        if (esAdministrador(socio.email, socio.rol)) {
+          const adminPanel = document.getElementById('admin-panel');
+          adminPanel.classList.remove('hidden');
+          
+          // Actualizar badge de rol
+          const rolBadge = document.getElementById('admin-role-badge');
+          if (socio.rol === 'supervisor') {
+            rolBadge.textContent = '🔧 Supervisor';
+          } else {
+            rolBadge.textContent = '👑 Administrador';
+          }
+        }
+        
+        // Cargar estadísticas
+        await loadStats(socio.id);
+        
+      } catch (error) {
+        console.error('Error al cargar dashboard:', error);
+      }
+    }
+    
+    // Cargar estadísticas del socio
+    async function loadStats(socioId) {
+      try {
+        // Consultas a Gotita
+        const { count: consultasGotita } = await supabaseClient
+          .from('conversaciones_gotita')
+          .select('*', { count: 'exact', head: true })
+          .eq('socio_id', socioId);
+        
+        document.getElementById('stat-gotita').textContent = consultasGotita || 0;
+        
+        // Eventos inscritos
+        const { count: eventosInscritos } = await supabaseClient
+          .from('inscripciones')
+          .select('*', { count: 'exact', head: true })
+          .eq('socio_id', socioId);
+        
+        document.getElementById('stat-eventos').textContent = eventosInscritos || 0;
+        
+        // Certificaciones
+        const { count: certificaciones } = await supabaseClient
+          .from('certificaciones')
+          .select('*', { count: 'exact', head: true })
+          .eq('socio_id', socioId);
+        
+        document.getElementById('stat-certificaciones').textContent = certificaciones || 0;
+        
+      } catch (error) {
+        console.warn('Error al cargar estadísticas:', error);
+      }
+    }
+    
+    // Función para abrir Gotita (placeholder)
+    function openGotita() {
+      alert('💧 ¡Próximamente! El asistente IA Gotita estará disponible muy pronto.\n\nPodrás consultar sobre:\n• Selección de donantes\n• Criterios de elegibilidad\n• Protocolos transfusionales\n• Y mucho más...');
+    }
+    
+    // Función para abrir gestores de contenido (solo admin/supervisor)
+    async function openContentManager(tipo) {
+      if (tipo === 'socios') {
+        await abrirGestionSocios();
+      } else {
+        const mensajes = {
+          'articulos': '📝 Próximamente: Sistema de gestión de artículos\n\n• Crear y editar artículos\n• Categorías y tags\n• Editor WYSIWYG\n• Programar publicaciones',
+          'eventos': '📅 Próximamente: Sistema de gestión de eventos\n\n• Crear webinars y cursos\n• Configurar inscripciones\n• Descuentos para socios\n• Envío de certificados',
+          'recursos': '📥 Próximamente: Sistema de gestión de recursos\n\n• Subir PDFs y documentos\n• Categorías y etiquetas\n• Control de acceso\n• Estadísticas de descargas'
+        };
+        
+        alert(mensajes[tipo] || 'Función en desarrollo');
+      }
+    }
+
+    // Abrir panel de gestión de socios
+    async function abrirGestionSocios() {
+      try {
+        // Cargar socios pendientes
+        const { data: sociosPendientes, error } = await supabaseClient
+          .from('socios')
+          .select('*')
+          .eq('estado', 'pendiente')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          alert('Error al cargar socios pendientes: ' + error.message);
+          return;
+        }
+
+        if (!sociosPendientes || sociosPendientes.length === 0) {
+          alert('✅ No hay solicitudes pendientes de aprobación');
+          return;
+        }
+
+        // Crear modal con la lista de socios pendientes
+        const modal = document.createElement('div');
+        modal.id = 'modal-socios';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4';
+        modal.innerHTML = `
+          <div class="bg-white rounded-3xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+              <h2 class="text-2xl font-black text-gray-900">Gestión de Socios - Solicitudes Pendientes</h2>
+              <button onclick="document.getElementById('modal-socios').remove()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="p-6">
+              <div class="grid md:grid-cols-2 gap-6">
+                ${sociosPendientes.map(socio => `
+                  <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                    <div class="flex items-start space-x-4 mb-4">
+                      <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-2xl text-white font-bold">${socio.nombre_completo.charAt(0)}</span>
+                      </div>
+                      <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900">${socio.nombre_completo}</h3>
+                        <p class="text-sm text-gray-600">${socio.especialidad || 'No especificado'}</p>
+                        <p class="text-xs text-gray-500">${socio.email}</p>
+                      </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 mb-4">
+                      <p><strong>RUT:</strong> ${socio.rut || 'No especificado'}</p>
+                      <p><strong>Ciudad:</strong> ${socio.ciudad || 'No especificado'}</p>
+                      <p><strong>Teléfono:</strong> ${socio.telefono || 'No especificado'}</p>
+                      <p><strong>Tipo:</strong> ${socio.tipo_membresia || 'Regular'}</p>
+                    </div>
+                    <div class="flex space-x-3">
+                      <button onclick="aprobarSocio('${socio.id}')" 
+                              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-bold transition-all">
+                        ✅ Aprobar
+                      </button>
+                      <button onclick="rechazarSocio('${socio.id}')"
+                              class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-bold transition-all">
+                        ❌ Rechazar
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // Aprobar socio
+    async function aprobarSocio(socioId) {
+      if (!confirm('¿Confirmas que deseas aprobar esta membresía?')) return;
+
+      try {
+        const fechaVencimiento = new Date();
+        fechaVencimiento.setFullYear(fechaVencimiento.getFullYear() + 1);
+
+        const { error } = await supabaseClient
+          .from('socios')
+          .update({
+            estado: 'activo',
+            fecha_vencimiento: fechaVencimiento.toISOString().split('T')[0]
+          })
+          .eq('id', socioId);
+
+        if (error) throw error;
+
+        alert('✅ Membresía aprobada exitosamente! El socio ahora aparecerá en la sección "Nuevos Socios"');
+        document.getElementById('modal-socios').remove();
+        
+      } catch (err) {
+        alert('Error al aprobar: ' + err.message);
+      }
+    }
+
+    // Rechazar socio
+    async function rechazarSocio(socioId) {
+      if (!confirm('¿Confirmas que deseas rechazar esta solicitud?')) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from('socios')
+          .update({ estado: 'rechazado' })
+          .eq('id', socioId);
+
+        if (error) throw error;
+
+        alert('❌ Solicitud rechazada');
+        document.getElementById('modal-socios').remove();
+        
+      } catch (err) {
+        alert('Error al rechazar: ' + err.message);
+      }
+    }
+    
+    // Cargar datos al iniciar
+    loadDashboardData();
+  </script>
+</body>
+</html>

@@ -68,6 +68,7 @@
             'slide-in-right': 'slideInRight 0.8s ease-out',
             'pulse-slow': 'pulse 3s infinite',
             'bounce-gentle': 'bounceGentle 2s infinite',
+            'shimmer': 'shimmer 3s infinite',
           }
         }
       }
@@ -77,9 +78,14 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
     
-    body { 
+    body {
       font-family: 'Inter', sans-serif;
       scroll-behavior: smooth;
+    }
+
+    /* Espaciado para header fijo */
+    section[id] {
+      scroll-margin-top: 80px;
     }
     
     /* Animaciones personalizadas */
@@ -103,7 +109,12 @@
       40% { transform: translateY(-10px); }
       60% { transform: translateY(-5px); }
     }
-    
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
     /* Efectos visuales */
     .glass-morphism {
       background: rgba(255, 255, 255, 0.1);
@@ -112,7 +123,7 @@
     }
     
     .gradient-mesh {
-      background: linear-gradient(-45deg, #1e40af, #3b82f6, #dc2626, #ef4444);
+      background: linear-gradient(-45deg, #1e3a8a, #312e81, #9f1239, #be123c);
       background-size: 400% 400%;
       animation: gradientShift 15s ease infinite;
     }
@@ -124,10 +135,193 @@
     }
     
     .text-gradient {
-      background: linear-gradient(135deg, #1e40af, #dc2626);
+      background: linear-gradient(120deg, #fcd34d, #fb7185);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      text-shadow: 0 4px 20px rgba(15, 23, 42, 0.35);
+    }
+
+    .text-glow {
+      background: linear-gradient(120deg, #93c5fd, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 20px rgba(15, 23, 42, 0.35);
+    }
+
+    .text-glimmer {
+      background: linear-gradient(120deg, #38bdf8, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 20px rgba(15, 23, 42, 0.35);
+    }
+
+    .text-highlight {
+      position: relative;
+      display: inline-block;
+      color: #fef9c3;
+      font-weight: 600;
+      padding: 0 0.15em;
+    }
+
+    .text-highlight::after {
+      content: "";
+      position: absolute;
+      inset: 65% 0 0 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(253, 224, 71, 0.25));
+      border-radius: 999px;
+      z-index: -1;
+    }
+
+    .text-aurora {
+      background: linear-gradient(120deg, #f472b6, #fb7185);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 20px rgba(15, 23, 42, 0.35);
+    }
+
+    /* Macrozonas - Mapa horizontal de Chile */
+    .macro-map {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    .macro-map path {
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: drop-shadow(0 8px 16px rgba(15, 23, 42, 0.2));
+      stroke: rgba(255, 255, 255, 0.5);
+      stroke-width: 2;
+    }
+
+    .macro-map path:focus,
+    .macro-map path:hover {
+      transform: scale(1.08) translateY(-4px);
+      filter: drop-shadow(0 20px 35px rgba(15, 23, 42, 0.4));
+      stroke: rgba(255, 255, 255, 0.9);
+      stroke-width: 3;
+      outline: none;
+      z-index: 10;
+    }
+
+    .macro-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.97) 0%, rgba(30, 41, 59, 0.95) 100%);
+      color: #f8fafc;
+      padding: 1.25rem 1.5rem;
+      border-radius: 1.25rem;
+      min-width: 300px;
+      max-width: 360px;
+      box-shadow: 0 25px 50px rgba(15, 23, 42, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+      transform: translate(-50%, -110%);
+      z-index: 100;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .macro-tooltip.visible {
+      opacity: 1;
+      transform: translate(-50%, -115%);
+      pointer-events: auto;
+    }
+
+    .macro-tooltip::before {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid rgba(15, 23, 42, 0.97);
+    }
+
+    /* Tooltip para Convenios */
+    .convenio-tooltip {
+      position: absolute;
+      pointer-events: auto;
+      background: linear-gradient(135deg,
+        rgba(99, 102, 241, 0.98) 0%,
+        rgba(139, 92, 246, 0.98) 50%,
+        rgba(168, 85, 247, 0.98) 100%);
+      color: #ffffff;
+      padding: 2rem;
+      border-radius: 2rem;
+      min-width: 380px;
+      max-width: 450px;
+      box-shadow:
+        0 30px 60px rgba(139, 92, 246, 0.5),
+        0 10px 30px rgba(99, 102, 241, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+        0 0 40px rgba(168, 85, 247, 0.3);
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transform: translateX(10px) translateY(-50%) scale(0.95);
+      animation: tooltipPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes tooltipPulse {
+      0%, 100% {
+        box-shadow:
+          0 30px 60px rgba(139, 92, 246, 0.5),
+          0 10px 30px rgba(99, 102, 241, 0.3),
+          0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+          0 0 40px rgba(168, 85, 247, 0.3);
+      }
+      50% {
+        box-shadow:
+          0 30px 60px rgba(139, 92, 246, 0.6),
+          0 10px 30px rgba(99, 102, 241, 0.4),
+          0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+          0 0 60px rgba(168, 85, 247, 0.5);
+      }
+    }
+
+    .convenio-tooltip.visible {
+      opacity: 1;
+      transform: translateX(15px) translateY(-50%) scale(1);
+    }
+
+    .convenio-tooltip.left {
+      transform: translateX(-10px) translateY(-50%) scale(0.95);
+    }
+
+    .convenio-tooltip.left.visible {
+      transform: translateX(-15px) translateY(-50%) scale(1);
+    }
+
+    /* Flecha para tooltip a la derecha */
+    .convenio-tooltip::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-right: 10px solid rgba(109, 40, 217, 0.97);
+    }
+
+    /* Flecha para tooltip a la izquierda */
+    .convenio-tooltip.left::before {
+      left: auto;
+      right: -10px;
+      border-right: none;
+      border-left: 10px solid rgba(109, 40, 217, 0.97);
     }
     
     /* Hover effects */
@@ -157,45 +351,110 @@
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #1e40af; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+    
+    /* Carrusel de noticias */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+    }
+    
+    .carousel-slide {
+      min-width: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+    
+    .carousel-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .carousel-dot.active {
+      background: white;
+      width: 24px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 
 <body class="bg-gray-50 text-gray-900 overflow-x-hidden">
   
   <!-- Header/Navbar ultra moderno -->
-  <header class="fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
-    <div class="glass-morphism">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-4">
+  <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-white shadow-md" id="navbar">
+    <div>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-2.5">
           
 <!-- Logo y marca -->
-<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-3">
   <div class="relative">
-    <div class="w-12 h-12 gradient-mesh rounded-xl flex items-center justify-center shadow-lg p-1">
-      <img src="_ Main Logo 1.3.png" alt="SOCHIMT" class="w-full h-full object-cover rounded-lg">
+    <div class="w-10 h-10 gradient-mesh rounded-xl flex items-center justify-center shadow-lg p-1">
+      <img src="images/logos/_ Main Logo 1.3.png" alt="SOCHIMT" class="w-full h-full object-cover rounded-lg">
     </div>
-    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
+    <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
   </div>
   <div class="hidden lg:block">
-    <h1 class="text-xl font-bold text-gradient">SOCHIMT</h1>
-    <p class="text-sm text-gray-600">Sociedad Chilena de Medicina Transfusional</p>
+    <h1 class="text-lg font-black text-sochimt-700">SOCHIMT</h1>
+    <p class="text-[10px] text-gray-600 font-medium">Sociedad Chilena de Medicina Transfusional</p>
   </div>
 </div>
 
           <!-- Navegación desktop -->
-          <nav class="hidden lg:flex items-center space-x-8">
-            <a href="#inicio" class="nav-link text-gray-700 hover:text-sochimt-600 font-medium transition-colors">Inicio</a>
-            <a href="#quienes-somos" class="nav-link text-gray-700 hover:text-sochimt-600 font-medium transition-colors">Quiénes Somos</a>
-            <a href="#servicios" class="nav-link text-gray-700 hover:text-sochimt-600 font-medium transition-colors">Servicios</a>
-            <a href="#noticias" class="nav-link text-gray-700 hover:text-sochimt-600 font-medium transition-colors">Noticias</a>
-            <a href="#socios" class="nav-link text-gray-700 hover:text-sochimt-600 font-medium transition-colors">Socios</a>
-            <a href="#contacto" class="nav-link text-gray-700 hover:text-sochimt-600 font-medium transition-colors">Contacto</a>
+          <nav class="hidden lg:flex items-center space-x-2 xl:space-x-3">
+            <a href="#inicio" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs">Inicio</a>
+            <a href="#directorio" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs whitespace-nowrap">Quiénes Somos</a>
+            <a href="#directorio" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs">Directorio</a>
+            <!-- <a href="#miembros" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs">Miembros</a> -->
+            <a href="#noticias" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs">Noticias</a>
+            <a href="#colaboraciones" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs">Colaboraciones</a>
+            <a href="#socios" class="nav-link text-gray-800 hover:text-sochimt-600 font-bold transition-colors text-xs">Socios</a>
           </nav>
 
-          <!-- CTA Button -->
-          <div class="hidden lg:flex items-center space-x-4">
-            <a href="#socios" class="bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-6 py-3 rounded-full font-semibold hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-              Únete Ahora
+          <!-- Redes Sociales -->
+          <div class="hidden lg:flex items-center space-x-1.5 xl:space-x-2">
+            <a href="https://www.facebook.com/profile.php?id=61575757064945&locale=es_LA" target="_blank" rel="noopener noreferrer"
+               class="w-8 h-8 bg-sochimt-50 hover:bg-sochimt-600 rounded-lg flex items-center justify-center transition-all group">
+              <svg class="w-4 h-4 text-sochimt-600 group-hover:text-white group-hover:scale-110 transition-all" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="https://www.youtube.com/@SOCHIMT" target="_blank" rel="noopener noreferrer"
+               class="w-8 h-8 bg-medical-50 hover:bg-medical-600 rounded-lg flex items-center justify-center transition-all group">
+              <svg class="w-4 h-4 text-medical-600 group-hover:text-white group-hover:scale-110 transition-all" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/sochimt_cl/" target="_blank" rel="noopener noreferrer"
+               class="w-8 h-8 bg-purple-50 hover:bg-purple-600 rounded-lg flex items-center justify-center transition-all group">
+              <svg class="w-4 h-4 text-purple-600 group-hover:text-white group-hover:scale-110 transition-all" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="hidden lg:flex items-center space-x-2 xl:space-x-3 ml-3">
+            <a href="login-socios.html" class="flex items-center justify-center space-x-1 px-2.5 xl:px-3 py-1.5 rounded-md border-2 border-sochimt-600 bg-white text-sochimt-600 hover:bg-sochimt-600 hover:text-white font-bold text-[10px] xl:text-xs transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              <span>Área de Socios</span>
+            </a>
+            <a href="registro-socios.html" class="flex items-center justify-center space-x-1 bg-sochimt-600 text-white px-2.5 xl:px-3 py-1.5 rounded-md font-extrabold text-[10px] xl:text-xs hover:bg-sochimt-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+              </svg>
+              <span>Únete Ahora</span>
             </a>
           </div>
 
@@ -211,15 +470,19 @@
 
     <!-- Mobile menu -->
     <div id="mobile-menu" class="lg:hidden hidden">
-      <div class="glass-morphism border-t border-white/20">
-        <nav class="max-w-7xl mx-auto px-4 py-6 space-y-4">
-          <a href="#inicio" class="block py-2 text-gray-700 hover:text-sochimt-600 font-medium">Inicio</a>
-          <a href="#quienes-somos" class="block py-2 text-gray-700 hover:text-sochimt-600 font-medium">Quiénes Somos</a>
-          <a href="#servicios" class="block py-2 text-gray-700 hover:text-sochimt-600 font-medium">Servicios</a>
-          <a href="#noticias" class="block py-2 text-gray-700 hover:text-sochimt-600 font-medium">Noticias</a>
-          <a href="#socios" class="block py-2 text-gray-700 hover:text-sochimt-600 font-medium">Socios</a>
-          <a href="#contacto" class="block py-2 text-gray-700 hover:text-sochimt-600 font-medium">Contacto</a>
-          <a href="#socios" class="block mt-4 bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-6 py-3 rounded-full font-semibold text-center">
+      <div class="bg-white border-t border-gray-200 shadow-lg">
+        <nav class="max-w-6xl mx-auto px-4 py-6 space-y-4">
+          <a href="#inicio" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Inicio</a>
+          <a href="#directorio" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Quiénes Somos</a>
+          <a href="#directorio" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Directorio</a>
+          <!-- <a href="#miembros" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Miembros</a> -->
+          <a href="#noticias" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Noticias</a>
+          <a href="#colaboraciones" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Colaboraciones</a>
+          <a href="#socios" class="block py-2 text-gray-800 hover:text-sochimt-600 font-bold text-base">Socios</a>
+          <a href="login-socios.html" class="block mt-4 border-2 border-sochimt-600 text-sochimt-600 px-6 py-3 rounded-md font-bold text-base text-center hover:bg-sochimt-600 hover:text-white transition-all">
+            Área de Socios
+          </a>
+          <a href="registro-socios.html" class="block bg-sochimt-600 text-white px-6 py-3 rounded-md font-extrabold text-base text-center hover:bg-sochimt-700 transition-all">
             Únete Ahora
           </a>
         </nav>
@@ -227,8 +490,8 @@
     </div>
   </header>
 
-  <!-- Hero Section ultra moderno -->
-  <section id="inicio" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <!-- Hero Section ultra moderno - OPTIMIZADO -->
+  <section id="inicio" class="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-20 pb-8 lg:pt-24 lg:pb-12">
     <!-- Background con gradiente animado -->
     <div class="absolute inset-0 gradient-mesh opacity-90"></div>
     
@@ -238,73 +501,184 @@
     <div class="absolute bottom-40 left-20 w-12 h-12 bg-white/10 rounded-full animate-bounce-gentle" style="animation-delay: 2s;"></div>
 
     <!-- Contenido principal -->
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      
-      <!-- Announcement Banner -->
-      <div class="inline-flex items-center space-x-3 glass-morphism rounded-full px-6 py-3 mb-8 animate-fade-in-down">
-        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-        <span class="text-white font-medium">Congreso Nacional</span>
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[1.05fr,0.95fr] gap-8 items-center text-left">
+        <div class="space-y-5 text-white">
+          <div class="space-y-3 animate-fade-in-up">
+            <span class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white uppercase tracking-[0.25em] text-[10px] md:text-[11px] px-6 py-2.5 rounded-full shadow-2xl font-bold border-2 border-blue-300/50 relative overflow-hidden">
+              <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></span>
+              <span class="relative z-10">SOCHIMT · Sociedad Chilena de Medicina Transfusional</span>
+            </span>
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
+              Liderando la<br/>
+              <span class="inline-block mt-1 bg-gradient-to-r from-white via-red-100 to-white bg-clip-text text-transparent">Seguridad Transfusional</span><br/>
+              <span class="text-white/95">en Chile</span>
+            </h1>
+          </div>
+
+          <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl font-light animate-fade-in-up" style="animation-delay: 0.15s;">
+            Conectamos especialistas, hospitales y servicios de sangre para <span class="font-semibold text-white">elevar los estándares de calidad</span> en todo el ciclo transfusional.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 pt-2 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <a href="registro-socios.html" class="group relative bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white px-8 py-3 rounded-full font-bold text-base transition-all duration-300 shadow-2xl hover:shadow-xl transform hover:scale-105 flex items-center space-x-2 overflow-hidden border-2 border-blue-300/50">
+              <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></span>
+              <span class="relative z-10">ÚNETE A SOCHIMT</span>
+              <svg class="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <a href="#directorio" class="group relative bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white border-2 border-blue-300/50 px-8 py-3 rounded-full font-bold text-base transition-all duration-300 flex items-center space-x-2 shadow-2xl transform hover:scale-105 overflow-hidden">
+              <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></span>
+              <span class="relative z-10">CONOCE MÁS</span>
+              <svg class="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+              </svg>
+            </a>
+          </div>
+
+        </div>
+
+        <div class="space-y-3 text-white animate-fade-in-up" style="animation-delay: 0.3s;">
+          <div class="bg-gradient-to-br from-white/20 to-white/10 border-2 border-white/30 rounded-3xl p-4 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <!-- Badge destacado -->
+            <div class="absolute top-0 right-0 bg-gradient-to-br from-yellow-400 to-orange-500 text-slate-900 px-4 py-1.5 rounded-bl-3xl font-black text-xs uppercase tracking-wider shadow-lg">
+              Próximo Evento
+            </div>
+
+            <div class="flex items-center gap-2 mb-3 mt-1">
+              <span class="px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] bg-sochimt-600 text-white rounded-full shadow-lg">
+                4° Conversatorio
+              </span>
+              <span class="text-white/80 text-xs font-bold flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                12 nov · 20:30
+              </span>
+            </div>
+            <h3 class="text-lg md:text-xl font-black mb-2 leading-tight text-white">Donación de Sangre: Estrategias para la captación y fidelización de donantes altruistas</h3>
+            <p class="text-white/80 leading-relaxed text-xs">
+              En este conversatorio abordaremos estrategias clave para fortalecer la donación de sangre altruista, profundizando en cómo fidelizar donantes y generar una cultura de compromiso y continuidad.
+            </p>
+            <div class="mt-3 space-y-2">
+              <div class="flex items-start gap-2">
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-widest text-white/60">Calendario</p>
+                  <p class="font-semibold text-sm text-glow">Miércoles 12 de noviembre · Online (Google Meet)</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-widest text-white/60">Expositor</p>
+                  <p class="font-semibold text-sm text-glow">Dr. TM. Alexy Rosales Zapata</p>
+                  <p class="text-xs text-white/70 mt-0.5">Socio SOCHIMT · Docente UCT</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-widest text-white/60">Link de acceso</p>
+                  <a href="https://meet.google.com/pcs-vebs-kbh" target="_blank" class="inline-flex items-center gap-1 mt-0.5 text-xs font-semibold text-white hover:text-emerald-300 transition-colors">
+                    Unirse al Meet
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="open-inscripcion-modal" class="mt-3 w-full group relative bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white border-2 border-blue-300/50 px-6 py-2.5 rounded-full font-black text-sm transition-all duration-300 shadow-2xl hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2 overflow-hidden uppercase tracking-wide">
+              <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></span>
+              <span class="relative z-10">Inscríbete Ahora</span>
+              <svg class="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+            <p class="text-center text-white/60 text-xs mt-1.5">✨ Sin costo · Cupos limitados</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Título principal -->
-    <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 animate-fade-in-up">
-    Sociedad Chilena 
-    <span class="block text-white">
-      de 
-    </span>
-    Medicina Transfusional
-    </h1>  
+      <!-- Estadísticas en horizontal -->
+      <div id="stats-section" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 animate-fade-in-up" style="animation-delay: 0.6s;">
+        <div class="bg-white/10 border border-white/15 rounded-2xl p-3 text-center shadow-lg">
+          <div class="text-2xl font-black text-white">
+            <span class="counter" data-target="100">0</span>+
+          </div>
+          <p class="text-[10px] uppercase tracking-widest text-white/70 mt-1">Socios activos</p>
+        </div>
+        <div class="bg-white/10 border border-white/15 rounded-2xl p-3 text-center shadow-lg">
+          <div class="text-2xl font-black text-white">
+            <span class="counter" data-target="4">0</span>+
+          </div>
+          <p class="text-[10px] uppercase tracking-widest text-white/70 mt-1">Anos liderando</p>
+        </div>
+        <div class="bg-white/10 border border-white/15 rounded-2xl p-3 text-center shadow-lg">
+          <div class="text-2xl font-black text-white">
+            <span class="counter" data-target="1">0</span>+
+          </div>
+          <p class="text-[10px] uppercase tracking-widest text-white/70 mt-1">Investigaciones activas</p>
+        </div>
+        <div class="bg-white/10 border border-white/15 rounded-2xl p-3 text-center shadow-lg">
+          <div class="text-2xl font-black text-white">
+            <span class="counter" data-target="5">0</span>+
+          </div>
+          <p class="text-[10px] uppercase tracking-widest text-white/70 mt-1">Centros aliados</p>
+        </div>
+      </div>
 
-      <!-- Subtítulo -->
-      <p class="text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 0.2s;">
-        Construyendo el futuro de la medicina transfusional con ciencia y educación de vanguardia.
-      </p>
+      <!-- Carrusel de Noticias Recientes - Hero destacado -->
+      <div class="mt-10 animate-fade-in-up" style="animation-delay: 0.9s;">
+        <div class="glass-morphism rounded-3xl p-6 md:p-8 max-w-7xl mx-auto shadow-2xl">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <h3 class="text-3xl md:text-4xl font-black text-white flex items-center">
+              <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+              Ultimas noticias
+            </h3>
+            <a href="#noticias" class="inline-flex items-center self-start md:self-auto text-white/85 hover:text-white transition-colors font-semibold bg-white/10 px-4 py-2 rounded-full hover:bg-white/20">
+              Ver todas
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
 
-<!-- Estadísticas impactantes -->
-<div id="stats-section" class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
-  <div class="text-center">
-    <div class="text-3xl md:text-4xl font-black text-white mb-2">
-      <span class="counter" data-target="100">0</span>+
-    </div>
-    <div class="text-white/80 text-sm uppercase tracking-wider">Socios Activos</div>
-  </div>
-  <div class="text-center">
-    <div class="text-3xl md:text-4xl font-black text-white mb-2">
-      <span class="counter" data-target="4">0</span>+
-    </div>
-    <div class="text-white/80 text-sm uppercase tracking-wider">Años de Historia</div>
-  </div>
-  <div class="text-center">
-    <div class="text-3xl md:text-4xl font-black text-white mb-2">
-      <span class="counter" data-target="1">0</span>+
-    </div>
-    <div class="text-white/80 text-sm uppercase tracking-wider">Publicaciones</div>
-  </div>
-  <div class="text-center">
-    <div class="text-3xl md:text-4xl font-black text-white mb-2">
-      <span class="counter" data-target="5">0</span>+
-    </div>
-    <div class="text-white/80 text-sm uppercase tracking-wider">Centros Asociados</div>
-  </div>
-</div>
+          <div id="news-carousel" class="carousel-container relative min-h-[400px]">
+            <div id="carousel-track" class="flex transition-transform duration-500">
+              <!-- Las noticias se cargaran aqui dinamicamente -->
+            </div>
 
-      <!-- CTAs -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style="animation-delay: 0.6s;">
-        <a href="#quienes-somos" class="group bg-white text-sochimt-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center space-x-2">
-          <span>Descubre Más</span>
-          <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </a>
-        <a href="#socios" class="group bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 flex items-center space-x-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-          </svg>
-          <span>Únete como Socio</span>
-        </a>
+            <button id="carousel-prev" class="absolute -left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full p-3 transition-all z-10 shadow-xl hover:scale-110">
+              <svg class="w-7 h-7 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button id="carousel-next" class="absolute -right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full p-3 transition-all z-10 shadow-xl hover:scale-110">
+              <svg class="w-7 h-7 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <div id="carousel-dots" class="carousel-dots mt-8"></div>
+        </div>
       </div>
     </div>
 
@@ -317,6 +691,7 @@
   </section>
 
 <!-- Quiénes Somos - Inspirado en NTT DATA -->
+<!-- SECCIÓN OCULTA TEMPORALMENTE - EN DESARROLLO
 <section id="quienes-somos" class="py-20 lg:py-32 bg-gray-50">
   
 
@@ -405,30 +780,17 @@
               entre los profesionales del área, apoyando el constante avance científico y tecnológico.
             </p>
           </div>
-
-          <!-- CTA -->
-          <div class="pt-6">
-            <a href="#servicios" class="inline-flex items-center bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-8 py-4 rounded-full font-semibold hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 group">
-              <span>Descubre nuestros servicios</span>
-              <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-              </svg>
-            </a>
-          </div>
         </div>
       </div>
 
       <!-- Visual Content -->
       <div class="reveal">
         <div class="relative">
-          <!-- Main image placeholder -->
-          <div class="bg-gradient-to-br from-sochimt-600/80 to-medical-600/80 backdrop-blur-sm rounded-3xl h-96 flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
-            <div class="text-center text-white">
-              <svg class="w-24 h-24 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-              </svg>
-              <h4 class="text-2xl font-bold mb-2">Laboratorio de Excelencia</h4>
-              <p class="text-white/80">Tecnología de vanguardia</p>
+          <!-- Logo SOCHIMT -->
+          <div class="bg-gradient-to-br from-sochimt-600/80 to-medical-600/80 backdrop-blur-sm rounded-3xl h-96 flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 p-12">
+            <!-- Logo de SOCHIMT -->
+            <div class="bg-white/95 rounded-3xl p-8 shadow-2xl">
+              <img src="images/logos/_ Main Logo 1.3.png" alt="SOCHIMT Logo" class="w-full h-auto max-w-xs mx-auto">
             </div>
           </div>
           
@@ -440,6 +802,299 @@
     </div>
   </div>
 </section>
+--> <!-- FIN SECCIÓN OCULTA -->
+
+  <!-- Directorio Humano - Nuestro Equipo -->
+  <section id="directorio" class="py-20 lg:py-32 bg-gradient-to-br from-sochimt-50 to-medical-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Header -->
+      <div class="text-center mb-16 reveal">
+        <span class="text-sochimt-600 font-semibold uppercase tracking-wider text-sm">Nuestro Directorio</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-6">
+          El Corazón Humano de
+          <span class="text-gradient">SOCHIMT</span>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+          Conoce al equipo apasionado que lidera nuestra sociedad hacia la excelencia
+        </p>
+      </div>
+
+      <!-- Grid de directorio -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 mb-12">
+        
+        <!-- Presidente -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden cursor-pointer" onclick="openDirectorModal('presidente')">
+          <div class="relative group">
+            <!-- Imagen de director - reemplazar con ruta real -->
+            <img src="images/directorio/presidente.png" alt="TM Mg. Guillermo Jerez Jerez" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <!-- Overlay al hover -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+              <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+              </svg>
+            </div>
+            <div class="h-80 bg-gradient-to-br from-sochimt-500 to-sochimt-700 items-center justify-center hidden">
+              <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl">
+                <svg class="w-20 h-20 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold flex items-center shadow-lg">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                Presidente
+              </span>
+            </div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">TM Mg. Guillermo Jerez Jerez</h3>
+            <div class="flex justify-center space-x-2">
+              <a href="mailto:presidente@sochimt.cl" onclick="event.stopPropagation()" class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-sochimt-600 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vicepresidente -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden cursor-pointer" onclick="openDirectorModal('vicepresidente')">
+          <div class="relative group">
+            <!-- Imagen de director - reemplazar con ruta real -->
+            <img src="images/directorio/vicepresidente.png" alt="TM Mg. Diego Zapata Tapia" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <!-- Overlay al hover -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+              <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+              </svg>
+            </div>
+            <div class="h-80 bg-gradient-to-br from-medical-500 to-medical-700 items-center justify-center hidden">
+              <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl">
+                <svg class="w-20 h-20 text-medical-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-blue-100 text-blue-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg">Vicepresidente</span>
+            </div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">TM Mg. Diego Zapata Tapia</h3>
+            <div class="flex justify-center space-x-2">
+              <a href="mailto:vicepresidente@sochimt.cl" onclick="event.stopPropagation()" class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-medical-600 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secretaria -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden cursor-pointer" onclick="openDirectorModal('secretaria')">
+          <div class="relative group">
+            <!-- Imagen de director - reemplazar con ruta real -->
+            <img src="images/directorio/secretaria.png" alt="TM Eileen Fernández Fernández" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <!-- Overlay al hover -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+              <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+              </svg>
+            </div>
+            <div class="h-80 bg-gradient-to-br from-purple-500 to-purple-700 items-center justify-center hidden">
+              <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl">
+                <svg class="w-20 h-20 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-purple-100 text-purple-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg">Secretaria</span>
+            </div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">TM Eileen Fernández Fernández</h3>
+            <div class="flex justify-center space-x-2">
+              <a href="mailto:secretaria@sochimt.cl" onclick="event.stopPropagation()" class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-purple-600 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tesorera -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden cursor-pointer" onclick="openDirectorModal('tesorera')">
+          <div class="relative group">
+            <!-- Imagen de director - reemplazar con ruta real -->
+            <img src="images/directorio/tesorera.png" alt="TM Silvia Díaz Guajardo" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <!-- Overlay al hover -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+              <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+              </svg>
+            </div>
+            <div class="h-80 bg-gradient-to-br from-green-500 to-green-700 items-center justify-center hidden">
+              <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl">
+                <svg class="w-20 h-20 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-green-100 text-green-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg">Tesorera</span>
+            </div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">TM Silvia Díaz Guajardo</h3>
+            <div class="flex justify-center space-x-2">
+              <a href="mailto:tesorera@sochimt.cl" onclick="event.stopPropagation()" class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-green-600 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coordinador Nacional -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden cursor-pointer" onclick="openDirectorModal('coordinador')">
+          <div class="relative group">
+            <!-- Imagen de director - reemplazar con ruta real -->
+            <img src="images/directorio/coordinador.png" alt="TM Juan Pablo Tayssier Guerrero" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <!-- Overlay al hover -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+              <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+              </svg>
+            </div>
+            <div class="h-80 bg-gradient-to-br from-orange-500 to-orange-700 items-center justify-center hidden">
+              <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl">
+                <svg class="w-20 h-20 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-orange-100 text-orange-900 px-2 py-1 rounded-full text-xs font-bold shadow-lg">Coordinador</span>
+            </div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">TM Juan Pablo Tayssier Guerrero</h3>
+            <div class="flex justify-center space-x-2">
+              <a href="mailto:coordinador@sochimt.cl" onclick="event.stopPropagation()" class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quote inspiracional -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 md:p-12 text-center reveal max-w-4xl mx-auto shadow-xl">
+        <svg class="w-12 h-12 text-sochimt-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+        </svg>
+        <blockquote class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+          "Juntos transformamos la medicina transfusional con pasión, dedicación y excelencia científica"
+        </blockquote>
+        <p class="text-gray-600 font-medium">El compromiso de nuestro directorio</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Macrozonas -->
+  <section id="macrozonas" class="py-20 lg:py-28 bg-slate-50 border-t border-slate-200/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-sochimt-600 font-semibold uppercase tracking-widest text-xs">Representación Territorial</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mt-4 mb-4">Representantes por Macrozona</h2>
+        <p class="text-sm text-slate-500 max-w-2xl mx-auto text-center">
+          ✨ Conoce a los directores y directoras que lideran SOCHIMT en cada zona del país.<br>
+          Haz clic en las tarjetas para descubrir quién representa tu región y contactar directamente.
+        </p>
+      </div>
+
+      <!-- Tarjetas de Macrozonas con Tooltips -->
+      <div class="relative">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Macrozona Norte -->
+          <div class="macrozona-card bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl shadow-xl p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl relative"
+               data-zone="norte">
+            <div class="text-center text-white">
+              <div class="inline-block w-4 h-4 rounded-full bg-white mb-4"></div>
+              <h3 class="text-2xl font-bold mb-3">Macrozona Norte</h3>
+              <p class="text-sm text-white/90 leading-relaxed">
+                Arica y Parinacota, Tarapacá, Antofagasta, Atacama.
+              </p>
+            </div>
+          </div>
+
+          <!-- Macrozona Centro Norte -->
+          <div class="macrozona-card bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl shadow-xl p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl relative"
+               data-zone="centronorte">
+            <div class="text-center text-white">
+              <div class="inline-block w-4 h-4 rounded-full bg-white mb-4"></div>
+              <h3 class="text-2xl font-bold mb-3">Macrozona Centro Norte</h3>
+              <p class="text-sm text-white/90 leading-relaxed">
+                Coquimbo, Valparaíso.
+              </p>
+            </div>
+          </div>
+
+          <!-- Macrozona Centro -->
+          <div class="macrozona-card bg-gradient-to-br from-sky-400 to-blue-600 rounded-2xl shadow-xl p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl relative"
+               data-zone="centro">
+            <div class="text-center text-white">
+              <div class="inline-block w-4 h-4 rounded-full bg-white mb-4"></div>
+              <h3 class="text-2xl font-bold mb-3">Macrozona Centro</h3>
+              <p class="text-sm text-white/90 leading-relaxed">
+                Región Metropolitana.
+              </p>
+            </div>
+          </div>
+
+          <!-- Macrozona Centro Sur -->
+          <div class="macrozona-card bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl shadow-xl p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl relative"
+               data-zone="centrosur">
+            <div class="text-center text-white">
+              <div class="inline-block w-4 h-4 rounded-full bg-white mb-4"></div>
+              <h3 class="text-2xl font-bold mb-3">Macrozona Centro Sur</h3>
+              <p class="text-sm text-white/90 leading-relaxed">
+                O'Higgins, Maule, Ñuble, Biobío.
+              </p>
+            </div>
+          </div>
+
+          <!-- Macrozona Sur -->
+          <div class="macrozona-card bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl shadow-xl p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl relative"
+               data-zone="sur">
+            <div class="text-center text-white">
+              <div class="inline-block w-4 h-4 rounded-full bg-white mb-4"></div>
+              <h3 class="text-2xl font-bold mb-3">Macrozona Sur</h3>
+              <p class="text-sm text-white/90 leading-relaxed">
+                La Araucanía, Los Ríos, Los Lagos.
+              </p>
+            </div>
+          </div>
+
+          <!-- Macrozona Austral -->
+          <div class="macrozona-card bg-gradient-to-br from-rose-400 to-rose-600 rounded-2xl shadow-xl p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl relative"
+               data-zone="austral">
+            <div class="text-center text-white">
+              <div class="inline-block w-4 h-4 rounded-full bg-white mb-4"></div>
+              <h3 class="text-2xl font-bold mb-3">Macrozona Austral</h3>
+              <p class="text-sm text-white/90 leading-relaxed">
+                Aysén, Magallanes y Antártica Chilena.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tooltip para mostrar información del representante -->
+        <div id="macro-tooltip" class="macro-tooltip hidden"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- Noticias Dinámicas -->
   <section id="noticias" class="py-20 lg:py-32 bg-white">
@@ -457,9 +1112,25 @@
         </p>
       </div>
 
-      <!-- News Grid -->
-      <div id="noticias-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Las noticias se cargarán dinámicamente aquí -->
+      <!-- Carrusel de Noticias (3 a la vez) -->
+      <div class="relative">
+        <div class="overflow-hidden">
+          <div id="noticias-container" class="flex transition-transform duration-500 ease-in-out">
+            <!-- Las noticias se cargarán dinámicamente aquí -->
+          </div>
+        </div>
+        
+        <!-- Controles del carrusel inferior -->
+        <button id="noticias-prev" class="absolute -left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-sochimt-600 hover:text-white rounded-full p-3 shadow-xl transition-all z-10 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button id="noticias-next" class="absolute -right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-sochimt-600 hover:text-white rounded-full p-3 shadow-xl transition-all z-10 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
       </div>
 
       <!-- Loading State -->
@@ -481,6 +1152,127 @@
     </div>
   </section>
 
+  <!-- Modal de Inscripcion -->
+  <div id="inscripcion-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="closeInscripcionModal(event)">
+    <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl" onclick="event.stopPropagation()">
+      <div class="relative px-8 py-6 md:px-12 md:py-10">
+        <button type="button" onclick="closeInscripcionModal()" class="absolute top-4 right-4 bg-slate-100 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-full p-2 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
+        <div class="mb-8">
+          <span class="inline-flex items-center text-xs font-semibold tracking-widest uppercase text-sochimt-600 bg-sochimt-50 px-3 py-1 rounded-full">4° Conversatorio SOCHIMT</span>
+          <h3 class="mt-4 text-3xl font-black text-slate-900">Inscríbete al <span class="text-gradient">Conversatorio</span></h3>
+          <p class="mt-3 text-sm md:text-base text-slate-600 leading-relaxed">Déjanos tus datos para confirmar tu participación en el conversatorio "Donación de Sangre: Estrategias para la captación y fidelización de donantes altruistas" el 12 de noviembre a las 20:30 hrs.</p>
+        </div>
+
+        <form id="inscripcion-form" name="conversatorio-inscripcion" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success.html" class="space-y-5">
+          <!-- Campo oculto para Netlify Forms -->
+          <input type="hidden" name="form-name" value="conversatorio-inscripcion" />
+          <input type="hidden" name="conversatorio" value="4° Conversatorio SOCHIMT - Donación de Sangre" />
+
+          <!-- Honeypot anti-spam -->
+          <div style="display: none;">
+            <label>No llenar este campo: <input name="bot-field" /></label>
+          </div>
+
+          <div>
+            <label for="inscripcion-nombre" class="block text-sm font-semibold text-slate-700 mb-1">Nombre y apellido</label>
+            <input id="inscripcion-nombre" name="nombre" type="text" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sochimt-500 focus:border-transparent" placeholder="Ej: Camila Perez">
+          </div>
+          <div>
+            <label for="inscripcion-correo" class="block text-sm font-semibold text-slate-700 mb-1">Correo electronico</label>
+            <input id="inscripcion-correo" name="correo" type="email" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sochimt-500 focus:border-transparent" placeholder="Ej: camila@institucion.cl">
+          </div>
+          <div>
+            <label for="inscripcion-institucion" class="block text-sm font-semibold text-slate-700 mb-1">Institucion o centro de trabajo</label>
+            <input id="inscripcion-institucion" name="institucion" type="text" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sochimt-500 focus:border-transparent" placeholder="Ej: Hospital Clinico Metropolitano">
+          </div>
+          <div>
+            <label for="inscripcion-mensaje" class="block text-sm font-semibold text-slate-700 mb-1">Mensaje (opcional)</label>
+            <textarea id="inscripcion-mensaje" name="mensaje" rows="3" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sochimt-500 focus:border-transparent" placeholder="Cuentanos si tienes alguna necesidad especifica."></textarea>
+          </div>
+
+          <!-- Mensaje de estado -->
+          <div id="form-status" class="hidden">
+            <div id="form-success" class="hidden bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl flex items-start gap-3">
+              <svg class="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <div>
+                <p class="font-semibold">¡Inscripción enviada exitosamente!</p>
+                <p class="text-sm mt-1">Te enviaremos un correo de confirmación a <span id="user-email" class="font-semibold"></span> con el enlace del Google Meet.</p>
+              </div>
+            </div>
+            <div id="form-error" class="hidden bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <div>
+                <p class="font-semibold">Error al enviar la inscripción</p>
+                <p class="text-sm mt-1">Por favor, intenta nuevamente o contacta directamente a contacto@sochimt.cl</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-4">
+            <p class="text-xs text-slate-500">Al enviar tus datos recibiras el enlace de acceso directo desde <span class="font-semibold text-slate-700">contacto@sochimt.cl</span>.</p>
+            <div class="flex gap-3">
+              <button type="button" onclick="closeInscripcionModal(true)" class="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100 transition">Cancelar</button>
+              <button type="submit" id="submit-button" class="px-6 py-2.5 rounded-full bg-sochimt-600 text-white font-semibold hover:bg-sochimt-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sochimt-500 flex items-center gap-2">
+                <span id="button-text">Enviar solicitud</span>
+                <svg id="button-spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Noticia -->
+  <div id="noticia-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center p-4" onclick="closeNoticiaModal(event)">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+      <div class="relative">
+        <!-- Botón cerrar -->
+        <button onclick="closeNoticiaModal()" class="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        
+        <!-- Contenido del modal -->
+        <div id="noticia-modal-content">
+          <!-- Se llenará dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Director -->
+  <div id="director-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center p-4" onclick="closeDirectorModal(event)">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+      <div class="relative">
+        <!-- Botón cerrar -->
+        <button onclick="closeDirectorModal()" class="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        
+        <!-- Contenido del modal -->
+        <div id="modal-content">
+          <!-- Se llenará dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CTA Section / Sección Socios -->
 <section id="socios" class="py-20 lg:py-32 gradient-mesh">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -493,13 +1285,13 @@
         formación continua y networking profesional de primer nivel.
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-        <a href="#contacto" class="bg-white text-sochimt-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center space-x-2 group">
+        <a href="registro-socios.html" class="bg-white text-sochimt-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center space-x-2 group">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
           <span>Hazte Socio Ahora</span>
         </a>
-        <a href="#contacto" class="glass-morphism text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300 flex items-center space-x-2">
+        <a href="contacto.html" class="glass-morphism text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300 flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
           </svg>
@@ -509,6 +1301,244 @@
     </div>
   </div>
 </section>
+
+
+  <!-- Sección de Colaboraciones y Convenios -->
+  <section id="colaboraciones" class="py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Header -->
+      <div class="text-center mb-16 reveal">
+        <span class="text-sochimt-600 font-semibold uppercase tracking-wider text-sm">Nuestros Aliados</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-6">
+          Colaboraciones y 
+          <span class="text-gradient">Convenios</span>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+          Trabajamos con las mejores instituciones y empresas para ofrecer beneficios exclusivos a nuestros socios
+        </p>
+      </div>
+
+      <!-- Beneficios para socios -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        
+        <!-- Beneficio 1 -->
+        <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal border-t-4 border-sochimt-600">
+          <div class="w-16 h-16 bg-sochimt-100 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Descuentos en Educación</h3>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Hasta 30% de descuento en cursos, diplomados y programas de especialización con instituciones partner.
+          </p>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Cursos online y presenciales
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Certificaciones internacionales
+            </li>
+          </ul>
+        </div>
+
+        <!-- Beneficio 2 -->
+        <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal border-t-4 border-medical-600">
+          <div class="w-16 h-16 bg-medical-100 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-medical-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Acceso a Eventos</h3>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Entrada preferencial y tarifas especiales en congresos, seminarios y talleres nacionales e internacionales.
+          </p>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Registro prioritario
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Descuentos hasta 50%
+            </li>
+          </ul>
+        </div>
+
+        <!-- Beneficio 3 -->
+        <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal border-t-4 border-purple-600">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Publicaciones</h3>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Descuentos en publicación de artículos científicos y acceso gratuito a journals especializados.
+          </p>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Revistas indexadas
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Apoyo editorial
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN: INSTITUCIONES COLABORADORAS -->
+      <div class="mt-20 reveal" id="convenios">
+        <div class="text-center mb-12">
+          <span class="inline-block px-6 py-2 bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-700 rounded-full text-sm font-semibold mb-4">
+            🤝 Instituciones Colaboradoras
+          </span>
+          <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Nuestros <span class="text-gradient bg-gradient-to-r from-purple-600 to-indigo-600">Convenios</span>
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            Haz click en cada logo para conocer los beneficios exclusivos para socios SOCHIMT
+          </p>
+        </div>
+
+        <!-- Instituciones Educativas -->
+        <div class="mb-12">
+          <h3 class="text-xl font-bold text-gray-900 text-center mb-6">🎓 Universidades / OTEC</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+            <!-- Universidad Central -->
+            <button onclick="openConvenioModal('ucentral')" class="group relative bg-gradient-to-br from-white via-purple-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 border-2 border-purple-100 hover:border-purple-400 overflow-hidden block w-full text-left">
+              <!-- Overlay -->
+              <div class="absolute inset-0 bg-purple-900/0 group-hover:bg-purple-900/5 transition-all duration-300 z-[1]"></div>
+              <!-- Efecto de brillo -->
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 z-[2]"></div>
+              <!-- Badge de descuento -->
+              <div class="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg z-[3]">
+                Hasta 40%
+              </div>
+              <!-- Logo -->
+              <div class="flex items-center justify-center h-32 relative z-[3] mb-4">
+                <img src="colaboraciones/Universidad Central.png" alt="Universidad Central" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <!-- Indicador de hover -->
+              <div class="text-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-[4]">
+                <div class="inline-flex items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-bold px-6 py-3 rounded-full shadow-2xl gap-2 border-2 border-white/50">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                  </svg>
+                  <span>Ver beneficios</span>
+                </div>
+              </div>
+            </button>
+
+            <!-- Centro de Formación Biomédica -->
+            <button onclick="openConvenioModal('cfb')" class="group relative bg-gradient-to-br from-white via-blue-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:scale-105 hover:-translate-y-2 border-2 border-blue-100 hover:border-blue-400 overflow-hidden block w-full text-left">
+              <!-- Overlay -->
+              <div class="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/5 transition-all duration-300 z-[1]"></div>
+              <!-- Efecto de brillo -->
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 z-[2]"></div>
+              <!-- Badge de descuento -->
+              <div class="absolute top-3 right-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg z-[3]">
+                Hasta 25%
+              </div>
+              <!-- Logo -->
+              <div class="flex items-center justify-center h-32 relative z-[3] mb-4">
+                <img src="colaboraciones/OTEC_Biomedica.png" alt="Centro de Formación Biomédica" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <!-- Indicador de hover -->
+              <div class="text-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-[4]">
+                <div class="inline-flex items-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-sm font-bold px-6 py-3 rounded-full shadow-2xl gap-2 border-2 border-white/50">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                  </svg>
+                  <span>Ver beneficios</span>
+                </div>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Empresas Colaboradoras -->
+        <div class="mb-12">
+          <h3 class="text-xl font-bold text-gray-900 text-center mb-6">🏢 Empresas Colaboradoras</h3>
+          <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+            Marcas que apoyan y colaboran con SOCHIMT en el desarrollo de la medicina transfusional en Chile
+          </p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+
+            <!-- Vitroscience -->
+            <a href="https://www.vitroscience.cl/" target="_blank" rel="noopener noreferrer" class="bg-white rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-sochimt-400 group block">
+              <div class="flex justify-center items-center h-24">
+                <img src="colaboraciones/vitroscience_chile_logo.jpg" alt="Vitroscience" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300">
+              </div>
+            </a>
+
+            <!-- Grifols -->
+            <a href="https://www.grifols.com/" target="_blank" rel="noopener noreferrer" class="bg-white rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-sochimt-400 group block">
+              <div class="flex justify-center items-center h-24">
+                <img src="colaboraciones/Grifols.png" alt="Grifols" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300">
+              </div>
+            </a>
+
+            <!-- BRCorp -->
+            <a href="https://brcorp.cl/" target="_blank" rel="noopener noreferrer" class="bg-white rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-sochimt-400 group block">
+              <div class="flex justify-center items-center h-24">
+                <img src="colaboraciones/BRCorp.png" alt="BRCorp" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300">
+              </div>
+            </a>
+
+            <!-- Dipromed -->
+            <a href="https://dipromed.cl/" target="_blank" rel="noopener noreferrer" class="bg-white rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-sochimt-400 group block">
+              <div class="flex justify-center items-center h-24">
+                <img src="colaboraciones/Dipromed.png" alt="Dipromed" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300">
+              </div>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-12 text-center reveal">
+        <p class="text-gray-600 mb-6">¿Quieres ser parte de nuestra red de colaboradores?</p>
+        <a href="colaboraciones.html" class="inline-flex items-center bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-8 py-4 rounded-full font-semibold hover:from-sochimt-700 hover:to-sochimt-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span>Contactar para Colaborar</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal de Convenios -->
+  <div id="convenio-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+    <div class="bg-gradient-to-br from-white to-gray-50 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all">
+      <div id="convenio-modal-content">
+        <!-- Contenido dinámico del convenio -->
+      </div>
+    </div>
+  </div>
 
   <!-- Footer moderno -->
   <footer class="bg-gray-900 text-gray-300">
@@ -533,7 +1563,7 @@
           
           <!-- Social Links -->
           <div class="flex space-x-4">
-            <a href="https://www.instagram.com/sochimt_cl" target="_blank" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-sochimt-600 transition-colors">
+            <a href="https://www.instagram.com/sochimt_cl/_cl" target="_blank" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-sochimt-600 transition-colors">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.942a3.916 3.916 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.282.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.843-.038 1.096-.047 3.232-.047h.001zm4.905 1.882a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM8 4.603a3.4 3.4 0 1 0 0 6.799 3.4 3.4 0 0 0 0-6.799zM8 6.4a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></svg>
             </a>
             <a href="https://www.facebook.com/profile.php?id=61575757064945" target="_blank" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-sochimt-600 transition-colors">
@@ -553,7 +1583,7 @@
         <div>
           <h4 class="text-lg font-semibold text-white mb-6">Enlaces Rápidos</h4>
           <ul class="space-y-3">
-            <li><a href="#quienes-somos" class="hover:text-white transition-colors">Quiénes Somos</a></li>
+            <li><a href="#directorio" class="hover:text-white transition-colors">Quiénes Somos</a></li>
             <li><a href="#servicios" class="hover:text-white transition-colors">Servicios</a></li>
             <li><a href="#noticias" class="hover:text-white transition-colors">Noticias</a></li>
             <li><a href="#socios" class="hover:text-white transition-colors">Socios</a></li>
@@ -600,14 +1630,34 @@
   </footer>
 
 <!-- Scripts -->
+<!-- Supabase Client Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Configuración de Entorno (Dev/Prod) -->
+<script src="js/config.js"></script>
+
+<!-- Inicializar Supabase Client -->
+<script>
+  // Inicializar cliente de Supabase con configuración dinámica
+  const { createClient } = supabase;
+  const supabaseClient = createClient(
+    window.CONFIG?.supabase?.url || 'https://dkohwhosputnxismgkon.supabase.co',
+    window.CONFIG?.supabase?.anonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb2h3aG9zcHV0bnhpc21na29uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMzkxMTQsImV4cCI6MjA2NTYxNTExNH0.2ZOwkilUv49SADBzjrq-4AHUUKnMLZs-beftr3FLdAE'
+  );
+  
+  console.log('✅ Supabase Client inicializado para index.html');
+</script>
+
 <script>
   // Configuración global (opcional)
-  const CONFIG = {
-    animations: {
-      duration: 800,
-      easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-    }
-  };
+  if (!window.CONFIG) {
+    window.CONFIG = {
+      animations: {
+        duration: 800,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+      }
+    };
+  }
 
   // Inicialización cuando el DOM esté cargado
   document.addEventListener('DOMContentLoaded', () => {
@@ -615,8 +1665,13 @@
     initMobileMenu();
     initScrollAnimations();
     loadNoticias();
+    loadNuevosSocios(); // Cargar nuevos socios
     initSmoothScrolling();
+    initInscripcionModal();
     initCounterAnimations();
+    initNewsCarousel();
+    initMacrozonas();
+    initConvenios();
   });
 
   // Efecto de la barra de navegación al hacer scroll
@@ -624,14 +1679,12 @@
     const navbar = document.getElementById('navbar');
     let lastScrollY = window.scrollY;
 
+    // Mantener siempre fondo blanco sólido
+    navbar.style.backgroundColor = 'rgb(255, 255, 255)';
+
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 100) {
-        navbar.style.backdropFilter = 'blur(20px)';
-        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-      } else {
-        navbar.style.backdropFilter = 'blur(10px)';
-        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-      }
+      // Mantener siempre fondo blanco sólido
+      navbar.style.backgroundColor = 'rgb(255, 255, 255)';
 
       // Ocultar al hacer scroll hacia abajo
       if (window.scrollY > lastScrollY && window.scrollY > 200) {
@@ -639,7 +1692,7 @@
       } else {
         navbar.style.transform = 'translateY(0)';
       }
-      
+
       lastScrollY = window.scrollY;
     });
   }
@@ -675,6 +1728,115 @@
         }
       });
     });
+  }
+
+  function initInscripcionModal() {
+    const openButton = document.getElementById('open-inscripcion-modal');
+    const form = document.getElementById('inscripcion-form');
+
+    if (openButton) {
+      openButton.addEventListener('click', () => {
+        openInscripcionModal();
+        if (form) {
+          window.requestAnimationFrame(() => {
+            const firstField = form.querySelector('input, textarea');
+            if (firstField) {
+              firstField.focus();
+            }
+          });
+        }
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+        const buttonSpinner = document.getElementById('button-spinner');
+        const formStatus = document.getElementById('form-status');
+        const formSuccess = document.getElementById('form-success');
+        const formError = document.getElementById('form-error');
+        const userEmailSpan = document.getElementById('user-email');
+
+        // Deshabilitar botón y mostrar spinner
+        submitButton.disabled = true;
+        buttonText.textContent = 'Enviando...';
+        buttonSpinner.classList.remove('hidden');
+        formStatus.classList.add('hidden');
+        formSuccess.classList.add('hidden');
+        formError.classList.add('hidden');
+
+        try {
+          const formData = new FormData(form);
+          const correo = formData.get('correo');
+
+          // Enviar formulario con Netlify Forms
+          const response = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
+          });
+
+          if (response.ok) {
+            // Éxito
+            formStatus.classList.remove('hidden');
+            formSuccess.classList.remove('hidden');
+            userEmailSpan.textContent = correo;
+            form.reset();
+
+            // Cerrar modal después de 4 segundos
+            setTimeout(() => {
+              closeInscripcionModal(true);
+              formStatus.classList.add('hidden');
+              formSuccess.classList.add('hidden');
+            }, 4000);
+          } else {
+            throw new Error('Error en el envío');
+          }
+        } catch (error) {
+          // Error
+          console.error('Error al enviar formulario:', error);
+          formStatus.classList.remove('hidden');
+          formError.classList.remove('hidden');
+        } finally {
+          // Restaurar botón
+          submitButton.disabled = false;
+          buttonText.textContent = 'Enviar solicitud';
+          buttonSpinner.classList.add('hidden');
+        }
+      });
+    }
+  }
+
+  function openInscripcionModal() {
+    const modal = document.getElementById('inscripcion-modal');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeInscripcionModal(arg) {
+    if (arg instanceof Event) {
+      if (arg.target !== arg.currentTarget) {
+        return;
+      }
+    }
+
+    const modal = document.getElementById('inscripcion-modal');
+    const form = document.getElementById('inscripcion-form');
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+
+    if (arg === true && form) {
+      form.reset();
+    }
   }
 
   // Animaciones al hacer scroll (efecto reveal)
@@ -750,10 +1912,22 @@
 
   // --- LÓGICA DE CARGA DE NOTICIAS (CORREGIDA PARA SUPABASE) ---
 
+  // Estado del carrusel inferior (3 noticias)
+  let noticiasCarouselState = {
+    currentPage: 0,
+    noticias: [],
+    itemsPerPage: 3
+  };
+
   // Orquesta la carga de noticias en la página
   async function loadNoticias() {
     const container = document.getElementById('noticias-container');
     const loading = document.getElementById('noticias-loading');
+
+    if (!container) {
+      console.error('❌ No se encontró el contenedor de noticias');
+      return;
+    }
 
     loading.style.display = 'block';
     container.innerHTML = '';
@@ -761,21 +1935,33 @@
     try {
       const noticias = await fetchNoticias();
       loading.style.display = 'none';
-      container.innerHTML = noticias.map(noticia => createNoticiaHTML(noticia)).join('');
       
-      container.querySelectorAll('.reveal').forEach((el, index) => {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, index * 100);
-      });
+      // Si no hay noticias, mostrar mensaje
+      if (!noticias || noticias.length === 0) {
+        container.innerHTML = `
+          <div class="w-full text-center py-12">
+            <div class="text-gray-400 text-6xl mb-4">ℹ️</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay noticias disponibles en este momento</h3>
+            <p class="text-gray-600">Las noticias aparecerán aquí cuando estén publicadas.</p>
+          </div>`;
+        return;
+      }
+      
+      // Guardar noticias en el estado
+      noticiasCarouselState.noticias = noticias;
+      
+      // Renderizar carrusel de 3 noticias
+      renderNoticiasCarousel();
+      setupNoticiasCarouselControls();
 
     } catch (error) {
-      console.error('Error al intentar cargar las noticias:', error);
-      loading.innerHTML = `
-        <div class="text-center py-12">
+      console.error('💥 Error al intentar cargar las noticias:', error);
+      loading.style.display = 'none';
+      container.innerHTML = `
+        <div class="w-full text-center py-12">
           <div class="text-red-500 text-6xl mb-4">⚠️</div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">Error cargando noticias</h3>
-          <p class="text-gray-600 mb-4">No se pudo conectar con el servidor.</p>
+          <p class="text-gray-600 mb-4">No se pudo conectar con Supabase: ${error.message}</p>
           <button onclick="loadNoticias()" class="px-6 py-2 bg-sochimt-600 text-white rounded-lg hover:bg-sochimt-700 transition-colors">
             Reintentar
           </button>
@@ -783,27 +1969,79 @@
     }
   }
 
-// Busca las noticias desde la API de Netlify
+  // Renderizar carrusel de noticias (3 a la vez)
+  function renderNoticiasCarousel() {
+    const container = document.getElementById('noticias-container');
+    if (!container) return;
+
+    container.innerHTML = noticiasCarouselState.noticias.map((noticia, index) => 
+      createNoticiaHTML(noticia, index)
+    ).join('');
+  }
+
+  // Configurar controles del carrusel de noticias
+  function setupNoticiasCarouselControls() {
+    const prevBtn = document.getElementById('noticias-prev');
+    const nextBtn = document.getElementById('noticias-next');
+    const itemsPerPage = noticiasCarouselState.itemsPerPage;
+    const totalItems = noticiasCarouselState.noticias.length;
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (noticiasCarouselState.currentPage > 0) {
+          noticiasCarouselState.currentPage--;
+          updateNoticiasCarousel();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const maxPage = Math.ceil(totalItems / itemsPerPage) - 1;
+        if (noticiasCarouselState.currentPage < maxPage) {
+          noticiasCarouselState.currentPage++;
+          updateNoticiasCarousel();
+        }
+      });
+    }
+  }
+
+  // Actualizar posición del carrusel
+  function updateNoticiasCarousel() {
+    const container = document.getElementById('noticias-container');
+    if (!container) return;
+
+    const itemWidth = 100 / noticiasCarouselState.itemsPerPage; // % por item
+    const offset = -(noticiasCarouselState.currentPage * itemWidth);
+    container.style.transform = `translateX(${offset}%)`;
+  }
+
+// Busca las noticias directamente desde Supabase
 async function fetchNoticias() {
   try {
-    // CORREGIDO: Cambiar 'get-noticias' por 'noticias' para coincidir con el archivo
-    const response = await fetch('/.netlify/functions/noticias');
+    console.log('📰 Cargando noticias desde Supabase...');
     
-    if (!response.ok) {
-      throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
+    const { data, error } = await supabaseClient
+      .from('noticias')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(6);
+    
+    if (error) {
+      console.error('❌ Error de Supabase:', error);
+      throw error;
     }
     
-    const data = await response.json();
-    
-    // Verificar que la respuesta tenga el formato esperado
-    if (!Array.isArray(data)) {
-      console.error('La respuesta no es un array:', data);
-      throw new Error('Formato de respuesta inválido');
+    if (!data || data.length === 0) {
+      console.warn('⚠️ No hay noticias en Supabase');
+      return [];
     }
     
+    console.log(`✅ ${data.length} noticias cargadas exitosamente`);
     return data;
+    
   } catch (error) {
-    console.error('No se pudieron obtener las noticias desde la API:', error);
+    console.error('💥 No se pudieron obtener las noticias:', error);
     throw error;
   }
 }
@@ -822,7 +2060,7 @@ async function fetchNoticias() {
 
 
   // Crea el bloque HTML para una sola tarjeta de noticia
-  function createNoticiaHTML(noticia) {
+  function createNoticiaHTML(noticia, index) {
     const categoryColors = {
       'Evento': 'bg-blue-100 text-blue-800',
       'Noticia': 'bg-yellow-100 text-yellow-800',
@@ -832,42 +2070,1769 @@ async function fetchNoticias() {
       'Error': 'bg-red-100 text-red-800'
     };
 
-    // CAMBIO: Usa los nombres de campo de Supabase (url_media, url_externa)
     return `
-      <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden flex flex-col">
-        <div class="relative">
-          <img src="${noticia.url_media}" alt="${noticia.titulo}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x200/ef4444/white?text=Imagen+no+disponible';">
-          <div class="absolute top-4 left-4">
-            <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium">
-              ${noticia.categoria}
-            </span>
+      <article class="flex-shrink-0 w-full md:w-1/3 px-4 cursor-pointer group" onmouseenter="showNoticiaPreview(event, ${index})" onmouseleave="hideNoticiaPreview()" onclick="openNoticiaModal(${index})">
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden h-full">
+          <div class="relative">
+            <img src="${noticia.url_media}" alt="${noticia.titulo}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x200/3b82f6/white?text=SOCHIMT';">
+            <div class="absolute top-4 left-4">
+              <span class="px-3 py-1 ${categoryColors[noticia.categoria] || 'bg-gray-100 text-gray-800'} rounded-full text-sm font-medium shadow-lg">
+                ${noticia.categoria}
+              </span>
+            </div>
           </div>
-        </div>
-        <div class="p-6 flex flex-col flex-grow">
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            ${formatSupabaseDate(noticia.fecha)}
+          <div class="p-6">
+            <div class="flex items-center text-sm text-gray-500 mb-3">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              ${formatSupabaseDate(noticia.fecha)}
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-sochimt-600 transition-colors">
+              ${noticia.titulo}
+            </h3>
+            <p class="text-gray-600 leading-relaxed mb-4 line-clamp-3">
+              ${noticia.resumen}
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-sochimt-600 transition-colors">
-            ${noticia.titulo}
-          </h3>
-          <p class="text-gray-600 leading-relaxed mb-4 flex-grow">
-            ${noticia.resumen}
-          </p>
-          <a href="${noticia.url_externa || '#'}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sochimt-600 font-semibold hover:text-sochimt-700 transition-colors group mt-auto">
-            <span>Leer más</span>
-            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </a>
         </div>
       </article>
     `;
   }
 
+  // Abrir modal de noticia
+  function openNoticiaModal(index) {
+    const noticia = noticiasCarouselState.noticias[index];
+    if (!noticia) return;
+
+    const modal = document.getElementById('noticia-modal');
+    const modalContent = document.getElementById('noticia-modal-content');
+
+    const categoryColors = {
+      'Evento': 'from-blue-500 to-blue-700',
+      'Noticia': 'from-yellow-500 to-yellow-700',
+      'Publicación': 'from-green-500 to-green-700',
+      'Webinar': 'from-purple-500 to-purple-700',
+      'Congreso': 'from-red-500 to-red-700'
+    };
+
+    modalContent.innerHTML = `
+      <img src="${noticia.url_media}" alt="${noticia.titulo}" class="w-full h-96 object-cover rounded-t-3xl" onerror="this.src='https://placehold.co/800x400/3b82f6/white?text=SOCHIMT'">
+      <div class="p-8 md:p-12">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="px-4 py-2 bg-gradient-to-r ${categoryColors[noticia.categoria] || 'from-gray-500 to-gray-700'} text-white rounded-full text-sm font-bold shadow-lg">
+            ${noticia.categoria}
+          </span>
+          <span class="text-gray-500 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            ${formatSupabaseDate(noticia.fecha)}
+          </span>
+        </div>
+        <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-6">${noticia.titulo}</h2>
+        <p class="text-xl text-gray-700 leading-relaxed mb-6">${noticia.resumen}</p>
+        ${noticia.contenido ? `<div class="prose max-w-none mb-8">${noticia.contenido}</div>` : ''}
+        <a href="${noticia.url_externa || '#'}" target="_blank" rel="noopener noreferrer" 
+           class="inline-flex items-center bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <span>Leer artículo completo</span>
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Abrir modal desde el carrusel hero
+  function openHeroNoticiaModal(index) {
+    const noticia = carouselState.noticias[index];
+    if (!noticia) return;
+
+    const modal = document.getElementById('noticia-modal');
+    const modalContent = document.getElementById('noticia-modal-content');
+
+    const categoryColors = {
+      'Evento': 'from-blue-500 to-blue-700',
+      'Noticia': 'from-yellow-500 to-yellow-700',
+      'Publicación': 'from-green-500 to-green-700',
+      'Webinar': 'from-purple-500 to-purple-700',
+      'Congreso': 'from-red-500 to-red-700'
+    };
+
+    modalContent.innerHTML = `
+      <img src="${noticia.url_media}" alt="${noticia.titulo}" class="w-full h-96 object-cover rounded-t-3xl" onerror="this.src='https://placehold.co/800x400/3b82f6/white?text=SOCHIMT'">
+      <div class="p-8 md:p-12">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="px-4 py-2 bg-gradient-to-r ${categoryColors[noticia.categoria] || 'from-gray-500 to-gray-700'} text-white rounded-full text-sm font-bold shadow-lg">
+            ${noticia.categoria}
+          </span>
+          <span class="text-gray-500 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            ${formatSupabaseDate(noticia.fecha)}
+          </span>
+        </div>
+        <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-6">${noticia.titulo}</h2>
+        <p class="text-xl text-gray-700 leading-relaxed mb-6">${noticia.resumen}</p>
+        ${noticia.contenido ? `<div class="prose max-w-none mb-8">${noticia.contenido}</div>` : ''}
+        <a href="${noticia.url_externa || '#'}" target="_blank" rel="noopener noreferrer" 
+           class="inline-flex items-center bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <span>Leer artículo completo</span>
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Cerrar modal de noticia
+  function closeNoticiaModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    
+    const modal = document.getElementById('noticia-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  // Preview al hover (opcional - tooltip pequeño)
+  function showNoticiaPreview(event, index) {
+    // Implementación opcional para tooltip al hover
+  }
+
+  function hideNoticiaPreview() {
+    // Implementación opcional para ocultar tooltip
+  }
+
+  // Cerrar modales con tecla ESC
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closeNoticiaModal();
+      closeDirectorModal();
+    }
+  });
+
+  // --- CARRUSEL DE NOTICIAS EN HERO ---
+  let carouselState = {
+    currentIndex: 0,
+    noticias: [],
+    autoplayInterval: null,
+    isTransitioning: false
+  };
+
+  // Inicializa el carrusel de noticias
+  async function initNewsCarousel() {
+    try {
+      const noticias = await fetchNoticias();
+      carouselState.noticias = noticias.slice(0, 5); // Máximo 5 noticias en el carrusel
+      
+      if (carouselState.noticias.length > 0) {
+        renderCarousel();
+        setupCarouselControls();
+        startAutoplay();
+      }
+    } catch (error) {
+      console.error('Error al inicializar el carrusel:', error);
+      // Mostrar mensaje de error en el carrusel
+      const carouselTrack = document.getElementById('carousel-track');
+      if (carouselTrack) {
+        carouselTrack.innerHTML = `
+          <div class="w-full p-8 text-center text-white">
+            <svg class="w-12 h-12 mx-auto mb-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-white/80">No hay noticias disponibles en este momento</p>
+          </div>
+        `;
+      }
+    }
+  }
+
+  // Renderiza el carrusel con gradientes alternados y tarjetas destacadas
+  function renderCarousel() {
+    const carouselTrack = document.getElementById('carousel-track');
+    const carouselDots = document.getElementById('carousel-dots');
+    
+    if (!carouselTrack || !carouselDots) return;
+
+    carouselTrack.innerHTML = carouselState.noticias.map((noticia, idx) => {
+      const isEven = idx % 2 === 0;
+      const gradientClasses = isEven
+        ? 'bg-gradient-to-r from-sochimt-600/80 via-sochimt-500/70 to-medical-500/80'
+        : 'bg-gradient-to-r from-medical-500/80 via-medical-400/70 to-sochimt-500/80';
+
+      return `
+        <div class="carousel-slide w-full flex-shrink-0 px-4">
+          <div class="${gradientClasses} backdrop-blur-sm rounded-3xl p-8 md:p-10 transition-all duration-300 shadow-xl hover:shadow-2xl cursor-pointer border border-white/10" onclick="openHeroNoticiaModal(${idx})">
+            <div class="flex flex-col md:flex-row items-start gap-8 max-w-6xl mx-auto">
+              <div class="w-full md:w-2/5 h-64 rounded-2xl overflow-hidden">
+                <img src="${noticia.url_media}" 
+                     alt="${noticia.titulo}" 
+                     class="w-full h-full object-cover rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-300" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/3b82f6/white?text=SOCHIMT';">
+              </div>
+
+              <div class="flex-1 text-white">
+                <span class="inline-block px-4 py-2 bg-gradient-to-r ${getCategoryColor(noticia.categoria)} rounded-full text-sm font-bold text-white mb-4 shadow-lg tracking-wide uppercase">
+                  ${noticia.categoria || 'Actualidad'}
+                </span>
+
+                <h4 class="text-2xl md:text-3xl font-black mb-4 leading-tight line-clamp-2">
+                  ${noticia.titulo}
+                </h4>
+
+                <p class="text-white/90 text-base md:text-lg mb-6 leading-relaxed line-clamp-3">
+                  ${noticia.resumen || ''}
+                </p>
+
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-white/80 text-sm">
+                  <span class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    ${formatHeroDate(noticia.fecha)}
+                  </span>
+                  <button onclick="event.stopPropagation(); window.open('${noticia.url_externa || '#'}', '_blank')" class="inline-flex items-center bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <span>Leer más</span>
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    carouselDots.innerHTML = carouselState.noticias.map((_, index) => `
+      <button class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></button>
+    `).join('');
+
+    carouselDots.querySelectorAll('.carousel-dot').forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index, 10);
+        goToSlide(index);
+      });
+    });
+  }
+
+  // Mapea categorías a gradientes suaves para las insignias del carrusel
+  function getCategoryColor(categoria = '') {
+    const gradients = {
+      'Evento': 'from-sochimt-400 to-sochimt-600',
+      'Noticia': 'from-amber-400 to-amber-600',
+      'Publicación': 'from-emerald-400 to-emerald-600',
+      'Publicaci�n': 'from-emerald-400 to-emerald-600',
+      'Webinar': 'from-purple-400 to-purple-600',
+      'Congreso': 'from-rose-400 to-rose-600',
+      'default': 'from-slate-400 to-slate-600'
+    };
+    return gradients[categoria] || gradients.default;
+  }
+
+  // Formatea la fecha para mostrarla en español de Chile
+  function formatHeroDate(dateStr) {
+    if (!dateStr) return 'Fecha por confirmar';
+
+    const parsedDate = new Date(dateStr);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return parsedDate.toLocaleDateString('es-CL', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    }
+
+    return formatSupabaseDate(dateStr);
+  }
+
+  // Configura los controles del carrusel
+  function setupCarouselControls() {
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+    const carousel = document.getElementById('news-carousel');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => previousSlide());
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => nextSlide());
+    }
+
+    // Pausar autoplay al hacer hover
+    if (carousel) {
+      carousel.addEventListener('mouseenter', () => pauseAutoplay());
+      carousel.addEventListener('mouseleave', () => startAutoplay());
+    }
+  }
+
+  // Ir a un slide específico
+  function goToSlide(index) {
+    if (carouselState.isTransitioning) return;
+    
+    carouselState.isTransitioning = true;
+    carouselState.currentIndex = index;
+    
+    const carouselTrack = document.getElementById('carousel-track');
+    const dots = document.querySelectorAll('.carousel-dot');
+    
+    if (carouselTrack) {
+      carouselTrack.style.transform = `translateX(-${index * 100}%)`;
+    }
+    
+    // Actualizar dots
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+
+    setTimeout(() => {
+      carouselState.isTransitioning = false;
+    }, 500);
+  }
+
+  // Ir al slide anterior
+  function previousSlide() {
+    const newIndex = carouselState.currentIndex === 0 
+      ? carouselState.noticias.length - 1 
+      : carouselState.currentIndex - 1;
+    goToSlide(newIndex);
+  }
+
+  // Ir al siguiente slide
+  function nextSlide() {
+    const newIndex = (carouselState.currentIndex + 1) % carouselState.noticias.length;
+    goToSlide(newIndex);
+  }
+
+  // Iniciar autoplay
+  function startAutoplay() {
+    if (carouselState.noticias.length <= 1) return;
+    
+    pauseAutoplay(); // Limpiar cualquier intervalo existente
+    carouselState.autoplayInterval = setInterval(() => {
+      nextSlide();
+    }, 5000); // Cambiar cada 5 segundos
+  }
+
+  // Pausar autoplay
+  function pauseAutoplay() {
+    if (carouselState.autoplayInterval) {
+      clearInterval(carouselState.autoplayInterval);
+      carouselState.autoplayInterval = null;
+    }
+  }
+
+  // ============================================
+  // SISTEMA DE CARGA DINÁMICA DE MIEMBROS
+  // ============================================
+  
+  // Función para obtener colores por tipo de avatar
+  function getMemberColors(color) {
+    const colors = {
+      'sochimt': { 
+        bg: 'from-sochimt-50 to-white', 
+        border: 'border-sochimt-100',
+        avatar: 'from-sochimt-500 to-sochimt-700',
+        text: 'text-sochimt-600'
+      },
+      'medical': { 
+        bg: 'from-medical-50 to-white', 
+        border: 'border-medical-100',
+        avatar: 'from-medical-500 to-medical-700',
+        text: 'text-medical-600'
+      },
+      'purple': { 
+        bg: 'from-purple-50 to-white', 
+        border: 'border-purple-100',
+        avatar: 'from-purple-500 to-purple-700',
+        text: 'text-purple-600'
+      },
+      'green': { 
+        bg: 'from-green-50 to-white', 
+        border: 'border-green-100',
+        avatar: 'from-green-500 to-green-700',
+        text: 'text-green-600'
+      },
+      'orange': { 
+        bg: 'from-orange-50 to-white', 
+        border: 'border-orange-100',
+        avatar: 'from-orange-500 to-orange-700',
+        text: 'text-orange-600'
+      }
+    };
+    return colors[color] || colors['sochimt'];
+  }
+
+  // Función para formatear fecha de ingreso
+  function formatMemberDate(dateStr) {
+    if (!dateStr) return 'Fecha no disponible';
+    const d = new Date(dateStr);
+    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+    
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    return `Se unió en ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  // Función para verificar si es nuevo (últimos 60 días)
+  function isNewMember(dateStr) {
+    if (!dateStr) return false;
+    const memberDate = new Date(dateStr);
+    const now = new Date();
+    const diffTime = Math.abs(now - memberDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 60; // Consideramos "nuevo" si ingresó hace menos de 60 días
+  }
+
+  // Función para cargar y renderizar miembros
+  async function loadMembers() {
+    const membersGrid = document.getElementById('members-grid');
+    if (!membersGrid) return;
+
+    try {
+      console.log('📥 Cargando miembros desde Supabase...');
+      
+      const { data: miembros, error } = await supabaseClient
+        .from('miembros')
+        .select('*')
+        .order('fecha_ingreso', { ascending: false })
+        .limit(6); // Mostrar solo los 6 más recientes
+
+      if (error) {
+        console.error('❌ Error al cargar miembros:', error);
+        membersGrid.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-gray-600">No se pudieron cargar los miembros</p>
+            <p class="text-sm text-gray-500 mt-2">Por favor, intenta más tarde</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (!miembros || miembros.length === 0) {
+        console.log('⚠️ No hay miembros en la base de datos');
+        membersGrid.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <p class="text-gray-600">Aún no hay miembros registrados</p>
+            <p class="text-sm text-gray-500 mt-2">¡Sé el primero en unirte!</p>
+          </div>
+        `;
+        return;
+      }
+
+      console.log(`✅ ${miembros.length} miembros cargados exitosamente`);
+
+      // Renderizar las tarjetas de miembros
+      membersGrid.innerHTML = miembros.map(miembro => {
+        const colors = getMemberColors(miembro.color_avatar || 'sochimt');
+        const isNew = isNewMember(miembro.fecha_ingreso);
+        
+        return `
+          <div class="bg-gradient-to-br ${colors.bg} rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover reveal overflow-hidden border ${colors.border}">
+            <div class="p-6">
+              <div class="flex items-start space-x-4 mb-4">
+                ${miembro.url_foto ? `
+                  <img src="${miembro.url_foto}" 
+                       alt="${miembro.nombre}" 
+                       class="w-20 h-20 rounded-full object-cover shadow-lg flex-shrink-0"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="w-20 h-20 bg-gradient-to-br ${colors.avatar} rounded-full hidden items-center justify-center shadow-lg flex-shrink-0">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                  </div>
+                ` : `
+                  <div class="w-20 h-20 bg-gradient-to-br ${colors.avatar} rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                  </div>
+                `}
+                <div class="flex-1">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-bold text-gray-900">${miembro.nombre}</h3>
+                    ${isNew ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Nuevo</span>' : ''}
+                  </div>
+                  <p class="${colors.text} text-sm font-medium mb-2">${miembro.especialidad}</p>
+                  <p class="text-gray-500 text-xs mb-2">${formatMemberDate(miembro.fecha_ingreso)}</p>
+                </div>
+              </div>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                ${miembro.descripcion}
+              </p>
+              <div class="flex items-center space-x-3 text-sm text-gray-500">
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1 text-medical-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  </svg>
+                  ${miembro.ciudad}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Aplicar animaciones reveal a los nuevos elementos
+      initScrollAnimations();
+
+    } catch (error) {
+      console.error('💥 Error general al cargar miembros:', error);
+      membersGrid.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <svg class="w-16 h-16 mx-auto mb-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-gray-600">Error al cargar los miembros</p>
+          <p class="text-sm text-gray-500 mt-2">${error.message}</p>
+        </div>
+      `;
+    }
+  }
+
+  // ============================================
+  // CARRUSEL DE NUEVOS SOCIOS
+  // ============================================
+
+  const NUEVOS_SOCIOS_EJEMPLO = [
+    {
+      nombre_completo: 'Juan Alberto Perez Gonzalez',
+      especialidad: 'Tecnologo Medico - Medicina Transfusional',
+      fecha_ingreso: '2025-10-24',
+      ciudad: 'Santiago',
+      descripcion: 'Especialista en inmunohematologia con 8 anos de experiencia en bancos de sangre.',
+      foto_perfil_url: 'https://i.pravatar.cc/160?img=65'
+    },
+    {
+      nombre_completo: 'Maria Fernanda Silva Rojas',
+      especialidad: 'Estudiante de Tecnologia Medica',
+      fecha_ingreso: '2025-10-18',
+      ciudad: 'Valparaiso',
+      descripcion: 'Estudiante de 4to ano realizando practica profesional en medicina transfusional.',
+      foto_perfil_url: 'https://i.pravatar.cc/160?img=47'
+    },
+    {
+      nombre_completo: 'TM Carlos Rojas Sanchez',
+      especialidad: 'Tecnologo Medico',
+      fecha_ingreso: '2024-12-12',
+      ciudad: 'Concepcion',
+      descripcion: 'Profesional enfocado en trazabilidad transfusional y gestion de calidad.',
+      foto_perfil_url: 'https://i.pravatar.cc/160?img=12'
+    }
+  ];
+
+  let nuevosSociosState = {
+    currentPage: 0,
+    socios: [],
+    itemsPerPage: 3,
+    controlsInitialized: false,
+    resizeListenerAttached: false
+  };
+
+  // Función mejorada para cargar nuevos socios
+  async function loadNuevosSocios() {
+    const loading = document.getElementById('nuevos-socios-loading');
+    const error = document.getElementById('nuevos-socios-error');
+    const empty = document.getElementById('nuevos-socios-empty');
+    const content = document.getElementById('nuevos-socios-content');
+    const stats = document.getElementById('nuevos-socios-stats');
+
+    if (!loading) return;
+
+    // Mostrar estado de carga
+    loading.classList.remove('hidden');
+    error.classList.add('hidden');
+    empty.classList.add('hidden');
+    content.classList.add('hidden');
+    stats.classList.add('hidden');
+
+    try {
+      console.log('👥 Cargando nuevos socios desde Supabase...');
+
+      // Calcular fecha de hace 3 meses
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      const fechaLimite = threeMonthsAgo.toISOString().split('T')[0];
+
+      console.log(`📅 Buscando socios desde: ${fechaLimite}`);
+
+      // Consulta optimizada a Supabase
+      const { data: socios, error: dbError } = await supabaseClient
+        .from('socios')
+        .select('id, nombre_completo, especialidad, ciudad, foto_perfil_url, fecha_ingreso, institucion, profesion, universidad')
+        .eq('estado', 'activo')
+        .gte('fecha_ingreso', fechaLimite)
+        .order('fecha_ingreso', { ascending: false })
+        .limit(12); // Aumentado a 12 para mejor carrusel
+
+      loading.classList.add('hidden');
+
+      if (dbError) {
+        console.error('❌ Error de Supabase:', dbError);
+        showError(dbError.message);
+        return;
+      }
+
+      if (!socios || socios.length === 0) {
+        console.log('ℹ️ No hay nuevos socios en los últimos 3 meses');
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      console.log(`✅ ${socios.length} nuevos socios cargados correctamente`);
+
+      // Guardar datos
+      nuevosSociosState.socios = socios;
+
+      // Renderizar
+      renderNuevosSocios();
+      renderEstadisticas(socios);
+      setupNuevosSociosControls();
+
+      // Mostrar contenido y estadísticas
+      content.classList.remove('hidden');
+      stats.classList.remove('hidden');
+
+    } catch (err) {
+      console.error('💥 Error al cargar socios:', err);
+      loading.classList.add('hidden');
+      showError(err.message || 'Error desconocido al conectar con la base de datos');
+    }
+  }
+
+  // Mostrar mensaje de error
+  function showError(message) {
+    const error = document.getElementById('nuevos-socios-error');
+    const errorMessage = document.getElementById('error-message');
+
+    if (error && errorMessage) {
+      errorMessage.textContent = message;
+      error.classList.remove('hidden');
+    }
+  }
+
+  // Renderizar estadísticas
+  function renderEstadisticas(socios) {
+    const ciudades = new Set(socios.map(s => s.ciudad).filter(Boolean));
+    const especialidades = new Set(socios.map(s => s.especialidad).filter(Boolean));
+
+    const statTotal = document.getElementById('stat-total');
+    const statCiudades = document.getElementById('stat-ciudades');
+    const statEspecialidades = document.getElementById('stat-especialidades');
+
+    if (statTotal) statTotal.textContent = socios.length;
+    if (statCiudades) statCiudades.textContent = ciudades.size;
+    if (statEspecialidades) statEspecialidades.textContent = especialidades.size;
+  }
+
+  // Renderizar tarjetas mejoradas de nuevos socios
+  function renderNuevosSocios() {
+    const container = document.getElementById('nuevos-socios-track');
+    if (!container) return;
+
+    const colorPalettes = [
+      { bg: 'from-blue-500 to-blue-700', text: 'text-blue-600', badge: 'bg-blue-100 text-blue-800' },
+      { bg: 'from-purple-500 to-purple-700', text: 'text-purple-600', badge: 'bg-purple-100 text-purple-800' },
+      { bg: 'from-red-500 to-red-700', text: 'text-red-600', badge: 'bg-red-100 text-red-800' },
+      { bg: 'from-green-500 to-green-700', text: 'text-green-600', badge: 'bg-green-100 text-green-800' },
+      { bg: 'from-orange-500 to-orange-700', text: 'text-orange-600', badge: 'bg-orange-100 text-orange-800' },
+      { bg: 'from-pink-500 to-pink-700', text: 'text-pink-600', badge: 'bg-pink-100 text-pink-800' }
+    ];
+
+    container.innerHTML = nuevosSociosState.socios.map((socio, index) => {
+      const colors = colorPalettes[index % colorPalettes.length];
+      const fechaIngreso = new Date(socio.fecha_ingreso);
+      const mesIngreso = fechaIngreso.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+      const diasDesde = Math.floor((new Date() - fechaIngreso) / (1000 * 60 * 60 * 24));
+      const esNuevo = diasDesde <= 30;
+
+      return `
+        <div class="flex-shrink-0 w-full md:w-1/3 px-4">
+          <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 h-full border-2 border-gray-100 hover:border-${colors.text.split('-')[1]}-200 relative overflow-hidden group">
+
+            ${esNuevo ? `
+              <div class="absolute top-4 right-4 ${colors.badge} px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                <span class="inline-block w-2 h-2 rounded-full bg-current animate-pulse"></span>
+                NUEVO
+              </div>
+            ` : ''}
+
+            <!-- Avatar Circular -->
+            <div class="flex items-start space-x-4 mb-6">
+              <div class="relative flex-shrink-0">
+                ${socio.foto_perfil_url ? `
+                  <img src="${socio.foto_perfil_url}"
+                       alt="${socio.nombre_completo}"
+                       class="w-24 h-24 rounded-full object-cover shadow-lg ring-4 ring-gray-100 group-hover:ring-${colors.text.split('-')[1]}-200 transition-all"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="w-24 h-24 bg-gradient-to-br ${colors.bg} rounded-full hidden items-center justify-center shadow-lg">
+                    <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                  </div>
+                ` : `
+                  <div class="w-24 h-24 bg-gradient-to-br ${colors.bg} rounded-full flex items-center justify-center shadow-lg ring-4 ring-gray-100 group-hover:ring-${colors.text.split('-')[1]}-200 transition-all">
+                    <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                  </div>
+                `}
+
+                <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <svg class="w-5 h-5 ${colors.text}" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Info Básica -->
+              <div class="flex-1 min-w-0">
+                <h3 class="text-xl font-bold text-gray-900 mb-1 truncate">${socio.nombre_completo}</h3>
+                <p class="${colors.text} text-sm font-semibold mb-1">${socio.especialidad || 'Tecnólogo Médico'}</p>
+                <p class="text-gray-500 text-xs flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  ${mesIngreso}
+                </p>
+              </div>
+            </div>
+
+            <!-- Información adicional (Institución o Universidad) -->
+            ${socio.institucion || socio.universidad || socio.profesion ? `
+              <div class="mb-4 space-y-2">
+                ${socio.institucion ? `
+                  <div class="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-2">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span class="truncate">${socio.institucion}</span>
+                  </div>
+                ` : ''}
+                ${socio.universidad ? `
+                  <div class="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 rounded-lg p-2">
+                    <svg class="w-4 h-4 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span class="truncate">${socio.universidad}</span>
+                  </div>
+                ` : ''}
+                ${socio.profesion && !socio.institucion && !socio.universidad ? `
+                  <div class="flex items-center gap-2 text-sm text-gray-600 bg-purple-50 rounded-lg p-2">
+                    <svg class="w-4 h-4 flex-shrink-0 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span class="truncate">${socio.profesion}</span>
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+
+            <!-- Descripción -->
+            <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3">
+              ${getSocioDescripcion(socio)}
+            </p>
+
+            <!-- Ubicación -->
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div class="flex items-center space-x-2 text-sm text-gray-500">
+                <span class="text-xl">🇨🇱</span>
+                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                <span class="font-medium">${socio.ciudad || 'Chile'}</span>
+              </div>
+
+              ${diasDesde <= 7 ? `
+                <span class="text-xs font-semibold ${colors.text}">Hace ${diasDesde} días</span>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Generar descripción personalizada del socio
+  function getSocioDescripcion(socio) {
+    const descripciones = {
+      'Medicina Transfusional': 'Especialista en inmunohematología con años de experiencia en bancos de sangre.',
+      'Inmunohematología': 'Médica hematóloga enfocada en terapia transfusional y hemostasia.',
+      'Terapia Celular': 'Experto en terapia celular y medicina regenerativa avanzada.',
+      'Hematología': 'Profesional enfocado en hematología y medicina transfusional.'
+    };
+
+    return descripciones[socio.especialidad] || 
+           'Especialista en medicina transfusional enfocado en la excelencia y seguridad del paciente.';
+  }
+
+  // Configurar controles del carrusel
+  function setupNuevosSociosControls() {
+    const prevBtn = document.getElementById('nuevos-socios-prev');
+    const nextBtn = document.getElementById('nuevos-socios-next');
+    const itemsPerPage = nuevosSociosState.itemsPerPage;
+    const totalItems = nuevosSociosState.socios.length;
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (nuevosSociosState.currentPage > 0) {
+          nuevosSociosState.currentPage--;
+          updateNuevosSociosCarousel();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const maxPage = Math.ceil(totalItems / itemsPerPage) - 1;
+        if (nuevosSociosState.currentPage < maxPage) {
+          nuevosSociosState.currentPage++;
+          updateNuevosSociosCarousel();
+        }
+      });
+    }
+  }
+
+  // Actualizar posición del carrusel
+  function updateNuevosSociosCarousel() {
+    const container = document.getElementById('nuevos-socios-track');
+    if (!container) return;
+
+    const itemWidth = 100 / nuevosSociosState.itemsPerPage;
+    const offset = -(nuevosSociosState.currentPage * itemWidth);
+    container.style.transform = `translateX(${offset}%)`;
+  }
+
   console.log('🚀 SOCHIMT renovado cargado exitosamente!');
+
+
+  // ============================================
+  // MACROZONAS
+  // ============================================
+
+  const macrozonasData = {
+    norte: {
+      nombre: 'Macrozona Norte',
+      representante: 'TM Diana Rojas Tello',
+      cargo: 'Directora Zona Norte',
+      email: 'zona.norte@sochimt.cl',
+      regiones: 'Arica y Parinacota, Tarapacá, Antofagasta, Atacama',
+      mensaje: 'Coordinación de donantes y apoyo técnico para bancos de sangre del norte grande.'
+    },
+    centronorte: {
+      nombre: 'Macrozona Centro Norte',
+      representante: 'TM Lorena Pino Gálvez',
+      cargo: 'Directora Zona Centro Norte',
+      email: 'zona.centro.norte@sochimt.cl',
+      regiones: 'Coquimbo, Valparaíso',
+      mensaje: 'Fortalecimiento de la red transfusional en la zona centro norte del país.'
+    },
+    centro: {
+      nombre: 'Macrozona Centro',
+      representante: 'TM Teresita Inostroza Luna / TM Valentina Araya Gallegos',
+      cargo: 'Directoras Zona Centro',
+      email: 'zona.centro@sochimt.cl',
+      regiones: 'Región Metropolitana de Santiago',
+      mensaje: 'Acompañamiento en gestión transfusional y capacitaciones para la zona metropolitana.'
+    },
+    centrosur: {
+      nombre: 'Macrozona Centro Sur',
+      representante: 'TM Marcelo Márquez Sandoval',
+      cargo: 'Director Zona Centro Sur',
+      email: 'zona.centro.sur@sochimt.cl',
+      regiones: 'O\'Higgins, Maule, Ñuble, Biobío',
+      mensaje: 'Coordinación de redes clínicas y desarrollo profesional en la zona centro sur.'
+    },
+    sur: {
+      nombre: 'Macrozona Sur',
+      representante: 'TM Claudina Aguayo Carrillo',
+      cargo: 'Directora Zona Sur',
+      email: 'zona.sur@sochimt.cl',
+      regiones: 'La Araucanía, Los Ríos, Los Lagos',
+      mensaje: 'Fortalecimiento de redes clínicas y programas de donación en el sur del país.'
+    },
+    austral: {
+      nombre: 'Macrozona Austral',
+      representante: 'TM Andrés Aburto Almonacid',
+      cargo: 'Director Zona Extremo Sur',
+      email: 'zona.extremo.sur@sochimt.cl',
+      regiones: 'Aysén, Magallanes y Antártica Chilena',
+      mensaje: 'Articulación de servicios y derivaciones en territorios australes.'
+    }
+  };
+
+  function initMacrozonas() {
+    const tooltip = document.getElementById('macro-tooltip');
+    const zones = document.querySelectorAll('.macrozona-card[data-zone]');
+    const container = document.querySelector('#macrozonas .relative');
+
+    if (!tooltip || !zones.length || !container) return;
+
+    let currentCard = null;
+    let isTooltipVisible = false;
+
+    const updatePosition = (card) => {
+      const containerRect = container.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+
+      // Posicionar tooltip arriba del centro de la tarjeta
+      const centerX = cardRect.left + cardRect.width / 2 - containerRect.left;
+      const topY = cardRect.top - containerRect.top;
+
+      tooltip.style.left = `${centerX}px`;
+      tooltip.style.top = `${topY}px`;
+    };
+
+    const showTooltip = (zoneKey, card) => {
+      const data = macrozonasData[zoneKey];
+      if (!data) return;
+
+      currentCard = card;
+      isTooltipVisible = true;
+
+      tooltip.innerHTML = `
+        <div class="space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <p class="text-xs uppercase tracking-widest text-cyan-400 font-semibold">${data.nombre}</p>
+              <h4 class="text-xl font-bold text-white mt-1">${data.representante}</h4>
+              <p class="text-sm text-slate-300">${data.cargo}</p>
+            </div>
+            <button onclick="closeTooltipMacrozona()" class="flex-shrink-0 w-8 h-8 bg-slate-700/50 hover:bg-slate-600/50 rounded-full flex items-center justify-center transition-colors">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="border-t border-slate-600 pt-2 space-y-2">
+            <p class="text-sm text-slate-200 flex items-start gap-2">
+              <svg class="w-4 h-4 mt-0.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span class="flex-1">${data.regiones}</span>
+            </p>
+            <p class="text-sm text-slate-200 flex items-center gap-2">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <a href="mailto:${data.email}" class="text-cyan-300 hover:text-cyan-200 transition-colors hover:underline font-medium">${data.email}</a>
+            </p>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed pt-2 border-t border-slate-600 italic">
+            ${data.mensaje}
+          </p>
+          <div class="pt-2 border-t border-slate-600">
+            <a href="mailto:${data.email}?subject=Consulta%20SOCHIMT%20-%20${encodeURIComponent(data.nombre)}&body=Estimado/a%20${encodeURIComponent(data.representante)}%2C%0A%0A"
+               class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-2.5 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span>Enviar Mensaje</span>
+            </a>
+          </div>
+        </div>
+      `;
+
+      tooltip.classList.remove('hidden');
+      tooltip.classList.add('visible');
+      updatePosition(card);
+
+      // Actualizar posición en scroll o resize
+      window.addEventListener('scroll', () => updatePosition(card), { passive: true });
+      window.addEventListener('resize', () => updatePosition(card));
+    };
+
+    const hideTooltip = () => {
+      isTooltipVisible = false;
+      tooltip.classList.remove('visible');
+      setTimeout(() => {
+        if (!isTooltipVisible) {
+          tooltip.classList.add('hidden');
+          currentCard = null;
+        }
+      }, 300);
+    };
+
+    // Función global para cerrar el tooltip (llamada desde el botón X)
+    window.closeTooltipMacrozona = hideTooltip;
+
+    zones.forEach((zone) => {
+      const zoneKey = zone.dataset.zone;
+
+      // Mostrar tooltip al hacer clic en la tarjeta
+      zone.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        // Si hay un tooltip visible y es de otra tarjeta, ocultarlo primero
+        if (isTooltipVisible && currentCard !== event.currentTarget) {
+          hideTooltip();
+          setTimeout(() => {
+            showTooltip(zoneKey, event.currentTarget);
+          }, 300);
+        } else if (!isTooltipVisible) {
+          showTooltip(zoneKey, event.currentTarget);
+        }
+      });
+
+      // Hacer las cards enfocables para accesibilidad
+      zone.setAttribute('tabindex', '0');
+      zone.setAttribute('role', 'button');
+      zone.setAttribute('aria-label', `Ver información de ${zoneKey}`);
+    });
+
+    // Cerrar tooltip al hacer clic fuera
+    document.addEventListener('click', (event) => {
+      if (isTooltipVisible &&
+          !tooltip.contains(event.target) &&
+          !event.target.closest('.macrozona-card')) {
+        hideTooltip();
+      }
+    });
+
+    // Prevenir que clics dentro del tooltip lo cierren
+    tooltip.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+  }
+
+  // ========================================
+  // TOOLTIPS DE CONVENIOS
+  // ========================================
+
+  const conveniosData = {
+    ucentral: {
+      nombre: 'Universidad Central de Chile',
+      logo: 'Universidad Central',
+      descuentos: [
+        {
+          porcentaje: '30%',
+          para: 'Socios SOCHIMT',
+          beneficiarios: 'Socios, cónyuges, hijos y convivientes civiles',
+          color: 'text-purple-300'
+        },
+        {
+          porcentaje: '40%',
+          para: 'Profesionales campos clínicos',
+          beneficiarios: 'Profesionales en centros con convenio vigente',
+          color: 'text-indigo-300'
+        }
+      ],
+      beneficios: [
+        'Matrícula sin costo',
+        'Hasta 20 becas por período académico',
+        'Programas Q4 2025 y 2026',
+        'Diplomados y postítulos especializados'
+      ],
+      contacto: {
+        email: 'educacioncontinua@ucentral.cl',
+        telefono: '600 582 2222'
+      },
+      enlace: '#convenios-detalle-ucentral'
+    },
+    cfb: {
+      nombre: 'Centro de Formación Biomédica',
+      logo: 'CFB',
+      descuentos: [
+        {
+          porcentaje: '25%',
+          para: 'Socios SOCHIMT',
+          beneficiarios: 'Descuento en cursos y talleres especializados',
+          color: 'text-blue-300'
+        }
+      ],
+      beneficios: [
+        'Cursos de actualización en medicina transfusional',
+        'Talleres prácticos especializados',
+        'Certificación profesional continua',
+        'Acceso a biblioteca digital'
+      ],
+      contacto: {
+        email: 'contacto@cfb.cl',
+        telefono: '+56 9 XXXX XXXX'
+      },
+      enlace: '#convenios-detalle-cfb'
+    }
+  };
+
+  function initConvenios() {
+    const tooltip = document.getElementById('convenio-tooltip');
+    const cards = document.querySelectorAll('.convenio-card[data-convenio]');
+    const container = document.querySelector('#convenios .relative');
+
+    if (!tooltip || !cards.length || !container) return;
+
+    let currentCard = null;
+    let hideTimeout = null;
+
+    const updatePosition = (card) => {
+      const containerRect = container.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+
+      // Calcular posición vertical centrada
+      const centerY = cardRect.top + cardRect.height / 2 - containerRect.top;
+
+      // Determinar si hay espacio a la derecha
+      const spaceRight = viewportWidth - cardRect.right;
+      const spaceLeft = cardRect.left;
+      const tooltipWidth = 450; // max-width del tooltip
+
+      // Posicionar a la derecha si hay espacio, sino a la izquierda
+      let leftX;
+      if (spaceRight >= tooltipWidth + 50) {
+        // Suficiente espacio a la derecha - más cerca para facilitar el movimiento del mouse
+        leftX = cardRect.right - containerRect.left + 10;
+        tooltip.classList.remove('left');
+      } else if (spaceLeft >= tooltipWidth + 50) {
+        // Suficiente espacio a la izquierda - más cerca para facilitar el movimiento del mouse
+        leftX = cardRect.left - containerRect.left - tooltipWidth - 10;
+        tooltip.classList.add('left');
+      } else {
+        // Poco espacio en ambos lados, usar derecha y permitir scroll
+        leftX = cardRect.right - containerRect.left + 10;
+        tooltip.classList.remove('left');
+      }
+
+      tooltip.style.left = `${leftX}px`;
+      tooltip.style.top = `${centerY}px`;
+    };
+
+    const showTooltip = (convenioKey, card) => {
+      // Cancelar cualquier timeout de ocultar pendiente
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+
+      const data = conveniosData[convenioKey];
+      if (!data) return;
+
+      currentCard = card;
+
+      // Construir HTML de descuentos
+      const descuentosHTML = data.descuentos.map((desc, index) => `
+        <div class="bg-white/15 rounded-2xl p-4 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl" style="animation: slideIn 0.5s ease-out ${index * 0.1}s backwards;">
+          <div class="flex items-center justify-center mb-2">
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+            </div>
+          </div>
+          <p class="text-4xl font-black text-white mb-2 text-center drop-shadow-lg">${desc.porcentaje}</p>
+          <p class="text-xs font-bold text-white uppercase tracking-wider text-center mb-2">${desc.para}</p>
+          <p class="text-xs text-white/80 text-center leading-relaxed">${desc.beneficiarios}</p>
+        </div>
+      `).join('');
+
+      // Construir HTML de beneficios
+      const beneficiosHTML = data.beneficios.map((beneficio, index) => `
+        <li class="flex items-start gap-3 group" style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s backwards;">
+          <div class="flex-shrink-0 w-5 h-5 bg-green-400/20 rounded-full flex items-center justify-center mt-0.5">
+            <svg class="w-3 h-3 text-green-300 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <span class="text-sm text-white/90 group-hover:text-white transition-colors leading-relaxed">${beneficio}</span>
+        </li>
+      `).join('');
+
+      tooltip.innerHTML = `
+        <div class="space-y-4">
+          <!-- Header con título -->
+          <div class="relative">
+            <div class="absolute -top-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-purple-400/10 rounded-full blur-3xl"></div>
+            <h4 class="text-2xl font-black text-white mb-1 relative z-10 drop-shadow-lg">${data.nombre}</h4>
+            <div class="h-1 w-20 bg-gradient-to-r from-yellow-300 to-pink-300 rounded-full"></div>
+          </div>
+
+          <!-- Descuentos -->
+          <div class="grid grid-cols-${data.descuentos.length} gap-3 relative z-10">
+            ${descuentosHTML}
+          </div>
+
+          <!-- Beneficios -->
+          <div class="border-t border-white/20 pt-4 bg-white/5 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <p class="text-sm font-bold text-white uppercase tracking-wider">Beneficios Incluidos</p>
+            </div>
+            <ul class="space-y-2">
+              ${beneficiosHTML}
+            </ul>
+          </div>
+
+          <!-- Contacto -->
+          <div class="border-t border-white/20 pt-3 space-y-2 bg-white/5 rounded-xl p-3">
+            <p class="text-sm text-white/90 flex items-center gap-2 hover:gap-3 transition-all">
+              <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <a href="mailto:${data.contacto.email}" class="text-white hover:text-blue-200 transition-colors hover:underline text-sm font-medium">${data.contacto.email}</a>
+            </p>
+            <p class="text-sm text-white/90 flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+              <span class="text-sm font-medium text-white">${data.contacto.telefono}</span>
+            </p>
+          </div>
+
+          <!-- Botón más información -->
+          <div class="pt-2">
+            <button onclick="openConvenioModal('${convenioKey}')" class="relative group w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3.5 rounded-xl transition-all duration-300 flex items-center gap-3 font-bold text-sm justify-center shadow-lg hover:shadow-2xl hover:scale-105 overflow-hidden">
+              <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></span>
+              <svg class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="relative z-10">Ver Información Completa</span>
+              <svg class="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <style>
+          @keyframes slideIn {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(5px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        </style>
+      `;
+
+      tooltip.classList.remove('hidden');
+      tooltip.classList.add('visible');
+      updatePosition(card);
+    };
+
+    const hideTooltip = () => {
+      // Delay más largo para dar tiempo a mover el mouse al tooltip
+      hideTimeout = setTimeout(() => {
+        tooltip.classList.remove('visible');
+        // Dar tiempo para la animación antes de ocultar
+        setTimeout(() => {
+          tooltip.classList.add('hidden');
+          currentCard = null;
+        }, 400);
+      }, 200);
+    };
+
+    // Event listeners para mantener el tooltip visible
+    tooltip.addEventListener('mouseenter', () => {
+      // Cancelar ocultar si el mouse entra al tooltip
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+      // Asegurarse de que el tooltip está visible
+      tooltip.classList.add('visible');
+      tooltip.classList.remove('hidden');
+    });
+
+    tooltip.addEventListener('mouseleave', (event) => {
+      // Delay antes de ocultar para permitir volver al tooltip
+      const relatedTarget = event.relatedTarget;
+      if (!currentCard || (!currentCard.contains(relatedTarget) && relatedTarget !== currentCard)) {
+        hideTooltip();
+      }
+    });
+
+    cards.forEach((card) => {
+      const convenioKey = card.dataset.convenio;
+
+      // Solo activar click para convenios con datos
+      if (!conveniosData[convenioKey]) return;
+
+      // Al hacer click, abrir directamente el modal
+      card.addEventListener('click', (event) => {
+        event.preventDefault();
+        openConvenioModal(convenioKey);
+      });
+
+      // Mejorar accesibilidad con teclado
+      card.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openConvenioModal(convenioKey);
+        }
+      });
+
+      // Hacer las cards enfocables para accesibilidad
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `Ver beneficios de ${conveniosData[convenioKey].nombre}`);
+    });
+  }
+
+  // --- MODAL DE CONVENIOS ---
+
+  function openConvenioModal(convenioKey) {
+    const convenio = conveniosData[convenioKey];
+    if (!convenio) return;
+
+    const modal = document.getElementById('convenio-modal');
+    const modalContent = document.getElementById('convenio-modal-content');
+
+    // Construir HTML de descuentos
+    const descuentosHTML = convenio.descuentos.map(desc => `
+      <div class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-6 text-white text-center shadow-xl">
+        <p class="text-5xl font-black mb-2">${desc.porcentaje}</p>
+        <p class="text-sm font-bold uppercase tracking-wide mb-2">${desc.para}</p>
+        <p class="text-xs opacity-90">${desc.beneficiarios}</p>
+      </div>
+    `).join('');
+
+    // Construir HTML de beneficios
+    const beneficiosHTML = convenio.beneficios.map(beneficio => `
+      <li class="flex items-start gap-3">
+        <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <span class="text-gray-700">${beneficio}</span>
+      </li>
+    `).join('');
+
+    modalContent.innerHTML = `
+      <div class="relative">
+        <!-- Header con gradiente -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-t-3xl p-8 text-white relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+          <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-4">
+              <span class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Instituciones Colaboradoras
+              </span>
+              <button onclick="closeConvenioModal()" class="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+
+            <h2 class="text-4xl font-black mb-3">${convenio.nombre}</h2>
+            <p class="text-white/90 text-lg">Pasa el cursor sobre los logos y descubre los beneficios exclusivos</p>
+          </div>
+        </div>
+
+        <!-- Contenido -->
+        <div class="p-8 space-y-8">
+          <!-- Descuentos -->
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Descuentos Disponibles
+            </h3>
+            <div class="grid md:grid-cols-${convenio.descuentos.length} gap-4">
+              ${descuentosHTML}
+            </div>
+          </div>
+
+          <!-- Beneficios -->
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Beneficios Incluidos
+            </h3>
+            <ul class="space-y-3 bg-gray-50 rounded-2xl p-6">
+              ${beneficiosHTML}
+            </ul>
+          </div>
+
+          <!-- Contacto -->
+          <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              Información de Contacto
+            </h3>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="flex items-center gap-3 bg-white rounded-xl p-4">
+                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 font-semibold uppercase">Email</p>
+                  <a href="mailto:${convenio.contacto.email}" class="text-purple-600 hover:text-purple-700 font-medium text-sm">${convenio.contacto.email}</a>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 bg-white rounded-xl p-4">
+                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 font-semibold uppercase">Teléfono</p>
+                  <p class="text-indigo-600 font-medium text-sm">${convenio.contacto.telefono}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón cerrar -->
+          <div class="text-center">
+            <button onclick="closeConvenioModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeConvenioModal() {
+    const modal = document.getElementById('convenio-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  // Cerrar modal al hacer click fuera
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('convenio-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeConvenioModal();
+        }
+      });
+    }
+  });
+
+  // --- MODAL DE DIRECTORIO ---
+  
+  const directoresData = {
+    presidente: {
+      nombre: 'TM Mg. Guillermo Jerez Jerez',
+      cargo: 'Presidente',
+      imagen: 'images/directorio/presidente.png',
+      descripcion: 'Magíster en Ciencias Biomédicas, mención en Bioquímica Clínica e Inmunohematología. Docente en Universidad Mayor y Universidad Andrés Bello.',
+      email: 'presidente@sochimt.cl',
+      badgeColor: 'bg-yellow-400 text-yellow-900',
+      gradientFrom: 'from-sochimt-500',
+      gradientTo: 'to-sochimt-700'
+    },
+    vicepresidente: {
+      nombre: 'TM Mg. Diego Zapata Tapia',
+      cargo: 'Vicepresidente',
+      imagen: 'images/directorio/vicepresidente.png',
+      descripcion: 'Magíster en Salud Pública. Jefe del Departamento Laboratorio del Hospital Dr. Sótero del Río',
+      email: 'vicepresidente@sochimt.cl',
+      badgeColor: 'bg-blue-100 text-blue-900',
+      gradientFrom: 'from-medical-500',
+      gradientTo: 'to-medical-700'
+    },
+    secretaria: {
+      nombre: 'TM Eileen Fernández Fernández',
+      cargo: 'Secretaria',
+      imagen: 'images/directorio/secretaria.png',
+      descripcion: 'Magíster (c) en Educación Universitaria, Diplomada en Medicina Transfusional y en Marketing de Donantes de Sangre. Docente en Universidad Santo Tomás.',
+      email: 'secretaria@sochimt.cl',
+      badgeColor: 'bg-purple-100 text-purple-900',
+      gradientFrom: 'from-purple-500',
+      gradientTo: 'to-purple-700'
+    },
+    tesorera: {
+      nombre: 'TM Silvia Díaz Guajardo',
+      cargo: 'Tesorera',
+      imagen: 'images/directorio/tesorera.png',
+      descripcion: 'Diplomada en Medicina Transfusional y Gestión de Calidad en Salud. Profesional de Banco de Sangre en Clínica Alemana.',
+      email: 'tesorera@sochimt.cl',
+      badgeColor: 'bg-green-100 text-green-900',
+      gradientFrom: 'from-green-500',
+      gradientTo: 'to-green-700'
+    },
+    coordinador: {
+      nombre: 'TM Juan Pablo Tayssier Guerrero',
+      cargo: 'Coordinador Nacional y Vinculación con el Medio',
+      imagen: 'images/directorio/coordinador.png',
+      descripcion: 'Tecnólogo Médico de Banco de Sangre, Hospital DIPRECA.',
+      email: 'coordinador@sochimt.cl',
+      badgeColor: 'bg-orange-100 text-orange-900',
+      gradientFrom: 'from-orange-500',
+      gradientTo: 'to-orange-700'
+    }
+  };
+
+  function openDirectorModal(directorKey) {
+    const director = directoresData[directorKey];
+    if (!director) return;
+
+    const modal = document.getElementById('director-modal');
+    const modalContent = document.getElementById('modal-content');
+
+    modalContent.innerHTML = `
+      <div class="relative">
+        <!-- Imagen grande -->
+        <img src="${director.imagen}" 
+             alt="${director.nombre}" 
+             class="w-full h-[30rem] object-cover object-[center_20%] rounded-t-3xl"
+             onerror="this.src=''; this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
+        <div class="w-full h-[30rem] bg-gradient-to-br ${director.gradientFrom} ${director.gradientTo} rounded-t-3xl hidden flex items-center justify-center">
+          <div class="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-xl">
+            <svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Badge del cargo -->
+        <div class="absolute top-4 left-4">
+          <span class="${director.badgeColor} px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+            ${director.cargo}
+          </span>
+        </div>
+      </div>
+
+      <!-- Información -->
+      <div class="p-8 md:p-12">
+        <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">${director.nombre}</h2>
+        <p class="text-xl text-gray-600 mb-2">${director.cargo}</p>
+        
+        <div class="border-t border-gray-200 my-6"></div>
+        
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Perfil Profesional</h3>
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">${director.descripcion}</p>
+        
+        <div class="border-t border-gray-200 my-6"></div>
+        
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Contacto</h3>
+        <a href="mailto:${director.email}" 
+           class="inline-flex items-center space-x-3 bg-gradient-to-r ${director.gradientFrom} ${director.gradientTo} text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <span>${director.email}</span>
+        </a>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDirectorModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+
+    const modal = document.getElementById('director-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  // Funciones para modal de convenios
+  function openConvenioModal(convenioId) {
+    const convenios = {
+      'ucentral': {
+        nombre: 'Universidad Central',
+        logo: 'colaboraciones/Universidad Central.png',
+        color: 'purple',
+        descuento: 'Hasta 40%',
+        descripcion: 'SOCHIMT ha suscrito un plan de beneficios con la Universidad Central, que permitirá a nuestros socios y sus familias acceder a descuentos especiales en programas de educación continua, diplomados y postítulos.',
+        beneficios: [
+          '<strong>30% de descuento</strong> en el arancel para todos/as los/as socios/as que postulen y cumplan con los requisitos académicos.',
+          '<strong>40% de descuento</strong> para socios/as que se desempeñen en campos clínicos con convenio vigente con la Universidad Central.',
+          'Extensión del beneficio a <strong>cónyuge, hijos o conviviente civil</strong> del socio/a.',
+          '<strong>Matrícula sin costo</strong> en los programas que cumplan con el número mínimo de matrículas requeridas.',
+          '<strong>Cupos limitados:</strong> máximo 20 becas por período académico (asignadas por orden de postulación).'
+        ],
+        programaDestacado: 'Diplomado en Gestión de la Calidad para Laboratorios Clínicos, Unidades de Medicina Transfusional e Imagenología',
+        contacto: 'contacto@sochimt.cl',
+        webUrl: 'https://www.ucentral.cl/'
+      },
+      'cfb': {
+        nombre: 'Centro de Formación Biomédica',
+        logo: 'colaboraciones/OTEC_Biomedica.png',
+        color: 'blue',
+        descuento: 'Hasta 25%',
+        descripcion: 'Centro de Formación Biomédica (OTEC) ofrece beneficios especiales para socios SOCHIMT en sus programas de capacitación y formación continua.',
+        beneficios: [
+          '<strong>25% de descuento</strong> para socios SOCHIMT en todos los programas.',
+          'Cursos especializados en <strong>ciencias biomédicas</strong>.',
+          'Capacitación técnica y <strong>certificación OTEC</strong> reconocida.',
+          'Formación continua en <strong>medicina transfusional</strong>.',
+          'Áreas: Laboratorio Clínico, Hematología, Banco de Sangre y Medicina Transfusional.'
+        ],
+        programaDestacado: 'Cursos especializados en Banco de Sangre, Hematología y Laboratorio Clínico',
+        contacto: 'contacto@sochimt.cl',
+        webUrl: 'https://otecbiomedica.cl/'
+      }
+    };
+
+    const convenio = convenios[convenioId];
+    if (!convenio) return;
+
+    const colorClasses = {
+      purple: {
+        gradient: 'from-purple-600 to-purple-700',
+        bg: 'bg-purple-100',
+        text: 'text-purple-800',
+        badge: 'from-purple-500 to-pink-500'
+      },
+      blue: {
+        gradient: 'from-blue-600 to-blue-700',
+        bg: 'bg-blue-100',
+        text: 'text-blue-800',
+        badge: 'from-blue-500 to-cyan-500'
+      }
+    };
+
+    const colors = colorClasses[convenio.color];
+
+    const beneficiosHTML = convenio.beneficios.map(beneficio => `
+      <li class="flex items-start space-x-3">
+        <svg class="w-6 h-6 ${convenio.color === 'purple' ? 'text-purple-600' : 'text-blue-600'} flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-gray-700 text-base">${beneficio}</span>
+      </li>
+    `).join('');
+
+    const modalContent = `
+      <div class="relative">
+        <!-- Botón cerrar -->
+        <button onclick="closeConvenioModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r ${colors.gradient} p-8 pt-16 rounded-t-3xl text-white relative overflow-hidden">
+          <div class="absolute top-4 right-16 bg-gradient-to-r ${colors.badge} px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+            ${convenio.descuento}
+          </div>
+          <div class="flex items-center justify-center mb-4">
+            <div class="bg-white p-4 rounded-2xl shadow-xl">
+              <img src="${convenio.logo}" alt="${convenio.nombre}" class="h-24 object-contain">
+            </div>
+          </div>
+          <h2 class="text-3xl font-black text-center">${convenio.nombre}</h2>
+        </div>
+
+        <!-- Contenido -->
+        <div class="p-8">
+          <div class="${colors.bg} rounded-2xl p-6 mb-6">
+            <p class="text-gray-700 text-lg leading-relaxed">${convenio.descripcion}</p>
+          </div>
+
+          <h3 class="text-2xl font-black ${colors.text} mb-4">✨ Beneficios Destacados</h3>
+          <ul class="space-y-4 mb-8">
+            ${beneficiosHTML}
+          </ul>
+
+          <div class="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-6 mb-6">
+            <h4 class="text-lg font-bold ${colors.text} mb-2">📚 Programa Destacado:</h4>
+            <p class="text-gray-700 font-semibold">${convenio.programaDestacado}</p>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="flex flex-col gap-4 justify-center items-stretch mb-6">
+            <a href="contacto.html"
+               class="inline-flex items-center justify-center space-x-3 bg-gradient-to-r ${colors.gradient} text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span>Solicitar Información</span>
+            </a>
+
+            <a href="${convenio.webUrl}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center justify-center space-x-2 bg-white border-2 border-gray-300 text-gray-700 px-6 py-4 rounded-xl font-semibold hover:border-${convenio.color}-500 hover:text-${convenio.color}-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+              </svg>
+              <span class="text-sm">${convenio.webUrl}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const modal = document.getElementById('convenio-modal');
+    const modalContent2 = document.getElementById('convenio-modal-content');
+    modalContent2.innerHTML = modalContent;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeConvenioModal() {
+    const modal = document.getElementById('convenio-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  // Cerrar modal al hacer click fuera
+  document.getElementById('convenio-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeConvenioModal();
+    }
+  });
+
 </script>
 </body>
 </html>

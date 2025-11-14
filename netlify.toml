@@ -6,6 +6,12 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Configuración de redirecciones para formulario
+[[redirects]]
+  from = "/success"
+  to = "/index.html"
+  status = 200
+
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]

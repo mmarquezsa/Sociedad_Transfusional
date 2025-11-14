@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start \"D:\\2025\\Sociedad_Transfusional\\colaboraciones.html\")",
+      "Bash(start \"D:\\2025\\Sociedad_Transfusional\\contacto.html\")",
+      "Bash(start \"D:\\2025\\Sociedad_Transfusional\\index.html\")",
+      "Bash(start \"D:\\2025\\Sociedad_Transfusional\\dashboard-socios.html\")",
+      "Bash(md5sum:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

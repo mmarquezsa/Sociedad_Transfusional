@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Postulación Nuevos Socios - SOCHIMT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'sochimt': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            'medical': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-mesh { background: linear-gradient(-45deg, #1e40af, #3b82f6, #dc2626, #ef4444); background-size: 400% 400%; animation: gradientShift 15s ease infinite; }
+    @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    .text-gradient { background: linear-gradient(135deg, #2563eb 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-blue-50 to-red-50 min-h-screen">
+  
+  <!-- Header -->
+  <header class="absolute top-0 left-0 right-0 z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-1.5">
+            <img src="images/logos/_ Main Logo 1.3.png" alt="SOCHIMT Logo" class="w-full h-full object-contain">
+          </div>
+          <div class="hidden sm:block">
+            <h1 class="text-xl font-bold text-gray-900">SOCHIMT</h1>
+            <p class="text-xs text-gray-600">Sociedad Chilena de Medicina Transfusional</p>
+          </div>
+        </a>
+        <a href="login-socios.html" class="text-gray-600 hover:text-sochimt-600 font-medium text-sm flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+          </svg>
+          Iniciar Sesión
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="min-h-screen flex items-center justify-center px-4 py-24">
+    <div class="max-w-4xl w-full">
+      
+      <!-- Success Message (Hidden by default) -->
+      <div id="success-message" class="hidden mb-8 bg-green-50 border-l-4 border-green-500 rounded-lg p-6 shadow-lg">
+        <div class="flex items-center">
+          <svg class="w-8 h-8 text-green-500 mr-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <h3 class="text-lg font-bold text-green-900">¡Registro Exitoso!</h3>
+            <p class="text-green-700 mt-1">Hemos enviado un email de confirmación. Por favor verifica tu correo.</p>
+            <a href="login-socios.html" class="inline-block mt-3 text-sochimt-600 hover:text-sochimt-700 font-bold">
+              → Ir a Iniciar Sesión
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form -->
+      <div id="registration-form-container" class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+        
+        <!-- Form Header -->
+        <div class="text-center mb-8">
+          <div class="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl p-4 border-4 border-sochimt-100">
+            <img src="images/logos/_ Main Logo 1.3.png" alt="SOCHIMT Logo" class="w-full h-full object-contain">
+          </div>
+          <h1 class="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+            Formulario de Postulación
+          </h1>
+          <h2 class="text-2xl font-bold text-gradient mb-3">
+            Nuevos Socios SOCHIMT
+          </h2>
+          <p class="text-gray-600 mt-2 text-base">Sociedad Chilena de Medicina Transfusional</p>
+          <p class="text-sm text-gray-500 mt-2">Campos marcados con (*) son obligatorios</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="mb-10">
+          <div class="flex items-center justify-between max-w-3xl mx-auto">
+            <div class="flex flex-col items-center flex-1">
+              <div id="step-indicator-1" class="w-12 h-12 bg-sochimt-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">1</div>
+              <span class="text-xs sm:text-sm font-bold text-gray-700 mt-2 text-center">Datos<br class="sm:hidden"/> Personales</span>
+            </div>
+            <div class="flex-1 h-2 bg-gray-300 mx-2" id="progress-1-2"></div>
+            <div class="flex flex-col items-center flex-1">
+              <div id="step-indicator-2" class="w-12 h-12 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
+              <span class="text-xs sm:text-sm font-medium text-gray-500 mt-2 text-center">Info<br class="sm:hidden"/> Profesional</span>
+            </div>
+            <div class="flex-1 h-2 bg-gray-300 mx-2" id="progress-2-3"></div>
+            <div class="flex flex-col items-center flex-1">
+              <div id="step-indicator-3" class="w-12 h-12 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
+              <span class="text-xs sm:text-sm font-medium text-gray-500 mt-2 text-center">Categoría &<br class="sm:hidden"/> Docs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="registro-form" class="space-y-6">
+          
+          <!-- Step 1: Datos Personales -->
+          <div id="step-1" class="space-y-6">
+            
+            <h3 class="text-xl font-black text-gray-900 mb-4">1. Datos Personales</h3>
+            
+            <div>
+              <label for="nombre-completo" class="block text-sm font-bold text-gray-700 mb-2">
+                👤 Nombre Completo *
+              </label>
+              <input 
+                type="text" 
+                id="nombre-completo" 
+                required 
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                placeholder="Ingrese su nombre completo"
+              >
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label for="rut" class="block text-sm font-bold text-gray-700 mb-2">
+                  🆔 RUT *
+                </label>
+                <input 
+                  type="text" 
+                  id="rut" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="12.345.678-9"
+                  maxlength="12"
+                >
+                <p class="text-xs text-gray-500 mt-1">Formato: 12.345.678-9</p>
+              </div>
+
+              <div>
+                <label for="fecha-nacimiento" class="block text-sm font-bold text-gray-700 mb-2">
+                  📅 Fecha de Nacimiento *
+                </label>
+                <input 
+                  type="date" 
+                  id="fecha-nacimiento" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                >
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label for="sexo" class="block text-sm font-bold text-gray-700 mb-2">
+                  👥 Sexo *
+                </label>
+                <select 
+                  id="sexo" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                >
+                  <option value="">Seleccione</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                  <option value="Prefiero no decir">Prefiero no decir</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="telefono" class="block text-sm font-bold text-gray-700 mb-2">
+                  📱 Teléfono de Contacto *
+                </label>
+                <input 
+                  type="tel" 
+                  id="telefono" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="+56 9 1234 5678"
+                >
+              </div>
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-bold text-gray-700 mb-2">
+                📧 Correo Electrónico *
+              </label>
+              <input 
+                type="email" 
+                id="email" 
+                required 
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                placeholder="ejemplo@email.com"
+              >
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label for="password" class="block text-sm font-bold text-gray-700 mb-2">
+                  🔐 Contraseña *
+                </label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="Mínimo 8 caracteres"
+                  minlength="8"
+                >
+                <p class="text-xs text-gray-500 mt-1">Mínimo 8 caracteres, incluir números y letras</p>
+              </div>
+
+              <div>
+                <label for="password-confirm" class="block text-sm font-bold text-gray-700 mb-2">
+                  ✅ Confirmar Contraseña *
+                </label>
+                <input 
+                  type="password" 
+                  id="password-confirm" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="Repite tu contraseña"
+                >
+              </div>
+            </div>
+
+            <button type="button" id="btn-next-step" class="w-full bg-gradient-to-r from-sochimt-600 to-medical-600 text-white py-4 rounded-xl font-bold text-lg hover:from-sochimt-700 hover:to-medical-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+              Continuar →
+            </button>
+          </div>
+
+          <!-- Step 2: Información Profesional -->
+          <div id="step-2" class="hidden space-y-6">
+            
+            <h3 class="text-xl font-black text-gray-900 mb-4">2. Información Profesional</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label for="profesion" class="block text-sm font-bold text-gray-700 mb-2">
+                  🎓 Profesión / Título *
+                </label>
+                <input 
+                  type="text" 
+                  id="profesion" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="Ej: Tecnólogo Médico, Médico, Enfermero/a"
+                >
+              </div>
+
+              <div>
+                <label for="universidad" class="block text-sm font-bold text-gray-700 mb-2">
+                  🏫 Universidad que otorga o revalida el título *
+                </label>
+                <input 
+                  type="text" 
+                  id="universidad" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="Ej: Universidad de Chile"
+                >
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label for="registro-sis" class="block text-sm font-bold text-gray-700 mb-2">
+                  📋 Número Registro en SIS *
+                </label>
+                <input 
+                  type="text" 
+                  id="registro-sis" 
+                  required 
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="Número de registro superintendencia"
+                >
+              </div>
+
+              <div>
+                <label for="anos-experiencia" class="block text-sm font-bold text-gray-700 mb-2">
+                  🕗 Años de experiencia en medicina transfusional *
+                </label>
+                <input 
+                  type="number" 
+                  id="anos-experiencia" 
+                  required 
+                  min="0" 
+                  max="50"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                  placeholder="Años"
+                >
+              </div>
+            </div>
+
+            <div>
+              <label for="institucion" class="block text-sm font-bold text-gray-700 mb-2">
+                🏥 Establecimiento o institución de desempeño *
+              </label>
+              <input 
+                type="text" 
+                id="institucion" 
+                required 
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                placeholder="Ej: Hospital Clínico Universidad de Chile"
+              >
+            </div>
+
+            <div>
+              <label for="cargo" class="block text-sm font-bold text-gray-700 mb-2">
+                💼 Cargo Actual *
+              </label>
+              <input 
+                type="text" 
+                id="cargo" 
+                required 
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                placeholder="Ej: Jefe de Banco de Sangre, Médico Tratante"
+              >
+            </div>
+
+            <div class="flex justify-between pt-6">
+              <button type="button" id="btn-prev-step" class="px-10 py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-black text-lg rounded-xl transition-all flex items-center space-x-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                </svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" id="btn-step-2-next" class="px-10 py-4 bg-gradient-to-r from-sochimt-600 to-medical-600 text-white font-black text-lg rounded-xl hover:from-sochimt-700 hover:to-medical-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center space-x-2">
+                <span>Continuar</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Categoría, Patrocinadores y Documentos -->
+          <div id="step-3" class="hidden space-y-6">
+            
+            <h3 class="text-xl font-black text-gray-900 mb-4">3. Categoría de Postulación</h3>
+            
+            <div>
+              <label for="categoria" class="block text-sm font-bold text-gray-700 mb-2">
+                📌 Tipo de postulación por categoría *
+              </label>
+              <select 
+                id="categoria" 
+                required 
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+              >
+                <option value="">Seleccione una opción</option>
+                <option value="A">Categoría A - Socio Activo</option>
+                <option value="B">Categoría B - Socio Adherente (requiere patrocinadores)</option>
+                <option value="C">Categoría C - Socio Estudiante (requiere patrocinadores)</option>
+              </select>
+              <p class="text-xs text-gray-500 mt-2">Las categorías B y C requieren 2 patrocinadores socios activos de SOCHIMT</p>
+            </div>
+
+            <!-- Patrocinadores (Solo para Categoría B y C) -->
+            <div id="patrocinadores-section" class="hidden space-y-6 border-t-2 border-gray-200 pt-6">
+              <h4 class="text-lg font-bold text-gray-900">4. Patrocinadores</h4>
+              <p class="text-sm text-gray-600 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                ℹ️ Debe indicar 2 patrocinadores que sean Socios Activos de SOCHIMT
+              </p>
+
+              <div class="bg-gray-50 p-6 rounded-xl space-y-4">
+                <h5 class="font-bold text-gray-900">Patrocinador/a 1</h5>
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="patrocinador1-nombre" class="block text-sm font-bold text-gray-700 mb-2">
+                      Nombre completo *
+                    </label>
+                    <input 
+                      type="text" 
+                      id="patrocinador1-nombre" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                      placeholder="Nombre del patrocinador"
+                    >
+                  </div>
+                  <div>
+                    <label for="patrocinador1-rut" class="block text-sm font-bold text-gray-700 mb-2">
+                      RUT *
+                    </label>
+                    <input 
+                      type="text" 
+                      id="patrocinador1-rut" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                      placeholder="12.345.678-9"
+                      maxlength="12"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-gray-50 p-6 rounded-xl space-y-4">
+                <h5 class="font-bold text-gray-900">Patrocinador/a 2</h5>
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="patrocinador2-nombre" class="block text-sm font-bold text-gray-700 mb-2">
+                      Nombre completo *
+                    </label>
+                    <input 
+                      type="text" 
+                      id="patrocinador2-nombre" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                      placeholder="Nombre del patrocinador"
+                    >
+                  </div>
+                  <div>
+                    <label for="patrocinador2-rut" class="block text-sm font-bold text-gray-700 mb-2">
+                      RUT *
+                    </label>
+                    <input 
+                      type="text" 
+                      id="patrocinador2-rut" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sochimt-500 focus:outline-none"
+                      placeholder="12.345.678-9"
+                      maxlength="12"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documentos Adjuntos -->
+            <div class="border-t-2 border-gray-200 pt-6">
+              <h4 class="text-lg font-bold text-gray-900 mb-4">5. Documentos Adjuntos</h4>
+              <p class="text-sm text-gray-600 mb-4 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                ⚠️ <strong>Documentos Obligatorios:</strong> Debe adjuntar los siguientes documentos en formato PDF (máximo 5MB cada uno)
+              </p>
+              
+              <div class="space-y-6">
+                <!-- Currículum Vitae -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-sochimt-400 transition-colors">
+                  <label class="block mb-3">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <svg class="w-6 h-6 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                      <span class="text-base font-bold text-gray-900">1. Currículum Vitae Actualizado *</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      id="file-cv" 
+                      accept=".pdf,application/pdf"
+                      required
+                      class="w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-sochimt-600 file:text-white hover:file:bg-sochimt-700 file:cursor-pointer cursor-pointer"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">Formato: PDF | Tamaño máximo: 5MB</p>
+                    <div id="cv-status" class="hidden mt-2 text-sm"></div>
+                  </label>
+                </div>
+
+                <!-- Certificado de Antecedentes -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-sochimt-400 transition-colors">
+                  <label class="block mb-3">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <svg class="w-6 h-6 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                      </svg>
+                      <span class="text-base font-bold text-gray-900">2. Certificado de Antecedentes *</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      id="file-antecedentes" 
+                      accept=".pdf,application/pdf"
+                      required
+                      class="w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-sochimt-600 file:text-white hover:file:bg-sochimt-700 file:cursor-pointer cursor-pointer"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">Formato: PDF | Tamaño máximo: 5MB</p>
+                    <div id="antecedentes-status" class="hidden mt-2 text-sm"></div>
+                  </label>
+                </div>
+
+                <!-- Certificado Registro SIS -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-sochimt-400 transition-colors">
+                  <label class="block mb-3">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <svg class="w-6 h-6 text-sochimt-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                      </svg>
+                      <span class="text-base font-bold text-gray-900">3. Certificado Registro Superintendencia de Salud (SIS) *</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      id="file-registro-sis" 
+                      accept=".pdf,application/pdf"
+                      required
+                      class="w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-sochimt-600 file:text-white hover:file:bg-sochimt-700 file:cursor-pointer cursor-pointer"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">Formato: PDF | Tamaño máximo: 5MB</p>
+                    <div id="registro-sis-status" class="hidden mt-2 text-sm"></div>
+                  </label>
+                </div>
+
+                <!-- Firma de Patrocinadores (Opcional - solo para categorías B y C) -->
+                <div id="file-patrocinadores-container" class="hidden bg-white border-2 border-blue-200 rounded-xl p-6 hover:border-blue-400 transition-colors">
+                  <label class="block mb-3">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                      </svg>
+                      <span class="text-base font-bold text-gray-900">4. Firma de Patrocinadores (Requerido para categorías B y C)</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      id="file-firma-patrocinadores" 
+                      accept=".pdf,application/pdf"
+                      class="w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer cursor-pointer"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">Formato: PDF | Tamaño máximo: 5MB</p>
+                    <div id="firma-patrocinadores-status" class="hidden mt-2 text-sm"></div>
+                  </label>
+                </div>
+
+                <!-- Documento Adicional (Opcional) -->
+                <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-gray-400 transition-colors">
+                  <label class="block mb-3">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                      </svg>
+                      <span class="text-base font-bold text-gray-700">5. Otro Documento (Opcional)</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      id="file-otro" 
+                      accept=".pdf,application/pdf"
+                      class="w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 file:cursor-pointer cursor-pointer"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">Formato: PDF | Tamaño máximo: 5MB</p>
+                    <div id="otro-status" class="hidden mt-2 text-sm"></div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                <p class="text-sm text-blue-800">
+                  <strong>ℹ️ Importante:</strong> Los documentos se cargarán de forma segura a nuestro sistema. 
+                  Asegúrese de que todos los archivos estén en formato PDF y no excedan 5MB cada uno.
+                </p>
+              </div>
+            </div>
+
+            <!-- Declaración -->
+            <div class="border-t-2 border-gray-200 pt-6">
+              <h4 class="text-lg font-bold text-gray-900 mb-4">6. Declaración del Postulante</h4>
+              <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                <p class="text-sm text-gray-700 leading-relaxed">
+                  Señor presidente: Por la presente solicito a usted, mi incorporación como Socio Activo de la Sociedad Chilena de Medicina Transfusional. 
+                  Declaro que la información entregada es veraz y que conozco los objetivos y propósitos de la Sociedad Chilena de Medicina Transfusional.
+                </p>
+              </div>
+            </div>
+
+            <!-- Términos y Condiciones -->
+            <div class="bg-gray-50 rounded-xl p-6 space-y-4">
+              <label class="flex items-start cursor-pointer">
+                <input type="checkbox" id="terminos" required class="w-5 h-5 text-sochimt-600 border-gray-300 rounded focus:ring-sochimt-500 mt-1 flex-shrink-0">
+                <span class="ml-3 text-sm text-gray-700">
+                  Acepto los <a href="#" class="text-sochimt-600 hover:text-sochimt-700 font-semibold underline">términos y condiciones</a> y la 
+                  <a href="#" class="text-sochimt-600 hover:text-sochimt-700 font-semibold underline">política de privacidad</a> de SOCHIMT. *
+                </span>
+              </label>
+              <label class="flex items-start cursor-pointer">
+                <input type="checkbox" id="declaracion" required class="w-5 h-5 text-sochimt-600 border-gray-300 rounded focus:ring-sochimt-500 mt-1 flex-shrink-0">
+                <span class="ml-3 text-sm text-gray-700">
+                  Declaro que la información proporcionada es veraz y acepto la declaración del postulante. *
+                </span>
+              </label>
+              <label class="flex items-start cursor-pointer">
+                <input type="checkbox" id="newsletter" checked class="w-5 h-5 text-sochimt-600 border-gray-300 rounded focus:ring-sochimt-500 mt-1 flex-shrink-0">
+                <span class="ml-3 text-sm text-gray-700">
+                  Deseo recibir newsletter con noticias, eventos y contenido exclusivo de SOCHIMT.
+                </span>
+              </label>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error-message-step3" class="hidden p-5 bg-red-50 border-l-4 border-red-500 rounded-xl">
+              <div class="flex items-start">
+                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                  <h4 class="font-bold text-red-800 mb-1">Error en el formulario</h4>
+                  <span id="error-text-step3" class="text-sm text-red-700"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex space-x-4 pt-6">
+              <button type="button" id="btn-step-3-prev" class="flex-1 px-10 py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-black text-lg rounded-xl transition-all flex items-center justify-center space-x-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                </svg>
+                <span>Atrás</span>
+              </button>
+              <button type="submit" id="btn-submit" class="flex-1 px-10 py-4 bg-gradient-to-r from-sochimt-600 to-medical-600 text-white font-black text-lg rounded-xl hover:from-sochimt-700 hover:to-medical-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2">
+                <span id="submit-text" class="flex items-center space-x-2">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>Enviar Solicitud</span>
+                </span>
+                <span id="submit-loading" class="hidden flex items-center space-x-2">
+                  <svg class="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Enviando...</span>
+                </span>
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+        <!-- Login Link -->
+        <div class="mt-8 pt-6 border-t border-gray-200 text-center">
+          <p class="text-gray-600 text-sm">
+            ¿Ya eres socio? 
+            <a href="login-socios.html" class="text-sochimt-600 hover:text-sochimt-700 font-bold">
+              Iniciar Sesión
+            </a>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center text-sm text-gray-600">
+    <p>&copy; 2025 SOCHIMT. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  
+  <script>
+    // Inicializar EmailJS con tu Public Key
+    emailjs.init('geeQcpwrcKHulwQef');
+
+    // Multi-step form logic
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const step3 = document.getElementById('step-3');
+    
+    const step1Indicator = document.getElementById('step-indicator-1');
+    const step2Indicator = document.getElementById('step-indicator-2');
+    const step3Indicator = document.getElementById('step-indicator-3');
+    
+    const progress12 = document.getElementById('progress-1-2');
+    const progress23 = document.getElementById('progress-2-3');
+    
+    const btnNextStep = document.getElementById('btn-next-step');
+    const btnPrevStep = document.getElementById('btn-prev-step');
+    const btnStep2Next = document.getElementById('btn-step-2-next');
+    const btnStep3Prev = document.getElementById('btn-step-3-prev');
+    
+    // Format RUT while typing
+    document.getElementById('rut').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\./g, '').replace(/-/g, '');
+      if (value.length > 1) {
+        e.target.value = formatearRUT(value);
+      }
+    });
+    
+    // Format RUT for patrocinadores
+    ['patrocinador1-rut', 'patrocinador2-rut'].forEach(id => {
+      const elem = document.getElementById(id);
+      if (elem) {
+        elem.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\./g, '').replace(/-/g, '');
+          if (value.length > 1) {
+            e.target.value = formatearRUT(value);
+          }
+        });
+      }
+    });
+
+    // Show/hide patrocinadores section based on category
+    document.getElementById('categoria').addEventListener('change', function(e) {
+      const patroSection = document.getElementById('patrocinadores-section');
+      const filePatroContainer = document.getElementById('file-patrocinadores-container');
+      const filePatroInput = document.getElementById('file-firma-patrocinadores');
+      const value = e.target.value;
+      
+      if (value === 'B' || value === 'C') {
+        patroSection.classList.remove('hidden');
+        filePatroContainer.classList.remove('hidden');
+        // Make patrocinadores required
+        document.getElementById('patrocinador1-nombre').required = true;
+        document.getElementById('patrocinador1-rut').required = true;
+        document.getElementById('patrocinador2-nombre').required = true;
+        document.getElementById('patrocinador2-rut').required = true;
+        filePatroInput.required = true;
+      } else {
+        patroSection.classList.add('hidden');
+        filePatroContainer.classList.add('hidden');
+        // Make patrocinadores optional
+        document.getElementById('patrocinador1-nombre').required = false;
+        document.getElementById('patrocinador1-rut').required = false;
+        document.getElementById('patrocinador2-nombre').required = false;
+        document.getElementById('patrocinador2-rut').required = false;
+        filePatroInput.required = false;
+      }
+    });
+
+    // File validation and preview
+    function validateFile(fileInput, statusDiv) {
+      const file = fileInput.files[0];
+      if (!file) return true;
+
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = ['application/pdf'];
+
+      if (!allowedTypes.includes(file.type)) {
+        statusDiv.innerHTML = '<span class="text-red-600 font-semibold">❌ Solo se permiten archivos PDF</span>';
+        statusDiv.classList.remove('hidden');
+        fileInput.value = '';
+        return false;
+      }
+
+      if (file.size > maxSize) {
+        statusDiv.innerHTML = '<span class="text-red-600 font-semibold">❌ El archivo excede 5MB</span>';
+        statusDiv.classList.remove('hidden');
+        fileInput.value = '';
+        return false;
+      }
+
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      statusDiv.innerHTML = `<span class="text-green-600 font-semibold">✅ Archivo válido (${sizeMB} MB)</span>`;
+      statusDiv.classList.remove('hidden');
+      return true;
+    }
+
+    // Add validation to all file inputs
+    ['file-cv', 'file-antecedentes', 'file-registro-sis', 'file-firma-patrocinadores', 'file-otro'].forEach(id => {
+      const input = document.getElementById(id);
+      const statusDiv = document.getElementById(id.replace('file-', '') + '-status');
+      if (input && statusDiv) {
+        input.addEventListener('change', () => validateFile(input, statusDiv));
+      }
+    });
+
+    // Function to upload file to Supabase Storage
+    async function uploadFileToSupabase(file, folder, fileName) {
+      try {
+        const filePath = `${folder}/${fileName}`;
+        
+        const { data, error } = await supabaseClient.storage
+          .from('documentos-socios')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (error) throw error;
+
+        // Get public URL
+        const { data: urlData } = supabaseClient.storage
+          .from('documentos-socios')
+          .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+      }
+    }
+    
+    // Step 1 to Step 2
+    btnNextStep.addEventListener('click', () => {
+      const nombreCompleto = document.getElementById('nombre-completo').value;
+      const rut = document.getElementById('rut').value;
+      const fechaNacimiento = document.getElementById('fecha-nacimiento').value;
+      const sexo = document.getElementById('sexo').value;
+      const email = document.getElementById('email').value;
+      const telefono = document.getElementById('telefono').value;
+      const password = document.getElementById('password').value;
+      const passwordConfirm = document.getElementById('password-confirm').value;
+      
+      if (!nombreCompleto || !rut || !fechaNacimiento || !sexo || !email || !telefono || !password || !passwordConfirm) {
+        alert('Por favor completa todos los campos obligatorios del Paso 1');
+        return;
+      }
+      
+      if (!validarRUT(rut)) {
+        alert('RUT inválido. Por favor verifica.');
+        return;
+      }
+      
+      if (password.length < 8) {
+        alert('La contraseña debe tener al menos 8 caracteres');
+        return;
+      }
+      
+      if (password !== passwordConfirm) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+      
+      // Move to step 2
+      step1.classList.add('hidden');
+      step2.classList.remove('hidden');
+      step2Indicator.classList.remove('bg-gray-300', 'text-gray-600');
+      step2Indicator.classList.add('bg-sochimt-600', 'text-white');
+      progress12.classList.remove('bg-gray-300');
+      progress12.classList.add('bg-sochimt-600');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Step 2 to Step 1 (Back)
+    btnPrevStep.addEventListener('click', () => {
+      step2.classList.add('hidden');
+      step1.classList.remove('hidden');
+      step2Indicator.classList.add('bg-gray-300', 'text-gray-600');
+      step2Indicator.classList.remove('bg-sochimt-600', 'text-white');
+      progress12.classList.add('bg-gray-300');
+      progress12.classList.remove('bg-sochimt-600');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Step 2 to Step 3
+    btnStep2Next.addEventListener('click', () => {
+      const profesion = document.getElementById('profesion').value;
+      const universidad = document.getElementById('universidad').value;
+      const registroSis = document.getElementById('registro-sis').value;
+      const anosExperiencia = document.getElementById('anos-experiencia').value;
+      const institucion = document.getElementById('institucion').value;
+      const cargo = document.getElementById('cargo').value;
+      
+      if (!profesion || !universidad || !registroSis || !anosExperiencia || !institucion || !cargo) {
+        alert('Por favor completa todos los campos obligatorios del Paso 2');
+        return;
+      }
+      
+      // Move to step 3
+      step2.classList.add('hidden');
+      step3.classList.remove('hidden');
+      step3Indicator.classList.remove('bg-gray-300', 'text-gray-600');
+      step3Indicator.classList.add('bg-sochimt-600', 'text-white');
+      progress23.classList.remove('bg-gray-300');
+      progress23.classList.add('bg-sochimt-600');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Step 3 to Step 2 (Back)
+    btnStep3Prev.addEventListener('click', () => {
+      step3.classList.add('hidden');
+      step2.classList.remove('hidden');
+      step3Indicator.classList.add('bg-gray-300', 'text-gray-600');
+      step3Indicator.classList.remove('bg-sochimt-600', 'text-white');
+      progress23.classList.add('bg-gray-300');
+      progress23.classList.remove('bg-sochimt-600');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Form submission
+    document.getElementById('registro-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btnSubmit = document.getElementById('btn-submit');
+      const submitText = document.getElementById('submit-text');
+      const submitLoading = document.getElementById('submit-loading');
+      const errorMessage = document.getElementById('error-message-step3');
+      
+      // Validate Step 3
+      const categoria = document.getElementById('categoria').value;
+      if (!categoria) {
+        document.getElementById('error-text-step3').textContent = 'Debe seleccionar una categoría de postulación';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      // Validate patrocinadores if category B or C
+      if (categoria === 'B' || categoria === 'C') {
+        const pat1Nombre = document.getElementById('patrocinador1-nombre').value;
+        const pat1Rut = document.getElementById('patrocinador1-rut').value;
+        const pat2Nombre = document.getElementById('patrocinador2-nombre').value;
+        const pat2Rut = document.getElementById('patrocinador2-rut').value;
+
+        if (!pat1Nombre || !pat1Rut || !pat2Nombre || !pat2Rut) {
+          document.getElementById('error-text-step3').textContent = 'Para categorías B y C debe completar los datos de 2 patrocinadores';
+          errorMessage.classList.remove('hidden');
+          return;
+        }
+
+        if (!validarRUT(pat1Rut)) {
+          document.getElementById('error-text-step3').textContent = 'RUT del Patrocinador 1 inválido';
+          errorMessage.classList.remove('hidden');
+          return;
+        }
+
+        if (!validarRUT(pat2Rut)) {
+          document.getElementById('error-text-step3').textContent = 'RUT del Patrocinador 2 inválido';
+          errorMessage.classList.remove('hidden');
+          return;
+        }
+      }
+
+      // Check terms acceptance
+      if (!document.getElementById('terminos').checked) {
+        document.getElementById('error-text-step3').textContent = 'Debe aceptar los términos y condiciones';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      if (!document.getElementById('declaracion').checked) {
+        document.getElementById('error-text-step3').textContent = 'Debe aceptar la declaración del postulante';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+      
+      // Validate required files
+      const fileCv = document.getElementById('file-cv').files[0];
+      const fileAntecedentes = document.getElementById('file-antecedentes').files[0];
+      const fileRegistroSis = document.getElementById('file-registro-sis').files[0];
+      const fileFirmaPatrocinadores = document.getElementById('file-firma-patrocinadores').files[0];
+
+      if (!fileCv) {
+        document.getElementById('error-text-step3').textContent = 'Debe adjuntar su Currículum Vitae';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      if (!fileAntecedentes) {
+        document.getElementById('error-text-step3').textContent = 'Debe adjuntar el Certificado de Antecedentes';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      if (!fileRegistroSis) {
+        document.getElementById('error-text-step3').textContent = 'Debe adjuntar el Certificado de Registro SIS';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      if ((categoria === 'B' || categoria === 'C') && !fileFirmaPatrocinadores) {
+        document.getElementById('error-text-step3').textContent = 'Debe adjuntar la Firma de Patrocinadores para categorías B y C';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+      
+      btnSubmit.disabled = true;
+      submitText.classList.add('hidden');
+      submitLoading.classList.remove('hidden');
+      errorMessage.classList.add('hidden');
+      
+      try {
+        // Generate unique identifier for this applicant
+        const timestamp = Date.now();
+        const rutClean = document.getElementById('rut').value.replace(/\./g, '').replace(/-/g, '');
+        const folderName = `${rutClean}_${timestamp}`;
+
+        // Por ahora, los archivos son opcionales (el bucket debe ser creado en Supabase)
+        console.log('📝 Registrando socio (archivos pendientes de configuración)...');
+        
+        let urlCv = null;
+        let urlAntecedentes = null;
+        let urlRegistroSis = null;
+        let urlFirmaPatrocinadores = null;
+        let urlOtro = null;
+
+        // Intentar subir archivos si el bucket existe
+        try {
+          if (fileCv) {
+            urlCv = await uploadFileToSupabase(fileCv, folderName, 'curriculum_vitae.pdf');
+            console.log('✅ CV subido');
+          }
+          if (fileAntecedentes) {
+            urlAntecedentes = await uploadFileToSupabase(fileAntecedentes, folderName, 'certificado_antecedentes.pdf');
+            console.log('✅ Antecedentes subidos');
+          }
+          if (fileRegistroSis) {
+            urlRegistroSis = await uploadFileToSupabase(fileRegistroSis, folderName, 'certificado_registro_sis.pdf');
+            console.log('✅ Registro SIS subido');
+          }
+          if (fileFirmaPatrocinadores) {
+            urlFirmaPatrocinadores = await uploadFileToSupabase(fileFirmaPatrocinadores, folderName, 'firma_patrocinadores.pdf');
+            console.log('✅ Firma patrocinadores subida');
+          }
+          const fileOtro = document.getElementById('file-otro').files[0];
+          if (fileOtro) {
+            urlOtro = await uploadFileToSupabase(fileOtro, folderName, 'otro_documento.pdf');
+            console.log('✅ Otro documento subido');
+          }
+        } catch (uploadError) {
+          console.warn('⚠️ No se pudieron subir los archivos (bucket no configurado):', uploadError.message);
+          console.log('✅ Continuando con el registro sin archivos...');
+        }
+
+        console.log('✅ Proceso de archivos completado');
+
+        // Collect all data
+        const datos = {
+          // Step 1: Datos Personales
+          nombreCompleto: document.getElementById('nombre-completo').value,
+          rut: document.getElementById('rut').value,
+          fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+          sexo: document.getElementById('sexo').value,
+          email: document.getElementById('email').value,
+          telefono: document.getElementById('telefono').value,
+          password: document.getElementById('password').value,
+          
+          // Step 2: Información Profesional
+          profesion: document.getElementById('profesion').value,
+          universidad: document.getElementById('universidad').value,
+          registroSis: document.getElementById('registro-sis').value,
+          anosExperiencia: document.getElementById('anos-experiencia').value,
+          institucion: document.getElementById('institucion').value,
+          cargo: document.getElementById('cargo').value,
+          
+          // Step 3: Categoría y Patrocinadores
+          categoria: categoria,
+          patrocinador1Nombre: document.getElementById('patrocinador1-nombre').value || null,
+          patrocinador1Rut: document.getElementById('patrocinador1-rut').value || null,
+          patrocinador2Nombre: document.getElementById('patrocinador2-nombre').value || null,
+          patrocinador2Rut: document.getElementById('patrocinador2-rut').value || null,
+          
+          // Document URLs
+          urlCV: urlCv,
+          urlAntecedentes: urlAntecedentes,
+          urlRegistroSIS: urlRegistroSis,
+          urlFirmaPatrocinadores: urlFirmaPatrocinadores,
+          urlOtro: urlOtro,
+          
+          // Newsletter
+          recibirNewsletter: document.getElementById('newsletter').checked,
+          
+          // Fecha de postulación
+          fechaPostulacion: new Date().toISOString().split('T')[0],
+          
+          // Folder name for documents
+          carpetaDocumentos: folderName
+        };
+        
+        // Register with Supabase
+        const result = await registrarSocio(
+          datos.email,
+          datos.password,
+          datos.nombreCompleto,
+          {
+            rut: datos.rut,
+            fecha_nacimiento: datos.fechaNacimiento,
+            sexo: datos.sexo,
+            telefono: datos.telefono,
+            profesion: datos.profesion,
+            universidad: datos.universidad,
+            registro_sis: datos.registroSis,
+            anos_experiencia: datos.anosExperiencia,
+            institucion: datos.institucion,
+            cargo: datos.cargo,
+            categoria: datos.categoria,
+            patrocinador1_nombre: datos.patrocinador1Nombre,
+            patrocinador1_rut: datos.patrocinador1Rut,
+            patrocinador2_nombre: datos.patrocinador2Nombre,
+            patrocinador2_rut: datos.patrocinador2Rut,
+            url_cv: datos.urlCV,
+            url_antecedentes: datos.urlAntecedentes,
+            url_registro_sis: datos.urlRegistroSIS,
+            url_firma_patrocinadores: datos.urlFirmaPatrocinadores,
+            url_otro_documento: datos.urlOtro,
+            carpeta_documentos: datos.carpetaDocumentos,
+            recibir_newsletter: datos.recibirNewsletter,
+            fecha_postulacion: datos.fechaPostulacion,
+            estado: 'pendiente',
+            tipo_membresia: datos.categoria === 'A' ? 'activo' : datos.categoria === 'B' ? 'adherente' : 'estudiante'
+          }
+        );
+
+        console.log('✅ Registro en Supabase exitoso');
+
+        // Enviar email a contacto@sochimt.cl con toda la información del registro
+        try {
+          console.log('📧 Enviando notificación por email...');
+
+          const categoriaNombre = datos.categoria === 'A' ? 'Categoría A - Socio Activo' :
+                                  datos.categoria === 'B' ? 'Categoría B - Socio Adherente' :
+                                  'Categoría C - Socio Estudiante';
+
+          const emailParams = {
+            to_email: 'contacto@sochimt.cl',
+            subject: `Nueva Postulación de Socio - ${datos.nombreCompleto}`,
+
+            // Datos Personales
+            nombre_completo: datos.nombreCompleto,
+            rut: datos.rut,
+            fecha_nacimiento: datos.fechaNacimiento,
+            sexo: datos.sexo,
+            email: datos.email,
+            telefono: datos.telefono,
+
+            // Información Profesional
+            profesion: datos.profesion,
+            universidad: datos.universidad,
+            registro_sis: datos.registroSis,
+            anos_experiencia: datos.anosExperiencia,
+            institucion: datos.institucion,
+            cargo: datos.cargo,
+
+            // Categoría y Patrocinadores
+            categoria: categoriaNombre,
+            patrocinador1: datos.patrocinador1Nombre ? `${datos.patrocinador1Nombre} (RUT: ${datos.patrocinador1Rut})` : 'No aplica',
+            patrocinador2: datos.patrocinador2Nombre ? `${datos.patrocinador2Nombre} (RUT: ${datos.patrocinador2Rut})` : 'No aplica',
+
+            // Enlaces a documentos
+            url_cv: datos.urlCV || 'Documento no disponible',
+            url_antecedentes: datos.urlAntecedentes || 'Documento no disponible',
+            url_registro_sis: datos.urlRegistroSIS || 'Documento no disponible',
+            url_firma_patrocinadores: datos.urlFirmaPatrocinadores || 'No aplica',
+            url_otro: datos.urlOtro || 'No adjuntado',
+
+            // Información adicional
+            fecha_postulacion: datos.fechaPostulacion,
+            recibir_newsletter: datos.recibirNewsletter ? 'Sí' : 'No',
+            carpeta_documentos: datos.carpetaDocumentos
+          };
+
+          await emailjs.send('service_7uxenu4', 'template_registro_socio', emailParams);
+          console.log('✅ Email de notificación enviado exitosamente');
+
+        } catch (emailError) {
+          console.error('⚠️ Error al enviar email de notificación:', emailError);
+          // No bloqueamos el flujo si el email falla, el registro ya está guardado
+        }
+
+        // Show success message
+        document.getElementById('registration-form-container').classList.add('hidden');
+        document.getElementById('success-message').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+      } catch (error) {
+        document.getElementById('error-text-step3').textContent = error.message;
+        errorMessage.classList.remove('hidden');
+        
+        btnSubmit.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoading.classList.add('hidden');
+        
+        window.scrollTo({ top: document.getElementById('error-message-step3').offsetTop - 100, behavior: 'smooth' });
+      }
+    });
+    
+    console.log('✅ Formulario de registro SOCHIMT oficial cargado correctamente');
+  </script>
+</body>
+</html>
