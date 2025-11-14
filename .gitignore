@@ -67,3 +67,6 @@ backup_old_versions.tar.gz
 credentials.json
 secrets.json
 private.key
+
+# Claude Code
+.claude/
