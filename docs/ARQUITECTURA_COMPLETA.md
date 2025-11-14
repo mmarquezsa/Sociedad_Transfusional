@@ -62,9 +62,9 @@ IDIOMA: Español chileno
 Cuando no estés seguro de algo, di "Recomiendo consultar con el médico transfusionista de tu centro" en lugar de adivinar.`;
 ```
 
-**Opción B: Claude** (Excelente para contextos largos)
+**Opción B: Anthropic API** (Excelente para contextos largos)
 - Ventaja: Mejor comprensión de documentos médicos extensos
-- API de Anthropic
+- Modelos de lenguaje avanzados
 
 **Opción C: Gemini Pro** (Google)
 - Ventaja: Gratuito con buenos límites

@@ -254,6 +254,5 @@ El proyecto ha sido optimizado significativamente:
 
 ---
 
-**Reporte generado por:** Claude Code Agent
 **Fecha:** 2025-11-14
 **Versión:** 1.0

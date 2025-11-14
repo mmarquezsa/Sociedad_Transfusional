@@ -17,7 +17,7 @@
    - Multimedia en `/media`
 
 2. ✅ **Archivos eliminados**
-   - `.claude/` - Carpeta removida
+   - Carpeta de herramientas de desarrollo removida
    - `auth-updated.js` - Versión redundante eliminada
    - `test-supabase.html` - Archivo de prueba eliminado
 

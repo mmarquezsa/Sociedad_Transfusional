@@ -323,7 +323,7 @@ CREATE TABLE IF NOT EXISTS public.socios (
 Una vez que el usuario Marcelo esté creado y funcionando:
 
 1. **Desarrollar IA Gotita:**
-   - Integración con OpenAI/Claude
+   - Integración con proveedores de IA (OpenAI, Anthropic, etc.)
    - Interfaz de chat
    - Historial de conversaciones
 

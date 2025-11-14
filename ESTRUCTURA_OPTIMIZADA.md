@@ -120,7 +120,7 @@ Sociedad_Transfusional/
 │   └── node_modules/               # Dependencias Node (npm install)
 │
 └── 🚫 Archivos Eliminados en Optimización
-    ├── .claude/                    # ❌ Carpeta Claude removida
+    ├── Carpeta de desarrollo       # ❌ Removida
     ├── auth-updated.js             # ❌ Versión desactualizada
     ├── test-supabase.html          # ❌ Archivo de prueba
     └── netflify/ (typo)            # ❌ Renombrado a netlify/
@@ -151,7 +151,7 @@ Sociedad_Transfusional/
 
 ### ❌ Archivos Eliminados
 
-- `.claude/` - Carpeta de herramienta de desarrollo no necesaria
+- Carpeta de herramientas de desarrollo - No necesaria para producción
 - `auth-updated.js` - Versión desactualizada, redundante con `auth.js`
 - `test-supabase.html` - Archivo de prueba no necesario en producción
 
@@ -321,7 +321,7 @@ Se actualizaron todas las referencias en archivos HTML:
 - [x] Referencias en otros archivos HTML
 
 ### ✅ Archivos Eliminados
-- [x] `.claude/` eliminado
+- [x] Carpeta de desarrollo eliminada
 - [x] `auth-updated.js` eliminado
 - [x] `test-supabase.html` eliminado
 

@@ -68,5 +68,5 @@ credentials.json
 secrets.json
 private.key
 
-# Claude Code
+# Development tools
 .claude/
