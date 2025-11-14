@@ -1,187 +1,0 @@
-═══════════════════════════════════════════════════════════════════
-   🚀 INICIO RÁPIDO - DESARROLLO LOCAL CON SUPABASE
-   SOCHIMT - Sociedad Chilena de Medicina Transfusional
-═══════════════════════════════════════════════════════════════════
-
-✅ TODO YA ESTÁ CONFIGURADO - SOLO SIGUE ESTOS 3 PASOS:
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📝 PASO 1: INICIAR SERVIDOR LOCAL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Opción A - Script PowerShell (Más fácil):
-    
-    1. Abre PowerShell
-    2. cd D:\2025\Sociedad_Transfusional
-    3. .\start-local.ps1
-
-
-Opción B - Python:
-    
-    1. Abre PowerShell
-    2. cd D:\2025\Sociedad_Transfusional
-    3. python -m http.server 8000
-
-
-Opción C - VS Code Live Server:
-    
-    1. Abre VS Code
-    2. Abre index.html
-    3. Click derecho → "Open with Live Server"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🌐 PASO 2: ABRIR EN NAVEGADOR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Una vez que el servidor esté corriendo, abre tu navegador en:
-
-    🧪 PÁGINA DE PRUEBAS (Recomendado primero):
-    http://localhost:8000/test-supabase.html
-
-    🏠 PÁGINA PRINCIPAL:
-    http://localhost:8000/index.html
-
-    🔐 ÁREA DE SOCIOS:
-    http://localhost:8000/login-socios.html
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ PASO 3: VERIFICAR QUE TODO FUNCIONA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-EN LA PÁGINA DE PRUEBAS (test-supabase.html):
-
-    1. Haz click en "🔌 Test Conexión"
-    2. Haz click en "🔐 Test Auth"
-    3. Haz click en "💾 Test Database"
-
-    Deberías ver checkmarks verdes ✅ en todo
-
-
-EN LA CONSOLA DEL NAVEGADOR (Presiona F12):
-
-    Deberías ver algo como:
-
-    🔧 Configuración cargada:
-       📍 Entorno: development
-       🏠 Local: true
-       🐛 Debug: true
-
-    🚀 MODO DESARROLLO ACTIVADO
-    ✅ Supabase Client inicializado
-
-
-EN LA ESQUINA INFERIOR DERECHA:
-
-    Deberías ver un badge que dice:
-    🧪 MODO DESARROLLO
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📚 MÁS INFORMACIÓN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Lee estos archivos para más detalles:
-
-    📄 README_DESARROLLO.md        - Guía completa y rápida
-    📄 DESARROLLO_LOCAL.md          - Documentación detallada
-    📄 config.js                    - Ver configuración de entornos
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔧 ARCHIVOS CREADOS PARA TI
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ config.js                   - Gestión automática de entornos
-✅ auth-updated.js             - Sistema de auth mejorado
-✅ test-supabase.html          - Página de pruebas interactiva
-✅ start-local.ps1             - Script de inicio rápido
-✅ DESARROLLO_LOCAL.md         - Documentación completa
-✅ README_DESARROLLO.md        - Guía rápida
-✅ INSTRUCCIONES_RAPIDAS.txt   - Este archivo
-
-ACTUALIZADOS:
-✅ index.html                  - Agregados scripts de Supabase
-✅ login-socios.html           - Mejorado visualmente
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-⚡ VENTAJAS DE ESTE SISTEMA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ Detección automática de entorno (local vs producción)
-✅ Logs detallados SOLO en desarrollo
-✅ Badge visual para identificar entorno
-✅ Misma base de datos que producción
-✅ Página de pruebas interactiva
-✅ Sin necesidad de configurar nada manualmente
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-⚠️ IMPORTANTE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔴 NO abras los archivos HTML directamente (doble click)
-✅ SIEMPRE usa un servidor HTTP local
-
-🔴 NO uses file:/// en la URL
-✅ SIEMPRE usa http://localhost:8000
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🎯 FLUJO DE TRABAJO DIARIO
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1. Inicia el servidor local
-2. Abre http://localhost:8000/test-supabase.html
-3. Verifica que todo esté verde ✅
-4. Haz tus cambios en los archivos
-5. Recarga el navegador (Ctrl+Shift+R)
-6. Prueba los cambios
-7. Cuando estés satisfecho:
-   
-   git add .
-   git commit -m "descripción del cambio"
-   git push
-
-8. Verifica en GitHub Pages que todo funcione
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🆘 PROBLEMAS COMUNES
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Problema: "supabase is not defined"
-    → Verifica que uses http://localhost (no file://)
-    → Limpia caché: Ctrl+Shift+R
-
-Problema: CORS Error
-    → Debes usar un servidor HTTP local
-
-Problema: Los cambios no se ven
-    → Limpia caché: Ctrl+Shift+R
-    → Abre en modo incógnito
-    → Verifica que guardaste el archivo (Ctrl+S)
-
-Problema: No veo el badge de desarrollo
-    → Verifica que config.js se cargó correctamente
-    → Abre consola (F12) y escribe: window.CONFIG
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🎉 ¡LISTO PARA EMPEZAR!
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Ejecuta esto ahora mismo:
-
-    cd D:\2025\Sociedad_Transfusional
-    .\start-local.ps1
-
-Luego abre:
-    http://localhost:8000/test-supabase.html
-
-¡Feliz desarrollo! 🚀
-
-═══════════════════════════════════════════════════════════════════

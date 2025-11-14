@@ -70,3 +70,12 @@ private.key
 
 # Development tools
 .claude/
+
+# Internal documentation (mantener solo README.md en raíz)
+docs/
+sql/
+CHECKLIST_*.md
+ESTRUCTURA_*.md
+REPORTE_*.md
+ANALISIS_*.md
+*_Backup_Docs_*/
