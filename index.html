@@ -27,9 +27,6 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180" />
 
-  <!-- EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
   <!-- Tailwind CSS con configuración personalizada -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -1794,9 +1791,6 @@
       });
     }
 
-    // Inicializar EmailJS
-    emailjs.init('geeQcpwrcKHulwQef');
-
     if (form) {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -1825,35 +1819,26 @@
           const mensaje = formData.get('mensaje') || 'Sin mensaje adicional';
           const conversatorio = formData.get('conversatorio');
 
-          // Parámetros para email a SOCHIMT
-          const templateParamsAdmin = {
-            to_email: 'contacto@sochimt.cl',
-            from_name: nombre,
-            from_email: correo,
-            institucion: institucion,
-            mensaje: mensaje,
-            conversatorio: conversatorio,
-            reply_to: correo
-          };
+          // Enviar a Netlify Function (usa Resend en el backend)
+          const response = await fetch('/.netlify/functions/enviar-inscripcion', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              nombre,
+              correo,
+              institucion,
+              mensaje,
+              conversatorio
+            })
+          });
 
-          // Enviar email a SOCHIMT
-          await emailjs.send('service_7uxenu4', 'template_inscripcion_conversatorio', templateParamsAdmin);
-          console.log('Email enviado a SOCHIMT');
+          const result = await response.json();
 
-          // Parámetros para email de confirmación al usuario con link del Meet
-          const templateParamsUser = {
-            to_email: correo,
-            to_name: nombre,
-            from_name: 'SOCHIMT',
-            conversatorio: '5° Conversatorio - Reacciones Adversas a la Transfusión en el Sistema de Salud Público Chileno',
-            fecha: 'Miércoles 03 de diciembre de 2025 a las 20:30 hrs',
-            link_meet: 'https://meet.google.com/pcs-vebs-kbh',
-            message: `Estimado/a ${nombre},\n\n¡Tu inscripción ha sido confirmada!\n\nTe esperamos en el 5° Conversatorio SOCHIMT:\n\n📌 Tema: Reacciones Adversas a la Transfusión en el Sistema de Salud Público Chileno\n👩‍🔬 Expositora: TM Javiera Villanueva Cortéz\n🎙️ Moderador: Juan Pablo Teyssier\n📅 Fecha: Miércoles 03 de diciembre de 2025\n🕐 Hora: 20:30 hrs (Chile)\n\n🔗 Link de acceso: https://meet.google.com/pcs-vebs-kbh\n\n¡Te esperamos!\n\nSaludos cordiales,\nEquipo SOCHIMT`
-          };
-
-          // Enviar email de confirmación al usuario
-          await emailjs.send('service_7uxenu4', 'template_auto', templateParamsUser);
-          console.log('Email de confirmación enviado al usuario');
+          if (!response.ok) {
+            throw new Error(result.error || 'Error al enviar');
+          }
 
           // Éxito
           formStatus.classList.remove('hidden');
