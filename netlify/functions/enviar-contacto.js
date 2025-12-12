@@ -1,4 +1,4 @@
-// Netlify Function para enviar emails de inscripción usando Resend
+// Netlify Function para enviar emails de contacto usando Resend
 const templates = require('./email-templates');
 
 exports.handler = async (event) => {
@@ -8,9 +8,9 @@ exports.handler = async (event) => {
 
   try {
     const data = JSON.parse(event.body);
-    const { nombre, correo, institucion, mensaje, conversatorio } = data;
+    const { nombre, email, telefono, motivo, region, mensaje } = data;
 
-    if (!nombre || !correo || !institucion) {
+    if (!nombre || !email || !mensaje) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Faltan campos requeridos' }) };
     }
 
@@ -18,8 +18,6 @@ exports.handler = async (event) => {
     if (!RESEND_API_KEY) {
       return { statusCode: 500, body: JSON.stringify({ error: 'Error de configuración' }) };
     }
-
-    const linkMeet = 'https://meet.google.com/pcs-vebs-kbh';
 
     // Email 1: Notificación a SOCHIMT
     await fetch('https://api.resend.com/emails', {
@@ -31,9 +29,9 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         from: 'SOCHIMT <contacto@sochimt.cl>',
         to: ['contacto@sochimt.cl'],
-        reply_to: correo,
-        subject: `Nueva inscripción - ${conversatorio}`,
-        html: templates.inscripcionAdmin({ nombre, correo, institucion, mensaje, conversatorio })
+        reply_to: email,
+        subject: `Nuevo mensaje de contacto - ${motivo || 'Consulta General'}`,
+        html: templates.contactoAdmin({ nombre, email, telefono, motivo, region, mensaje })
       })
     });
 
@@ -46,16 +44,16 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         from: 'SOCHIMT <contacto@sochimt.cl>',
-        to: [correo],
-        subject: '¡Inscripción Confirmada! - 5° Conversatorio SOCHIMT',
-        html: templates.inscripcionUsuario({ nombre, linkMeet })
+        to: [email],
+        subject: '¡Mensaje Recibido! - SOCHIMT',
+        html: templates.contactoUsuario({ nombre })
       })
     });
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ success: true, message: 'Inscripción enviada correctamente' })
+      body: JSON.stringify({ success: true, message: 'Mensaje enviado correctamente' })
     };
 
   } catch (error) {
