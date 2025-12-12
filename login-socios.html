@@ -6,8 +6,6 @@
   <title>Área de Socios - SOCHIMT</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -452,9 +450,6 @@
       }
     });
 
-    // Inicializar EmailJS
-    emailjs.init('geeQcpwrcKHulwQef');
-
     // Modal Recuperación de Contraseña
     const modal = document.getElementById('modal-recuperacion');
     const forgotLink = document.getElementById('forgot-password-link');
@@ -526,22 +521,20 @@
         const fechaExpiracion = new Date();
         fechaExpiracion.setHours(fechaExpiracion.getHours() + 1); // Expira en 1 hora
 
-        // Enviar email con EmailJS
-        const emailParams = {
-          to_email: email,
-          to_name: email.split('@')[0], // Usar primera parte del email como nombre
-          codigo_recuperacion: codigoRecuperacion,
-          fecha_expiracion: fechaExpiracion.toLocaleString('es-CL', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          }),
-          link_recuperacion: `${window.location.origin}/login-socios.html#reset=${codigoRecuperacion}`
-        };
+        // Enviar email con Netlify Function (usa Resend)
+        const response = await fetch('/.netlify/functions/enviar-recuperacion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            nombre: email.split('@')[0],
+            codigo: codigoRecuperacion
+          })
+        });
 
-        await emailjs.send('service_7uxenu4', 'template_recuperacion_password', emailParams);
+        if (!response.ok) {
+          throw new Error('Error al enviar email');
+        }
 
         console.log('✅ Email de recuperación enviado exitosamente');
 

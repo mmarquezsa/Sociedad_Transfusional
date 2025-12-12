@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulario de Postulación Nuevos Socios - SOCHIMT</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -651,9 +649,6 @@
   <script src="js/auth.js"></script>
   
   <script>
-    // Inicializar EmailJS con tu Public Key
-    emailjs.init('geeQcpwrcKHulwQef');
-
     // Multi-step form logic
     const step1 = document.getElementById('step-1');
     const step2 = document.getElementById('step-2');
@@ -1089,50 +1084,43 @@
         try {
           console.log('📧 Enviando notificación por email...');
 
-          const categoriaNombre = datos.categoria === 'A' ? 'Categoría A - Socio Activo' :
-                                  datos.categoria === 'B' ? 'Categoría B - Socio Adherente' :
-                                  'Categoría C - Socio Estudiante';
+          const response = await fetch('/.netlify/functions/enviar-registro-socio', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nombreCompleto: datos.nombreCompleto,
+              rut: datos.rut,
+              fechaNacimiento: datos.fechaNacimiento,
+              sexo: datos.sexo,
+              email: datos.email,
+              telefono: datos.telefono,
+              profesion: datos.profesion,
+              universidad: datos.universidad,
+              registroSis: datos.registroSis,
+              anosExperiencia: datos.anosExperiencia,
+              institucion: datos.institucion,
+              cargo: datos.cargo,
+              categoria: datos.categoria,
+              patrocinador1Nombre: datos.patrocinador1Nombre,
+              patrocinador1Rut: datos.patrocinador1Rut,
+              patrocinador2Nombre: datos.patrocinador2Nombre,
+              patrocinador2Rut: datos.patrocinador2Rut,
+              urlCV: datos.urlCV,
+              urlAntecedentes: datos.urlAntecedentes,
+              urlRegistroSIS: datos.urlRegistroSIS,
+              urlFirmaPatrocinadores: datos.urlFirmaPatrocinadores,
+              urlOtro: datos.urlOtro,
+              fechaPostulacion: datos.fechaPostulacion,
+              recibirNewsletter: datos.recibirNewsletter,
+              carpetaDocumentos: datos.carpetaDocumentos
+            })
+          });
 
-          const emailParams = {
-            to_email: 'contacto@sochimt.cl',
-            subject: `Nueva Postulación de Socio - ${datos.nombreCompleto}`,
-
-            // Datos Personales
-            nombre_completo: datos.nombreCompleto,
-            rut: datos.rut,
-            fecha_nacimiento: datos.fechaNacimiento,
-            sexo: datos.sexo,
-            email: datos.email,
-            telefono: datos.telefono,
-
-            // Información Profesional
-            profesion: datos.profesion,
-            universidad: datos.universidad,
-            registro_sis: datos.registroSis,
-            anos_experiencia: datos.anosExperiencia,
-            institucion: datos.institucion,
-            cargo: datos.cargo,
-
-            // Categoría y Patrocinadores
-            categoria: categoriaNombre,
-            patrocinador1: datos.patrocinador1Nombre ? `${datos.patrocinador1Nombre} (RUT: ${datos.patrocinador1Rut})` : 'No aplica',
-            patrocinador2: datos.patrocinador2Nombre ? `${datos.patrocinador2Nombre} (RUT: ${datos.patrocinador2Rut})` : 'No aplica',
-
-            // Enlaces a documentos
-            url_cv: datos.urlCV || 'Documento no disponible',
-            url_antecedentes: datos.urlAntecedentes || 'Documento no disponible',
-            url_registro_sis: datos.urlRegistroSIS || 'Documento no disponible',
-            url_firma_patrocinadores: datos.urlFirmaPatrocinadores || 'No aplica',
-            url_otro: datos.urlOtro || 'No adjuntado',
-
-            // Información adicional
-            fecha_postulacion: datos.fechaPostulacion,
-            recibir_newsletter: datos.recibirNewsletter ? 'Sí' : 'No',
-            carpeta_documentos: datos.carpetaDocumentos
-          };
-
-          await emailjs.send('service_7uxenu4', 'template_registro_socio', emailParams);
-          console.log('✅ Email de notificación enviado exitosamente');
+          if (response.ok) {
+            console.log('✅ Email de notificación enviado exitosamente');
+          } else {
+            throw new Error('Error al enviar email');
+          }
 
         } catch (emailError) {
           console.error('⚠️ Error al enviar email de notificación:', emailError);
