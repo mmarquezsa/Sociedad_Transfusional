@@ -35,31 +35,19 @@ const emailFooter = `
     <p style="text-align: center; color: #64748b; font-size: 13px; margin: 15px 0;">Síguenos en Redes Sociales</p>
     <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
       <tr>
-        <td style="padding: 0 8px;">
+        <td style="padding: 0 12px;">
           <a href="https://www.facebook.com/profile.php?id=61575757064945" style="text-decoration: none;">
-            <table border="0" cellpadding="0" cellspacing="0" style="background: #1877f2; border-radius: 50%; width: 40px; height: 40px;">
-              <tr>
-                <td align="center" valign="middle" style="width: 40px; height: 40px; color: white; font-family: Arial, sans-serif; font-size: 20px; font-weight: bold;">f</td>
-              </tr>
-            </table>
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook" style="width: 32px; height: 32px; display: block;">
           </a>
         </td>
-        <td style="padding: 0 8px;">
+        <td style="padding: 0 12px;">
           <a href="https://www.youtube.com/@SOCHIMT" style="text-decoration: none;">
-            <table border="0" cellpadding="0" cellspacing="0" style="background: #ff0000; border-radius: 50%; width: 40px; height: 40px;">
-              <tr>
-                <td align="center" valign="middle" style="width: 40px; height: 40px; color: white; font-family: Arial, sans-serif; font-size: 16px;">▶</td>
-              </tr>
-            </table>
+            <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width: 32px; height: 32px; display: block;">
           </a>
         </td>
-        <td style="padding: 0 8px;">
+        <td style="padding: 0 12px;">
           <a href="https://www.instagram.com/sochimt_cl/" style="text-decoration: none;">
-            <table border="0" cellpadding="0" cellspacing="0" style="background: #e4405f; border-radius: 50%; width: 40px; height: 40px;">
-              <tr>
-                <td align="center" valign="middle" style="width: 40px; height: 40px; color: white; font-family: Arial, sans-serif; font-size: 18px;">📷</td>
-              </tr>
-            </table>
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="width: 32px; height: 32px; display: block;">
           </a>
         </td>
       </tr>
