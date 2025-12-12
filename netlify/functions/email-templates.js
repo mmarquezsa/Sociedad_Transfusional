@@ -7,7 +7,9 @@ const SOCHIMT_COLOR = '#9f1239'; // rose-800
 // Header común para todos los emails
 const emailHeader = `
   <div style="background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%); padding: 30px; text-align: center; border-radius: 16px 16px 0 0;">
-    <img src="${LOGO_URL}" alt="SOCHIMT" style="width: 80px; height: 80px; border-radius: 16px; margin-bottom: 15px;">
+    <div style="width: 90px; height: 90px; background: white; border-radius: 50%; margin: 0 auto 15px; display: inline-block; padding: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+      <img src="${LOGO_URL}" alt="SOCHIMT" style="width: 100%; height: 100%; object-fit: contain;">
+    </div>
     <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">SOCHIMT</h1>
     <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 14px;">Sociedad Chilena de Medicina Transfusional</p>
   </div>
@@ -31,23 +33,37 @@ const emailFooter = `
     </div>
 
     <p style="text-align: center; color: #64748b; font-size: 13px; margin: 15px 0;">Síguenos en Redes Sociales</p>
-    <div style="text-align: center;">
-      <a href="https://www.facebook.com/profile.php?id=61575757064945" style="display: inline-block; margin: 0 8px;">
-        <div style="width: 36px; height: 36px; background: #2563eb; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
-        </div>
-      </a>
-      <a href="https://www.youtube.com/@SOCHIMT" style="display: inline-block; margin: 0 8px;">
-        <div style="width: 36px; height: 36px; background: #dc2626; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733646.png" alt="YouTube" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
-        </div>
-      </a>
-      <a href="https://www.instagram.com/sochimt_cl/" style="display: inline-block; margin: 0 8px;">
-        <div style="width: 36px; height: 36px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
-        </div>
-      </a>
-    </div>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+      <tr>
+        <td style="padding: 0 8px;">
+          <a href="https://www.facebook.com/profile.php?id=61575757064945" style="text-decoration: none;">
+            <table border="0" cellpadding="0" cellspacing="0" style="background: #1877f2; border-radius: 50%; width: 40px; height: 40px;">
+              <tr>
+                <td align="center" valign="middle" style="width: 40px; height: 40px; color: white; font-family: Arial, sans-serif; font-size: 20px; font-weight: bold;">f</td>
+              </tr>
+            </table>
+          </a>
+        </td>
+        <td style="padding: 0 8px;">
+          <a href="https://www.youtube.com/@SOCHIMT" style="text-decoration: none;">
+            <table border="0" cellpadding="0" cellspacing="0" style="background: #ff0000; border-radius: 50%; width: 40px; height: 40px;">
+              <tr>
+                <td align="center" valign="middle" style="width: 40px; height: 40px; color: white; font-family: Arial, sans-serif; font-size: 16px;">▶</td>
+              </tr>
+            </table>
+          </a>
+        </td>
+        <td style="padding: 0 8px;">
+          <a href="https://www.instagram.com/sochimt_cl/" style="text-decoration: none;">
+            <table border="0" cellpadding="0" cellspacing="0" style="background: #e4405f; border-radius: 50%; width: 40px; height: 40px;">
+              <tr>
+                <td align="center" valign="middle" style="width: 40px; height: 40px; color: white; font-family: Arial, sans-serif; font-size: 18px;">📷</td>
+              </tr>
+            </table>
+          </a>
+        </td>
+      </tr>
+    </table>
   </div>
 
   <div style="background: #1e293b; padding: 20px; text-align: center; border-radius: 0 0 16px 16px;">
