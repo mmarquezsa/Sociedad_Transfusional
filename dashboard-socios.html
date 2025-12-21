@@ -386,6 +386,32 @@
       return adminEmails.includes(email) || rol === 'admin' || rol === 'supervisor';
     }
     
+    // Aplicar restricciones según rol
+    function aplicarRestriccionesRol(rol) {
+      // Si es supervisor, ocultar opciones de eliminar y aprobar socios
+      if (rol === 'supervisor') {
+        // Deshabilitar botones de eliminar
+        document.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+          btn.disabled = true;
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+          btn.title = 'Solo administradores pueden eliminar';
+        });
+        
+        // Ocultar gestión de socios para supervisores
+        const gestionSocios = document.querySelector('[onclick*="socios"]');
+        if (gestionSocios) {
+          gestionSocios.classList.add('opacity-50');
+          gestionSocios.onclick = () => alert('Solo administradores pueden gestionar socios');
+        }
+      }
+      
+      // Si es socio normal, no debería ver el panel (ya está oculto)
+      if (rol === 'socio') {
+        const adminPanel = document.getElementById('admin-panel');
+        if (adminPanel) adminPanel.classList.add('hidden');
+      }
+    }
+    
     // Cargar datos del socio
     async function loadDashboardData() {
       try {
@@ -440,6 +466,9 @@
           } else {
             rolBadge.textContent = '👑 Administrador';
           }
+          
+          // Aplicar restricciones según rol
+          aplicarRestriccionesRol(socio.rol || 'socio');
         }
         
         // Cargar estadísticas

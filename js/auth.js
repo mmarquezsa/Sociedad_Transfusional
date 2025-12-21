@@ -339,6 +339,178 @@ async function requireActiveMembresia() {
   return true;
 }
 
+// ============================================
+// SISTEMA DE ROLES
+// ============================================
+
+/**
+ * Roles disponibles y sus permisos:
+ * - admin: Acceso total a todas las funciones
+ * - supervisor: Acceso a gestión con restricciones (solo lectura en algunas áreas)
+ * - socio: Solo uso de funciones básicas (dashboard, recursos, chatbot)
+ */
+
+const PERMISOS_ROL = {
+  admin: {
+    gestion_noticias: true,
+    gestion_miembros: true,
+    gestion_eventos: true,
+    gestion_recursos: true,
+    ver_estadisticas: true,
+    editar_contenido: true,
+    eliminar_contenido: true,
+    aprobar_socios: true,
+    ver_logs: true,
+    configuracion: true
+  },
+  supervisor: {
+    gestion_noticias: true,
+    gestion_miembros: true,
+    gestion_eventos: true,
+    gestion_recursos: true,
+    ver_estadisticas: true,
+    editar_contenido: true,
+    eliminar_contenido: false,
+    aprobar_socios: false,
+    ver_logs: true,
+    configuracion: false
+  },
+  socio: {
+    gestion_noticias: false,
+    gestion_miembros: false,
+    gestion_eventos: false,
+    gestion_recursos: false,
+    ver_estadisticas: false,
+    editar_contenido: false,
+    eliminar_contenido: false,
+    aprobar_socios: false,
+    ver_logs: false,
+    configuracion: false
+  }
+};
+
+/**
+ * Obtener rol del usuario actual
+ */
+async function getRolUsuario() {
+  try {
+    const socio = await getSocioActual();
+    return socio.rol || 'socio';
+  } catch (error) {
+    console.error('❌ Error al obtener rol:', error);
+    return 'socio';
+  }
+}
+
+/**
+ * Verificar si el usuario tiene un permiso específico
+ */
+async function tienePermiso(permiso) {
+  try {
+    const rol = await getRolUsuario();
+    const permisos = PERMISOS_ROL[rol] || PERMISOS_ROL.socio;
+    return permisos[permiso] || false;
+  } catch (error) {
+    console.error('❌ Error al verificar permiso:', error);
+    return false;
+  }
+}
+
+/**
+ * Verificar si el usuario es admin
+ */
+async function isAdmin() {
+  const rol = await getRolUsuario();
+  return rol === 'admin';
+}
+
+/**
+ * Verificar si el usuario es supervisor o admin
+ */
+async function isSupervisorOrAdmin() {
+  const rol = await getRolUsuario();
+  return rol === 'admin' || rol === 'supervisor';
+}
+
+/**
+ * Proteger página - requiere rol admin
+ */
+async function requireAdmin() {
+  const isAuth = await requireAuth();
+  if (!isAuth) return false;
+
+  const admin = await isAdmin();
+  
+  if (!admin) {
+    console.log('🚫 Acceso denegado - se requiere rol admin');
+    alert('No tienes permisos para acceder a esta sección.');
+    window.location.href = 'dashboard-socios.html';
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Proteger página - requiere rol supervisor o admin
+ */
+async function requireSupervisor() {
+  const isAuth = await requireAuth();
+  if (!isAuth) return false;
+
+  const supervisor = await isSupervisorOrAdmin();
+  
+  if (!supervisor) {
+    console.log('🚫 Acceso denegado - se requiere rol supervisor o admin');
+    alert('No tienes permisos para acceder a esta sección.');
+    window.location.href = 'dashboard-socios.html';
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Mostrar/ocultar elementos según rol
+ */
+async function aplicarPermisosUI() {
+  const rol = await getRolUsuario();
+  const permisos = PERMISOS_ROL[rol] || PERMISOS_ROL.socio;
+  
+  console.log('🔐 Aplicando permisos UI para rol:', rol);
+  
+  // Mostrar elementos según permisos
+  document.querySelectorAll('[data-permiso]').forEach(el => {
+    const permiso = el.dataset.permiso;
+    if (permisos[permiso]) {
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  });
+  
+  // Mostrar elementos según rol específico
+  document.querySelectorAll('[data-rol]').forEach(el => {
+    const rolesPermitidos = el.dataset.rol.split(',').map(r => r.trim());
+    if (rolesPermitidos.includes(rol)) {
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  });
+  
+  // Deshabilitar botones de eliminar si no tiene permiso
+  if (!permisos.eliminar_contenido) {
+    document.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+      btn.disabled = true;
+      btn.classList.add('opacity-50', 'cursor-not-allowed');
+      btn.title = 'No tienes permisos para eliminar';
+    });
+  }
+  
+  return { rol, permisos };
+}
+
 /**
  * Recuperar contraseña
  */
@@ -512,5 +684,15 @@ window.actualizarPerfil = actualizarPerfil;
 window.validarRUT = validarRUT;
 window.formatearRUT = formatearRUT;
 window.supabaseClient = supabaseClient;
+
+// Exportar funciones de roles
+window.getRolUsuario = getRolUsuario;
+window.tienePermiso = tienePermiso;
+window.isAdmin = isAdmin;
+window.isSupervisorOrAdmin = isSupervisorOrAdmin;
+window.requireAdmin = requireAdmin;
+window.requireSupervisor = requireSupervisor;
+window.aplicarPermisosUI = aplicarPermisosUI;
+window.PERMISOS_ROL = PERMISOS_ROL;
 
 console.log('✅ Auth.js cargado correctamente');
