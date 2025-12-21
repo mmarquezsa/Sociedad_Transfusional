@@ -237,45 +237,138 @@
       </div>
     </div>
 
+    <!-- Herramientas Clínicas Destacadas -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+          <span class="text-3xl">🩺</span>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-white">Herramientas Clínicas</h2>
+          <p class="text-indigo-100 text-sm">Calculadoras y recursos para tu práctica diaria</p>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <!-- Calculadora de Hemocomponentes -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20 hover:bg-white/20 transition-all cursor-pointer group" onclick="abrirCalculadora()">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">🧮</span>
+            <h3 class="text-lg font-bold text-white">Calculadora de Dosis</h3>
+          </div>
+          <p class="text-indigo-100 text-sm mb-3">Calcula dosis de GR, plaquetas, plasma y crioprecipitado según peso del paciente.</p>
+          <span class="text-yellow-300 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+            Usar herramienta <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+        
+        <!-- Compatibilidad ABO/Rh -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20 hover:bg-white/20 transition-all cursor-pointer group" onclick="abrirCompatibilidad()">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">🩸</span>
+            <h3 class="text-lg font-bold text-white">Compatibilidad ABO/Rh</h3>
+          </div>
+          <p class="text-indigo-100 text-sm mb-3">Consulta rápida de compatibilidad entre grupos sanguíneos para transfusión.</p>
+          <span class="text-yellow-300 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+            Ver tabla <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+        
+        <!-- Criterios de Selección -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20 hover:bg-white/20 transition-all cursor-pointer group" onclick="abrirCriterios()">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">✅</span>
+            <h3 class="text-lg font-bold text-white">Criterios de Selección</h3>
+          </div>
+          <p class="text-indigo-100 text-sm mb-3">Guía rápida de criterios de elegibilidad para donantes de sangre.</p>
+          <span class="text-yellow-300 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+            Consultar <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
     <!-- Quick Access Cards Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
       
-      <!-- Gotita Card -->
-      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-100">
+      <!-- Gotita Card - Destacada -->
+      <div class="bg-gradient-to-br from-sochimt-50 to-blue-50 rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-gradient-to-br from-yellow-400 to-orange-500 text-xs font-black text-white px-3 py-1 rounded-bl-xl">
+          ⭐ NUEVO
+        </div>
         <div class="w-16 h-16 bg-gradient-to-br from-sochimt-500 to-sochimt-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
           <span class="text-4xl">💧</span>
         </div>
         <h3 class="text-2xl font-black text-gray-900 mb-3">IA Gotita</h3>
         <p class="text-gray-600 mb-6">
-          Consulta a nuestro asistente de IA especializado en selección de donantes y medicina transfusional.
+          Tu asistente de IA especializado en medicina transfusional. Consulta criterios, protocolos y más.
         </p>
         <button onclick="openGotita()" class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-3 rounded-xl font-bold hover:from-sochimt-700 hover:to-sochimt-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-          Iniciar Consulta
+          💬 Iniciar Consulta
         </button>
         <p class="text-xs text-gray-500 mt-3 text-center">
           Consultas ilimitadas • Respuestas instantáneas
         </p>
       </div>
 
-      <!-- Blog/Artículos Card -->
-      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-100">
-        <div class="w-16 h-16 bg-gradient-to-br from-sochimt-500 to-sochimt-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-          <span class="text-4xl">📚</span>
+      <!-- Conversatorios Card -->
+      <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-xl p-8 card-hover border-2 border-purple-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-gradient-to-br from-purple-500 to-pink-500 text-xs font-black text-white px-3 py-1 rounded-bl-xl">
+          🎥 VIDEO
         </div>
-        <h3 class="text-2xl font-black text-gray-900 mb-3">Artículos Premium</h3>
+        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">🎬</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Conversatorios</h3>
         <p class="text-gray-600 mb-6">
-          Accede a casos clínicos, revisiones y artículos científicos exclusivos para socios.
+          Accede a las grabaciones de todos los conversatorios SOCHIMT con expertos internacionales.
         </p>
-        <button onclick="alert('Próximamente: Sistema de artículos')" class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-700 text-white py-3 rounded-xl font-bold hover:from-sochimt-700 hover:to-sochimt-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-          Ver Artículos
+        <a href="conversatorios.html" class="block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-center">
+          🎥 Ver Conversatorios
+        </a>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          5 conversatorios disponibles
+        </p>
+      </div>
+
+      <!-- Casos Clínicos Card -->
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl p-8 card-hover border-2 border-amber-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-gradient-to-br from-amber-500 to-orange-500 text-xs font-black text-white px-3 py-1 rounded-bl-xl">
+          🔥 POPULAR
+        </div>
+        <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">🏥</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Casos Clínicos</h3>
+        <p class="text-gray-600 mb-6">
+          Casos clínicos interactivos para discusión y aprendizaje continuo en medicina transfusional.
+        </p>
+        <button onclick="abrirCasosClinicos()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-xl font-bold hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          📋 Ver Casos
         </button>
         <p class="text-xs text-gray-500 mt-3 text-center">
-          +50 artículos disponibles
+          Caso del mes + archivo histórico
+        </p>
+      </div>
+
+      <!-- Normativas Card -->
+      <div class="bg-gradient-to-br from-slate-50 to-gray-100 rounded-2xl shadow-xl p-8 card-hover border-2 border-slate-200">
+        <div class="w-16 h-16 bg-gradient-to-br from-slate-600 to-slate-800 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="text-4xl">📜</span>
+        </div>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Normativas</h3>
+        <p class="text-gray-600 mb-6">
+          Acceso directo a normativas MINSAL, decretos y circulares vigentes sobre medicina transfusional.
+        </p>
+        <button onclick="abrirNormativas()" class="w-full bg-gradient-to-r from-slate-600 to-slate-800 text-white py-3 rounded-xl font-bold hover:from-slate-700 hover:to-slate-900 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          📄 Ver Normativas
+        </button>
+        <p class="text-xs text-gray-500 mt-3 text-center">
+          Actualizado 2025
         </p>
       </div>
 
       <!-- Eventos Card -->
-      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-medical-100">
+      <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl shadow-xl p-8 card-hover border-2 border-red-200">
         <div class="w-16 h-16 bg-gradient-to-br from-medical-500 to-medical-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
           <span class="text-4xl">📅</span>
         </div>
@@ -284,64 +377,64 @@
           Inscríbete a webinars, cursos y congresos. Obtén descuentos exclusivos como socio.
         </p>
         <button onclick="alert('Próximamente: Sistema de eventos')" class="w-full bg-gradient-to-r from-medical-600 to-medical-700 text-white py-3 rounded-xl font-bold hover:from-medical-700 hover:to-medical-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-          Ver Calendario
+          📅 Ver Calendario
         </button>
         <p class="text-xs text-gray-500 mt-3 text-center">
-          3 eventos próximos
+          Próximo: Enero 2026
         </p>
       </div>
 
       <!-- Recursos Card -->
-      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-sochimt-100">
-        <div class="w-16 h-16 bg-gradient-to-br from-sochimt-600 to-sochimt-800 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+      <div class="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-2xl shadow-xl p-8 card-hover border-2 border-cyan-200">
+        <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-sky-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
           <span class="text-4xl">📥</span>
         </div>
-        <h3 class="text-2xl font-black text-gray-900 mb-3">Recursos</h3>
+        <h3 class="text-2xl font-black text-gray-900 mb-3">Biblioteca</h3>
         <p class="text-gray-600 mb-6">
-          Descarga guías, protocolos, formularios y presentaciones de congresos.
+          Descarga guías, protocolos, formularios y presentaciones de congresos anteriores.
         </p>
-        <button onclick="alert('Próximamente: Biblioteca de recursos')" class="w-full bg-gradient-to-r from-sochimt-600 to-sochimt-800 text-white py-3 rounded-xl font-bold hover:from-sochimt-700 hover:to-sochimt-900 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-          Ver Biblioteca
+        <button onclick="alert('Próximamente: Biblioteca de recursos')" class="w-full bg-gradient-to-r from-cyan-500 to-sky-600 text-white py-3 rounded-xl font-bold hover:from-cyan-600 hover:to-sky-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          📚 Ver Biblioteca
         </button>
         <p class="text-xs text-gray-500 mt-3 text-center">
           +100 recursos disponibles
         </p>
       </div>
 
-      <!-- Certificaciones Card -->
-      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-medical-100">
-        <div class="w-16 h-16 bg-gradient-to-br from-medical-600 to-medical-800 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-          <span class="text-4xl">🎓</span>
-        </div>
-        <h3 class="text-2xl font-black text-gray-900 mb-3">Certificaciones</h3>
-        <p class="text-gray-600 mb-6">
-          Consulta tus certificaciones obtenidas y genera PDFs con código de verificación.
-        </p>
-        <button onclick="alert('Próximamente: Sistema de certificaciones')" class="w-full bg-gradient-to-r from-medical-600 to-medical-800 text-white py-3 rounded-xl font-bold hover:from-medical-700 hover:to-medical-900 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-          Mis Certificados
-        </button>
-        <p class="text-xs text-gray-500 mt-3 text-center">
-          Descarga • Verifica online
-        </p>
-      </div>
+    </div>
 
-      <!-- Mi Perfil Card -->
-      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover border-2 border-gray-200">
-        <div class="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-          <span class="text-4xl">⚙️</span>
+    <!-- Sección de Hemovigilancia y Alertas -->
+    <div class="bg-gradient-to-r from-red-600 to-rose-700 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center animate-pulse">
+            <span class="text-3xl">🚨</span>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-white">Hemovigilancia</h2>
+            <p class="text-red-100 text-sm">Alertas y notificaciones del sistema nacional</p>
+          </div>
         </div>
-        <h3 class="text-2xl font-black text-gray-900 mb-3">Mi Perfil</h3>
-        <p class="text-gray-600 mb-6">
-          Actualiza tus datos personales, preferencias y configuración de cuenta.
-        </p>
-        <button onclick="alert('Próximamente: Editar perfil')" class="w-full bg-gradient-to-r from-gray-700 to-gray-900 text-white py-3 rounded-xl font-bold hover:from-gray-800 hover:to-black transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-          Editar Perfil
-        </button>
-        <p class="text-xs text-gray-500 mt-3 text-center">
-          Datos • Foto • Preferencias
-        </p>
+        <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
+          0 alertas activas
+        </span>
       </div>
-
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+          <h3 class="text-lg font-bold text-white mb-2">📊 Reportar Reacción Adversa</h3>
+          <p class="text-red-100 text-sm mb-3">Notifica reacciones adversas a la transfusión al sistema de hemovigilancia.</p>
+          <button onclick="abrirReporteRAT()" class="bg-white text-red-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-50 transition-all">
+            Crear Reporte
+          </button>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+          <h3 class="text-lg font-bold text-white mb-2">📋 Mis Reportes</h3>
+          <p class="text-red-100 text-sm mb-3">Consulta el estado de tus reportes enviados y su seguimiento.</p>
+          <button onclick="verMisReportes()" class="bg-white text-red-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-50 transition-all">
+            Ver Historial
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Activity Section -->
@@ -365,9 +458,10 @@
   <footer class="bg-white border-t py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600 text-sm">
       <p>&copy; 2025 SOCHIMT. Todos los derechos reservados.</p>
+      <p class="mt-1 text-gray-500 text-xs">Desarrollado por Marcelo Márquez-Sandoval</p>
       <p class="mt-2">
-        <a href="#" class="hover:text-sochimt-600">Términos</a> • 
-        <a href="#" class="hover:text-sochimt-600">Privacidad</a> • 
+        <a href="#" class="hover:text-sochimt-600">Términos</a> •
+        <a href="#" class="hover:text-sochimt-600">Privacidad</a> •
         <a href="mailto:soporte@sochimt.cl" class="hover:text-sochimt-600">Soporte</a>
       </p>
     </div>
@@ -514,6 +608,494 @@
     // Función para abrir Gotita (placeholder)
     function openGotita() {
       alert('💧 ¡Próximamente! El asistente IA Gotita estará disponible muy pronto.\n\nPodrás consultar sobre:\n• Selección de donantes\n• Criterios de elegibilidad\n• Protocolos transfusionales\n• Y mucho más...');
+    }
+    
+    // ============================================
+    // HERRAMIENTAS CLÍNICAS
+    // ============================================
+    
+    // Calculadora de Hemocomponentes
+    function abrirCalculadora() {
+      const modal = document.createElement('div');
+      modal.id = 'modal-calculadora';
+      modal.className = 'fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4';
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div class="sticky top-0 bg-gradient-to-r from-emerald-500 to-teal-600 p-6 rounded-t-3xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-4xl">🧮</span>
+                <h2 class="text-2xl font-black text-white">Calculadora de Hemocomponentes</h2>
+              </div>
+              <button onclick="document.getElementById('modal-calculadora').remove()" class="text-white/80 hover:text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="grid gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Peso del paciente (kg)</label>
+                <input type="number" id="calc-peso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none" placeholder="70">
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Hematocrito actual (%)</label>
+                <input type="number" id="calc-hto-actual" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none" placeholder="25">
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Hematocrito deseado (%)</label>
+                <input type="number" id="calc-hto-deseado" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none" placeholder="30">
+              </div>
+            </div>
+            <button onclick="calcularDosis()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-4 rounded-xl font-black text-lg hover:from-emerald-600 hover:to-teal-700 transition-all">
+              Calcular Dosis
+            </button>
+            <div id="resultado-calculo" class="mt-6 hidden">
+              <h3 class="text-lg font-black text-gray-900 mb-4">📊 Resultados:</h3>
+              <div class="grid gap-3" id="resultados-grid"></div>
+            </div>
+            <div class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+              <p class="text-amber-800 text-sm"><strong>⚠️ Nota:</strong> Esta calculadora es una herramienta de apoyo. Siempre verifique los cálculos y considere las condiciones clínicas del paciente.</p>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function calcularDosis() {
+      const peso = parseFloat(document.getElementById('calc-peso').value);
+      const htoActual = parseFloat(document.getElementById('calc-hto-actual').value);
+      const htoDeseado = parseFloat(document.getElementById('calc-hto-deseado').value);
+      
+      if (!peso || !htoActual || !htoDeseado) {
+        alert('Por favor complete todos los campos');
+        return;
+      }
+      
+      // Volumen sanguíneo estimado (70 mL/kg)
+      const volSanguineo = peso * 70;
+      
+      // Unidades de GR necesarias (cada unidad aumenta Hto ~3%)
+      const deltaHto = htoDeseado - htoActual;
+      const unidadesGR = Math.ceil(deltaHto / 3);
+      
+      // Dosis de plaquetas (1 unidad/10kg para aumentar 5000-10000/uL)
+      const unidadesPlaquetas = Math.ceil(peso / 10);
+      
+      // Plasma (10-15 mL/kg)
+      const plasmaML = peso * 12;
+      
+      const resultadosDiv = document.getElementById('resultados-grid');
+      resultadosDiv.innerHTML = `
+        <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+          <p class="text-red-800 font-bold">🩸 Glóbulos Rojos</p>
+          <p class="text-2xl font-black text-red-600">${unidadesGR > 0 ? unidadesGR : 0} unidades</p>
+          <p class="text-red-600 text-sm">Para aumentar Hto de ${htoActual}% a ${htoDeseado}%</p>
+        </div>
+        <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+          <p class="text-yellow-800 font-bold">🟡 Plaquetas</p>
+          <p class="text-2xl font-black text-yellow-600">${unidadesPlaquetas} unidades</p>
+          <p class="text-yellow-600 text-sm">Dosis estándar para peso ${peso}kg</p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+          <p class="text-blue-800 font-bold">💧 Plasma Fresco</p>
+          <p class="text-2xl font-black text-blue-600">${plasmaML} mL</p>
+          <p class="text-blue-600 text-sm">10-15 mL/kg de peso</p>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+          <p class="text-purple-800 font-bold">📊 Volumen Sanguíneo</p>
+          <p class="text-2xl font-black text-purple-600">${volSanguineo} mL</p>
+          <p class="text-purple-600 text-sm">Estimado (70 mL/kg)</p>
+        </div>
+      `;
+      document.getElementById('resultado-calculo').classList.remove('hidden');
+    }
+    
+    // Tabla de Compatibilidad ABO/Rh
+    function abrirCompatibilidad() {
+      const modal = document.createElement('div');
+      modal.id = 'modal-compatibilidad';
+      modal.className = 'fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4';
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div class="sticky top-0 bg-gradient-to-r from-red-500 to-rose-600 p-6 rounded-t-3xl z-10">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-4xl">🩸</span>
+                <h2 class="text-2xl font-black text-white">Compatibilidad ABO/Rh</h2>
+              </div>
+              <button onclick="document.getElementById('modal-compatibilidad').remove()" class="text-white/80 hover:text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <!-- Tabla Glóbulos Rojos -->
+            <h3 class="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+              <span class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm">GR</span>
+              Compatibilidad para Glóbulos Rojos
+            </h3>
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-red-100">
+                    <th class="p-2 text-left font-bold text-red-800">Receptor</th>
+                    <th class="p-2 text-center font-bold text-red-800">O-</th>
+                    <th class="p-2 text-center font-bold text-red-800">O+</th>
+                    <th class="p-2 text-center font-bold text-red-800">A-</th>
+                    <th class="p-2 text-center font-bold text-red-800">A+</th>
+                    <th class="p-2 text-center font-bold text-red-800">B-</th>
+                    <th class="p-2 text-center font-bold text-red-800">B+</th>
+                    <th class="p-2 text-center font-bold text-red-800">AB-</th>
+                    <th class="p-2 text-center font-bold text-red-800">AB+</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">O-</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">O+</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">A-</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">A+</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">B-</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">B+</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-red-50">AB-</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td></tr>
+                  <tr><td class="p-2 font-bold bg-red-50">AB+</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="grid md:grid-cols-2 gap-3 mb-8">
+              <div class="bg-green-50 p-3 rounded-xl border border-green-200">
+                <p class="font-bold text-green-800 text-sm">🩸 Donante Universal GR</p>
+                <p class="text-green-600 text-sm">O negativo (O-)</p>
+              </div>
+              <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
+                <p class="font-bold text-blue-800 text-sm">🩸 Receptor Universal GR</p>
+                <p class="text-blue-600 text-sm">AB positivo (AB+)</p>
+              </div>
+            </div>
+            
+            <!-- Tabla Plasma y Plaquetas -->
+            <h3 class="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+              <span class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white text-sm">PL</span>
+              Compatibilidad para Plasma y Plaquetas
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 bg-amber-50 p-3 rounded-lg border border-amber-200">
+              ⚠️ <strong>Nota:</strong> Para plasma y plaquetas la compatibilidad es INVERSA a los glóbulos rojos (se considera el plasma del donante con los GR del receptor).
+            </p>
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-yellow-100">
+                    <th class="p-2 text-left font-bold text-yellow-800">Receptor</th>
+                    <th class="p-2 text-center font-bold text-yellow-800">O</th>
+                    <th class="p-2 text-center font-bold text-yellow-800">A</th>
+                    <th class="p-2 text-center font-bold text-yellow-800">B</th>
+                    <th class="p-2 text-center font-bold text-yellow-800">AB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b"><td class="p-2 font-bold bg-yellow-50">O</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-yellow-50">A</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td></tr>
+                  <tr class="border-b"><td class="p-2 font-bold bg-yellow-50">B</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td><td class="p-2 text-center">✅</td></tr>
+                  <tr><td class="p-2 font-bold bg-yellow-50">AB</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">❌</td><td class="p-2 text-center">✅</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="grid md:grid-cols-2 gap-3">
+              <div class="bg-purple-50 p-3 rounded-xl border border-purple-200">
+                <p class="font-bold text-purple-800 text-sm">💧 Donante Universal Plasma</p>
+                <p class="text-purple-600 text-sm">AB (no tiene anticuerpos Anti-A ni Anti-B)</p>
+              </div>
+              <div class="bg-orange-50 p-3 rounded-xl border border-orange-200">
+                <p class="font-bold text-orange-800 text-sm">💧 Receptor Universal Plasma</p>
+                <p class="text-orange-600 text-sm">O (puede recibir de cualquier grupo)</p>
+              </div>
+            </div>
+            
+            <!-- Nota sobre Rh en plaquetas -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <h4 class="font-bold text-gray-800 mb-2">📋 Consideraciones sobre Rh:</h4>
+              <ul class="text-gray-600 text-sm space-y-1">
+                <li>• <strong>Plasma:</strong> El factor Rh NO es relevante para transfusión de plasma.</li>
+                <li>• <strong>Plaquetas:</strong> Preferir Rh compatible. En mujeres en edad fértil Rh(-), evitar plaquetas Rh(+) o administrar inmunoglobulina anti-D.</li>
+                <li>• <strong>Crioprecipitado:</strong> Seguir las mismas reglas que el plasma.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    // Criterios de Selección de Donantes
+    function abrirCriterios() {
+      const modal = document.createElement('div');
+      modal.id = 'modal-criterios';
+      modal.className = 'fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4';
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div class="sticky top-0 bg-gradient-to-r from-green-500 to-emerald-600 p-6 rounded-t-3xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-4xl">✅</span>
+                <h2 class="text-2xl font-black text-white">Criterios de Selección de Donantes</h2>
+              </div>
+              <button onclick="document.getElementById('modal-criterios').remove()" class="text-white/80 hover:text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-6 space-y-4">
+            <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+              <h3 class="font-bold text-green-800 mb-2">✅ Requisitos Básicos</h3>
+              <ul class="text-green-700 text-sm space-y-1">
+                <li>• Edad: 18-65 años (hasta 60 primera vez)</li>
+                <li>• Peso mínimo: 50 kg</li>
+                <li>• Hemoglobina: ≥12.5 g/dL (mujeres), ≥13.5 g/dL (hombres)</li>
+                <li>• Presión arterial: 90-180/60-100 mmHg</li>
+                <li>• Pulso: 50-100 lpm, regular</li>
+                <li>• Temperatura: ≤37.5°C</li>
+              </ul>
+            </div>
+            <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+              <h3 class="font-bold text-red-800 mb-2">❌ Diferimiento Permanente</h3>
+              <ul class="text-red-700 text-sm space-y-1">
+                <li>• VIH, Hepatitis B o C</li>
+                <li>• Uso de drogas IV</li>
+                <li>• Enfermedad de Chagas</li>
+                <li>• Creutzfeldt-Jakob o variante</li>
+                <li>• Trasplante de órganos/tejidos</li>
+              </ul>
+            </div>
+            <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+              <h3 class="font-bold text-amber-800 mb-2">⏳ Diferimiento Temporal</h3>
+              <ul class="text-amber-700 text-sm space-y-1">
+                <li>• Tatuajes/piercings: 12 meses</li>
+                <li>• Cirugía mayor: 6-12 meses</li>
+                <li>• Embarazo: 6 meses post-parto</li>
+                <li>• Transfusión recibida: 12 meses</li>
+                <li>• Antibióticos: según medicamento</li>
+                <li>• Viaje zona endémica malaria: 12 meses</li>
+              </ul>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+              <h3 class="font-bold text-blue-800 mb-2">📋 Intervalos entre Donaciones</h3>
+              <ul class="text-blue-700 text-sm space-y-1">
+                <li>• Sangre total: 3 meses (hombres), 4 meses (mujeres)</li>
+                <li>• Plaquetas por aféresis: 15 días (máx 24/año)</li>
+                <li>• Plasma por aféresis: 15 días</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    // Funciones placeholder para otras herramientas
+    function abrirCasosClinicos() {
+      const modal = document.createElement('div');
+      modal.id = 'modal-casos';
+      modal.className = 'fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4';
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div class="sticky top-0 bg-gradient-to-r from-amber-500 to-orange-600 p-6 rounded-t-3xl z-10">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-4xl">🏥</span>
+                <div>
+                  <h2 class="text-2xl font-black text-white">Caso Clínico del Mes</h2>
+                  <p class="text-amber-100 text-sm">Inmunohematología - Discrepancia ABO</p>
+                </div>
+              </div>
+              <button onclick="document.getElementById('modal-casos').remove()" class="text-white/80 hover:text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-6 space-y-6">
+            
+            <!-- Presentación del caso -->
+            <div class="bg-blue-50 p-5 rounded-2xl border border-blue-200">
+              <h3 class="text-lg font-black text-blue-800 mb-3 flex items-center gap-2">
+                <span>📋</span> Presentación del Caso
+              </h3>
+              <p class="text-blue-900 mb-3">
+                <strong>Paciente:</strong> Mujer de 78 años, ingresa a urgencias por cuadro de anemia severa secundaria a hemorragia digestiva alta.
+              </p>
+              <p class="text-blue-900 mb-3">
+                <strong>Antecedentes:</strong> Mieloma múltiple en tratamiento con quimioterapia. Sin antecedentes transfusionales previos ni embarazos.
+              </p>
+              <p class="text-blue-900">
+                <strong>Solicitud:</strong> Se solicita tipificación ABO/Rh y pruebas de compatibilidad para transfusión de 2 unidades de glóbulos rojos.
+              </p>
+            </div>
+            
+            <!-- Resultados iniciales -->
+            <div class="bg-red-50 p-5 rounded-2xl border border-red-200">
+              <h3 class="text-lg font-black text-red-800 mb-3 flex items-center gap-2">
+                <span>🔬</span> Resultados de Tipificación ABO/Rh
+              </h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-red-200">
+                  <h4 class="font-bold text-red-700 mb-2">Prueba Globular (Directa)</h4>
+                  <table class="w-full text-sm">
+                    <tr class="border-b"><td class="py-1">Anti-A:</td><td class="py-1 font-bold text-green-600">4+ (Positivo)</td></tr>
+                    <tr class="border-b"><td class="py-1">Anti-B:</td><td class="py-1 font-bold text-red-600">Negativo</td></tr>
+                    <tr><td class="py-1">Anti-D:</td><td class="py-1 font-bold text-green-600">3+ (Positivo)</td></tr>
+                  </table>
+                  <p class="mt-2 text-sm font-bold text-red-800">Interpretación: Grupo A Rh(D) Positivo</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-red-200">
+                  <h4 class="font-bold text-red-700 mb-2">Prueba Sérica (Inversa)</h4>
+                  <table class="w-full text-sm">
+                    <tr class="border-b"><td class="py-1">Células A1:</td><td class="py-1 font-bold text-red-600">Negativo ⚠️</td></tr>
+                    <tr><td class="py-1">Células B:</td><td class="py-1 font-bold text-red-600">Negativo ⚠️</td></tr>
+                  </table>
+                  <p class="mt-2 text-sm font-bold text-amber-700">⚠️ DISCREPANCIA: Se esperaba Anti-B positivo</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Análisis de la discrepancia -->
+            <div class="bg-amber-50 p-5 rounded-2xl border border-amber-200">
+              <h3 class="text-lg font-black text-amber-800 mb-3 flex items-center gap-2">
+                <span>🔍</span> Análisis de la Discrepancia
+              </h3>
+              <p class="text-amber-900 mb-3">
+                <strong>Tipo de discrepancia:</strong> Discrepancia en prueba sérica (inversa) - Ausencia de anticuerpos esperados.
+              </p>
+              <p class="text-amber-900 mb-3">
+                <strong>Causas posibles a investigar:</strong>
+              </p>
+              <ul class="list-disc list-inside text-amber-800 space-y-1 ml-4">
+                <li>Hipogammaglobulinemia (común en mieloma múltiple)</li>
+                <li>Inmunosupresión por quimioterapia</li>
+                <li>Edad avanzada (disminución fisiológica de anticuerpos)</li>
+                <li>Recién nacidos (no aplica en este caso)</li>
+                <li>Trasplante de médula ósea ABO incompatible</li>
+              </ul>
+            </div>
+            
+            <!-- Investigación -->
+            <div class="bg-purple-50 p-5 rounded-2xl border border-purple-200">
+              <h3 class="text-lg font-black text-purple-800 mb-3 flex items-center gap-2">
+                <span>🧪</span> Protocolo de Investigación
+              </h3>
+              
+              <div class="space-y-4">
+                <div class="bg-white p-4 rounded-xl border border-purple-200">
+                  <h4 class="font-bold text-purple-700 mb-2">1. Verificación de la muestra</h4>
+                  <ul class="text-purple-800 text-sm space-y-1">
+                    <li>✅ Identificación correcta del paciente</li>
+                    <li>✅ Muestra sin hemólisis ni lipemia</li>
+                    <li>✅ Repetición de pruebas con nueva muestra: mismo resultado</li>
+                  </ul>
+                </div>
+                
+                <div class="bg-white p-4 rounded-xl border border-purple-200">
+                  <h4 class="font-bold text-purple-700 mb-2">2. Potenciación de la prueba sérica</h4>
+                  <ul class="text-purple-800 text-sm space-y-1">
+                    <li>• Incubación prolongada a temperatura ambiente (30 min): <strong>Negativo</strong></li>
+                    <li>• Incubación a 4°C por 30 minutos: <strong>Anti-B débil (1+)</strong></li>
+                    <li>• Uso de células B de pool de 3 donantes: <strong>Anti-B débil (1+)</strong></li>
+                  </ul>
+                </div>
+                
+                <div class="bg-white p-4 rounded-xl border border-purple-200">
+                  <h4 class="font-bold text-purple-700 mb-2">3. Estudios complementarios</h4>
+                  <ul class="text-purple-800 text-sm space-y-1">
+                    <li>• Electroforesis de proteínas: <strong>Pico monoclonal IgG kappa</strong></li>
+                    <li>• Inmunoglobulinas séricas:</li>
+                    <li class="ml-4">- IgG: 450 mg/dL (VN: 700-1600) ↓</li>
+                    <li class="ml-4">- IgM: 25 mg/dL (VN: 40-230) ↓↓</li>
+                    <li class="ml-4">- IgA: 35 mg/dL (VN: 70-400) ↓</li>
+                    <li>• Prueba de Coombs Directo: <strong>Negativo</strong></li>
+                  </ul>
+                </div>
+                
+                <div class="bg-white p-4 rounded-xl border border-purple-200">
+                  <h4 class="font-bold text-purple-700 mb-2">4. Prueba de adsorción-elución (confirmación grupo A)</h4>
+                  <ul class="text-purple-800 text-sm space-y-1">
+                    <li>• Adsorción con células A1: <strong>Positiva</strong></li>
+                    <li>• Elución: <strong>Anti-A detectado</strong></li>
+                    <li>• Conclusión: Confirma antígeno A presente en los glóbulos rojos</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Diagnóstico -->
+            <div class="bg-green-50 p-5 rounded-2xl border border-green-200">
+              <h3 class="text-lg font-black text-green-800 mb-3 flex items-center gap-2">
+                <span>✅</span> Diagnóstico Final
+              </h3>
+              <div class="bg-white p-4 rounded-xl border border-green-300">
+                <p class="text-green-900 font-bold text-lg mb-2">Grupo Sanguíneo: A Rh(D) Positivo</p>
+                <p class="text-green-800 mb-3">
+                  <strong>Causa de la discrepancia:</strong> Hipogammaglobulinemia secundaria a mieloma múltiple, con disminución marcada de IgM (isotipo predominante de los anticuerpos ABO naturales), resultando en ausencia/debilidad del Anti-B esperado.
+                </p>
+              </div>
+            </div>
+            
+            <!-- Conducta -->
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+              <h3 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
+                <span>💉</span> Conducta Transfusional
+              </h3>
+              <ul class="text-slate-800 space-y-2">
+                <li>✅ Se confirma grupo A Rh(D) Positivo para transfusión</li>
+                <li>✅ Pruebas de compatibilidad con unidades grupo A Rh(D) Positivo: <strong>Compatibles</strong></li>
+                <li>✅ Se transfunden 2 unidades de GR sin incidentes</li>
+                <li>⚠️ Se documenta la discrepancia en el historial del paciente</li>
+                <li>⚠️ Se recomienda tipificación con técnicas potenciadas en futuras muestras</li>
+              </ul>
+            </div>
+            
+            <!-- Puntos clave -->
+            <div class="bg-indigo-50 p-5 rounded-2xl border border-indigo-200">
+              <h3 class="text-lg font-black text-indigo-800 mb-3 flex items-center gap-2">
+                <span>💡</span> Puntos Clave de Aprendizaje
+              </h3>
+              <ol class="text-indigo-800 space-y-2 list-decimal list-inside">
+                <li>Las discrepancias ABO séricas por ausencia de anticuerpos son comunes en pacientes con hipogammaglobulinemia.</li>
+                <li>El mieloma múltiple causa inmunoparesia con disminución de inmunoglobulinas policlonales.</li>
+                <li>La incubación a 4°C puede potenciar anticuerpos ABO débiles.</li>
+                <li>La prueba globular (directa) es más confiable que la sérica en estos casos.</li>
+                <li>Siempre documentar las discrepancias resueltas para futuras referencias.</li>
+              </ol>
+            </div>
+            
+            <!-- Referencias -->
+            <div class="text-center text-gray-500 text-xs pt-4 border-t">
+              <p>Caso clínico educativo - SOCHIMT 2025</p>
+              <p>Basado en literatura de inmunohematología y casos reales anonimizados</p>
+            </div>
+            
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function abrirNormativas() {
+      alert('📜 Normativas\n\nPróximamente acceso directo a:\n• Decreto 1.587 - Reglamento de Bancos de Sangre\n• Norma Técnica N°146 MINSAL\n• Circulares vigentes\n• Guías clínicas actualizadas');
+    }
+    
+    function abrirReporteRAT() {
+      alert('🚨 Reporte de Reacción Adversa\n\nPróximamente:\n• Formulario de notificación RAT\n• Clasificación según gravedad\n• Seguimiento automático\n• Conexión con sistema ISP');
+    }
+    
+    function verMisReportes() {
+      alert('📋 Mis Reportes\n\nPróximamente:\n• Historial de reportes enviados\n• Estado de seguimiento\n• Estadísticas personales');
     }
     
     // Función para abrir gestores de contenido (solo admin/supervisor)
