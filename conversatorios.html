@@ -391,7 +391,7 @@
       descripcion: "Ciclo de Conversatorios SOCHIMT: Estrategias innovadoras para la reducción de reacciones adversas a la donación (RAD) mediante técnicas de compresión de musculatura inferior automatizada. Evidencia científica y aplicación práctica.",
       fecha: "22 de agosto 2024",
       expositor: "TM MSc. Ph.D(c) Eugenio Reyes",
-      pais: "🇨🇱",
+      pais: "cl",
       cargo: "Jefe Banco de Sangre - Hospital del Trabajador",
       duracion: "1:05:03",
       youtubeId: "EsJeHnqzXtM",
@@ -403,7 +403,7 @@
       descripcion: "Ciclo de Conversatorios SOCHIMT: Análisis profundo de las brechas existentes para la implementación efectiva de un sistema de hemovigilancia en Chile. Desafíos, oportunidades y propuestas de mejora.",
       fecha: "19 de septiembre 2024",
       expositor: "TM Mg. Diego Zapata Tapia",
-      pais: "🇨🇱",
+      pais: "cl",
       cargo: "Jefe Depto. Laboratorio - Hospital Dr. Sótero del Río",
       duracion: "1:04:59",
       youtubeId: "eu1NpYxcpLA",
@@ -415,7 +415,7 @@
       descripcion: "Estrategias efectivas para mejorar la captación y fidelización de donantes altruistas de sangre. Experiencias exitosas y metodologías probadas para aumentar la donación voluntaria.",
       fecha: "5 de diciembre 2024",
       expositor: "Dr. TM Alexy Rosales Zapata",
-      pais: "🇨🇱",
+      pais: "cl",
       cargo: "Docente Carrera Tecnología Médica - U. Católica de Temuco",
       duracion: "1:03:34",
       youtubeId: "MQb-IctwQjU",
@@ -427,7 +427,7 @@
       descripcion: "Análisis integral de los aspectos éticos y sistemas de gestión de calidad aplicados a la medicina transfusional. Normativas vigentes, buenas prácticas y casos de estudio.",
       fecha: "18 de diciembre 2024",
       expositor: "Lic. TM Carlos Penalillo Pimentel",
-      pais: "🇵🇪",
+      pais: "pe",
       cargo: "Especialista en Hemoterapia y Banco de Sangre",
       duracion: "1:00:31",
       youtubeId: "2b_9eeKVUGI",
@@ -727,7 +727,7 @@
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
             <div class="min-w-0">
-              <p class="text-white text-sm font-semibold truncate">${conv.expositor}${conv.pais ? ' ' + conv.pais : ''}</p>
+              <p class="text-white text-sm font-semibold truncate">${conv.expositor}${conv.pais ? ` <img src="https://flagcdn.com/16x12/${conv.pais}.png" alt="${conv.pais}" class="inline-block ml-1 align-middle" style="width:16px;height:12px;">` : ''}</p>
               <p class="text-gray-400 text-xs truncate">${conv.cargo}</p>
             </div>
           </div>
@@ -799,7 +799,7 @@
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           </div>
           <div>
-            <p class="text-lg font-bold text-gray-900">${conv.expositor}${conv.pais ? ' ' + conv.pais : ''}</p>
+            <p class="text-lg font-bold text-gray-900">${conv.expositor}${conv.pais ? ` <img src="https://flagcdn.com/20x15/${conv.pais}.png" alt="${conv.pais}" class="inline-block ml-1 align-middle" style="width:20px;height:15px;">` : ''}</p>
             <p class="text-gray-600">${conv.cargo}</p>
           </div>
         </div>
