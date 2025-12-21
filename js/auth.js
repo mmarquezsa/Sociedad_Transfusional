@@ -164,7 +164,11 @@ async function registrarSocio(email, password, nombreCompleto, datos = {}) {
 
     if (profileError) {
       console.error('❌ Error al crear perfil:', profileError);
-      throw new Error('Error al crear perfil de socio');
+      console.error('❌ Código:', profileError.code);
+      console.error('❌ Mensaje:', profileError.message);
+      console.error('❌ Detalles:', profileError.details);
+      console.error('❌ Hint:', profileError.hint);
+      throw new Error('Error al crear perfil de socio: ' + profileError.message);
     }
 
     console.log('✅ Perfil de socio creado exitosamente');
