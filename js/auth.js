@@ -159,7 +159,7 @@ async function registrarSocio(email, password, nombreCompleto, datos = {}) {
         fecha_postulacion: datos.fecha_postulacion || new Date().toISOString().split('T')[0],
         fecha_ingreso: new Date().toISOString().split('T')[0],
         estado: 'pendiente',
-        tipo_membresia: datos.tipo_membresia || 'regular'
+        tipo_membresia: datos.categoria === 'C' ? 'estudiante' : 'regular'
       });
 
     if (profileError) {
