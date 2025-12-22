@@ -354,8 +354,7 @@
     </div>
   </div>
 
-<!-- Configuración de YouTube API (opcional) -->
-<script src="config-youtube.js"></script>
+<!-- La API Key de YouTube está segura en Netlify Functions -->
 
 <script>
   // Mobile menu
@@ -454,27 +453,24 @@
   // ============================================
   // INTEGRACIÓN CON YOUTUBE DATA API
   // ============================================
-  // Configuración en archivo externo: config-youtube.js
-  // Ver instrucciones en ese archivo para activar la carga automática
-  
-  // Cargar configuración (si existe el archivo config-youtube.js)
-  const YOUTUBE_CHANNEL_ID = (typeof YOUTUBE_CONFIG !== 'undefined') ? YOUTUBE_CONFIG.CHANNEL_ID : '';
-  const YOUTUBE_API_KEY = (typeof YOUTUBE_CONFIG !== 'undefined') ? YOUTUBE_CONFIG.API_KEY : '';
-  
-  // Función para cargar videos desde YouTube API
-  async function loadVideosFromYouTube() {
-    if (!YOUTUBE_API_KEY) {
-      console.log('YouTube API Key no configurada. Usando datos manuales.');
-      return conversatoriosDataManual;
-    }
+  // La API Key está segura en Netlify Functions (variable de entorno YOUTUBE_API_KEY)
+  // Los videos se cargan automáticamente desde el canal de SOCHIMT
 
+  // URL del proxy de Netlify Functions (la API Key está segura en el servidor)
+  const YOUTUBE_PROXY_URL = '/.netlify/functions/youtube-proxy';
+
+  // Función para cargar videos desde YouTube API (via proxy seguro)
+  async function loadVideosFromYouTube() {
     try {
       // Primero obtenemos el ID de la playlist de uploads del canal
-      const channelResponse = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${YOUTUBE_CHANNEL_ID}&key=${YOUTUBE_API_KEY}`
-      );
+      const channelResponse = await fetch(`${YOUTUBE_PROXY_URL}?action=channel`);
       const channelData = await channelResponse.json();
-      
+
+      if (channelData.error) {
+        console.log('Error del proxy:', channelData.error, '. Usando datos manuales.');
+        return conversatoriosDataManual;
+      }
+
       if (!channelData.items || channelData.items.length === 0) {
         console.log('Canal no encontrado. Usando datos manuales.');
         return conversatoriosDataManual;
@@ -484,7 +480,7 @@
 
       // Obtenemos los videos de la playlist
       const videosResponse = await fetch(
-        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${uploadsPlaylistId}&maxResults=50&key=${YOUTUBE_API_KEY}`
+        `${YOUTUBE_PROXY_URL}?action=playlist&playlistId=${uploadsPlaylistId}`
       );
       const videosData = await videosResponse.json();
 
@@ -496,17 +492,17 @@
       // Obtenemos detalles adicionales de cada video (duración)
       const videoIds = videosData.items.map(item => item.contentDetails.videoId).join(',');
       const detailsResponse = await fetch(
-        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&id=${videoIds}&key=${YOUTUBE_API_KEY}`
+        `${YOUTUBE_PROXY_URL}?action=videos&ids=${videoIds}`
       );
       const detailsData = await detailsResponse.json();
 
       // Mapeamos los videos al formato de conversatorios
       const videosFromYouTube = videosData.items.map((item, index) => {
         const videoId = item.contentDetails.videoId;
-        const details = detailsData.items.find(d => d.id === videoId);
+        const details = detailsData.items ? detailsData.items.find(d => d.id === videoId) : null;
         const duration = details ? formatYouTubeDuration(details.contentDetails.duration) : 'N/A';
         const publishDate = new Date(item.snippet.publishedAt);
-        
+
         return {
           id: index + 1,
           titulo: item.snippet.title,
@@ -527,7 +523,7 @@
         videosFromYouTube.push({...proximo, id: videosFromYouTube.length + 1});
       }
 
-      console.log(`✅ Cargados ${videosFromYouTube.length} videos desde YouTube`);
+      console.log(`✅ Cargados ${videosFromYouTube.length} videos desde YouTube (via proxy seguro)`);
       return videosFromYouTube;
 
     } catch (error) {
@@ -597,14 +593,16 @@
 
   // Función para verificar nuevos videos periódicamente
   async function checkForNewVideos() {
-    if (!YOUTUBE_API_KEY) return;
-    
-    const newVideos = await loadVideosFromYouTube();
-    if (newVideos.length > conversatoriosData.length) {
-      console.log('🆕 Nuevos videos detectados!');
-      conversatoriosData = newVideos;
-      loadConversatorios();
-      updateStats();
+    try {
+      const newVideos = await loadVideosFromYouTube();
+      if (newVideos.length > conversatoriosData.length) {
+        console.log('🆕 Nuevos videos detectados!');
+        conversatoriosData = newVideos;
+        loadConversatorios();
+        updateStats();
+      }
+    } catch (e) {
+      console.log('Error verificando nuevos videos:', e);
     }
   }
 
@@ -879,30 +877,26 @@
     document.getElementById('stat-horas').textContent = horas + '+';
   }
 
-  // Init - Intenta cargar desde YouTube API, si falla usa datos manuales
+  // Init - Intenta cargar desde YouTube API via proxy, si falla usa datos manuales
   document.addEventListener('DOMContentLoaded', async () => {
     // Mostrar loading
     const loading = document.getElementById('conversatorios-loading');
     if (loading) loading.style.display = 'block';
 
-    // Intentar cargar desde YouTube API
-    if (YOUTUBE_API_KEY) {
-      try {
-        conversatoriosData = await loadVideosFromYouTube();
-      } catch (e) {
-        console.log('Usando datos manuales');
-        conversatoriosData = [...conversatoriosDataManual];
-      }
+    // Intentar cargar desde YouTube API (via proxy seguro de Netlify)
+    try {
+      conversatoriosData = await loadVideosFromYouTube();
+    } catch (e) {
+      console.log('Usando datos manuales');
+      conversatoriosData = [...conversatoriosDataManual];
     }
 
     // Cargar la galería
     loadConversatorios();
     updateStats();
 
-    // Verificar nuevos videos cada 5 minutos (solo si hay API key)
-    if (YOUTUBE_API_KEY) {
-      setInterval(checkForNewVideos, 5 * 60 * 1000);
-    }
+    // Verificar nuevos videos cada 5 minutos
+    setInterval(checkForNewVideos, 5 * 60 * 1000);
   });
 </script>
 </body>
