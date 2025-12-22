@@ -496,13 +496,17 @@
           descripcion: item.snippet.description.substring(0, 200) + '...',
           fecha: formatDate(publishDate),
           expositor: extractExpositor(item.snippet.title, item.snippet.description),
-          cargo: "SOCHIMT",
+          cargo: "Sociedad Chilena de Medicina Transfusional",
           duracion: duration,
           youtubeId: videoId,
           temas: extractTemas(item.snippet.title, item.snippet.description),
-          esProximo: false
+          esProximo: false,
+          fechaPublicacion: publishDate
         };
       });
+
+      // Ordenar por fecha de publicación (más reciente primero)
+      videosFromYouTube.sort((a, b) => b.fechaPublicacion - a.fechaPublicacion);
 
       console.log(`✅ Cargados ${videosFromYouTube.length} videos desde YouTube (via proxy seguro)`);
       return videosFromYouTube;
